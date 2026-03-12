@@ -1,0 +1,14 @@
+
+C:\Users\admin\Desktop\RK The Complete Care\client\src\pages\Admin.jsx
+    4:10   error    'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                        no-unused-vars
+  178:119  error    Empty block statement                                                                                                no-empty
+  203:134  error    Empty block statement                                                                                                no-empty
+  223:172  error    Empty block statement                                                                                                no-empty
+  224:96   warning  React Hook useEffect has a missing dependency: 'clinicInfoLoaded'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  236:119  error    Empty block statement                                                                                                no-empty
+  263:127  error    Empty block statement                                                                                                no-empty
+  290:126  error    Empty block statement                                                                                                no-empty
+  578:69   error    'i' is defined but never used                                                                                        no-unused-vars
+
+✖ 9 problems (8 errors, 1 warning)
+
