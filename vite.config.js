@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: "/rk-complete-care-clinic/",
+  base: "/rk-complete-care/",
   server: {
     proxy: {
       '/api': {
@@ -16,4 +16,4 @@ export default defineConfig({
       }
     }
   }
-})
+})  
