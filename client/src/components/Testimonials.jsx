@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import { getTestimonials } from '../services/api';
 
 const fallbackTestimonials = [
     {
@@ -52,9 +52,9 @@ const Testimonials = () => {
     useEffect(() => {
         const fetchTestimonials = async () => {
             try {
-                const res = await axios.get('/api/testimonials');
-                if (res.data && res.data.length > 0) {
-                    setTestimonials(res.data);
+                const data = await getTestimonials();
+                if (data && data.length > 0) {
+                    setTestimonials(data);
                 }
             } catch (err) {
                 console.error('Could not fetch testimonials, using fallback data.');

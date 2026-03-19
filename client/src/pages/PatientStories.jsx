@@ -1,9 +1,7 @@
-﻿import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
-
-const API = "/api";
+import { getPatientStories } from "../services/api";
 
 const StarRating = ({ rating }) => (
     <div className="flex gap-0.5">
@@ -20,8 +18,8 @@ const PatientStories = () => {
     const [filter, setFilter] = useState("All");
 
     useEffect(() => {
-        axios.get(`${API}/patient-stories`)
-            .then(r => setStories(r.data))
+        getPatientStories()
+            .then(data => setStories(data))
             .catch(() => { })
             .finally(() => setLoading(false));
     }, []);

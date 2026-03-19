@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getDoctors } from '../services/api';
 
 const Doctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -27,8 +27,8 @@ const Doctors = () => {
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const res = await axios.get('/api/doctors');
-                setDoctors(res.data && res.data.length > 0 ? res.data : fallbackDoctors);
+                const data = await getDoctors();
+                setDoctors(data && data.length > 0 ? data : fallbackDoctors);
             } catch {
                 setDoctors(fallbackDoctors);
             } finally {

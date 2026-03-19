@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getBanners } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
-
-
 
 const BannerCarousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -40,9 +38,9 @@ const BannerCarousel = () => {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const res = await axios.get('/api/banners');
-                if (res.data && res.data.length > 0) {
-                    setSlides(res.data);
+                const data = await getBanners();
+                if (data && data.length > 0) {
+                    setSlides(data);
                 } else {
                     setSlides(defaultSlides);
                 }

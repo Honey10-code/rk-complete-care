@@ -1,14 +1,6 @@
 const mongoose = require('mongoose');
-const User = require('./models/User');
+require('dotenv').config();
 
-mongoose.connect('mongodb://localhost:27017/rk_care')
-    .then(async () => {
-        console.log('MongoDB Connected');
-        const users = await User.find({});
-        console.log('Users found:', users);
-        process.exit();
-    })
-    .catch(err => {
-        console.error('MongoDB Connection Error:', err);
-        process.exit(1);
-    });
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB Connected ✅'))
+    .catch(err => console.log('MongoDB Error ❌', err));

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
-
-const API = "/api";
+import { getClinicPosters } from "../services/api";
 
 const CATEGORIES = ["All", "Awareness", "Services", "Events", "Health Tips", "Offers", "General"];
 
@@ -14,8 +12,8 @@ const ClinicPosters = () => {
     const [lightbox, setLightbox] = useState(null);
 
     useEffect(() => {
-        axios.get(`${API}/clinic-posters`)
-            .then(r => setPosters(r.data))
+        getClinicPosters()
+            .then(data => setPosters(data))
             .catch(() => { })
             .finally(() => setLoading(false));
     }, []);
