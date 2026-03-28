@@ -158,60 +158,71 @@ const Home = () => {
                 </motion.div>
             </section>
 
-            {/* Features/Teaser Sections */}
-            <section className="py-24 bg-white relative">
+            {/* Quick Access Teasers */}
+            <section className="py-20 bg-white border-b border-slate-50">
                 <div className="container mx-auto px-6">
                     <div className="grid md:grid-cols-3 gap-8">
                         {/* Services Teaser */}
-                        <motion.div 
-                            whileHover={{ y: -10 }}
-                            className="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center"
-                        >
-                            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-2xl mb-6">
+                        <motion.div whileHover={{ y: -5 }} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex flex-col items-center text-center group">
+                            <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
                                 <i className="fa-solid fa-hand-holding-medical"></i>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3 uppercase">Elite Services</h3>
-                            <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-                                Advanced orthopedic rehabilitation and personalized therapy plans for all recovery needs.
-                            </p>
-                            <Link to="/services" className="mt-auto px-6 py-2.5 bg-blue-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-800 transition-all">
-                                Explore Services
+                            <h3 className="text-lg font-black text-slate-900 mb-2 uppercase tracking-tight">Elite Services</h3>
+                            <p className="text-slate-500 text-xs mb-6 font-medium leading-relaxed">Advanced orthopedic rehab and personalized therapy plans.</p>
+                            <Link to="/services" className="mt-auto text-blue-700 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+                                Explore Services <i className="fa-solid fa-arrow-right"></i>
                             </Link>
                         </motion.div>
 
                         {/* Doctors Teaser */}
-                        <motion.div 
-                            whileHover={{ y: -10 }}
-                            className="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center"
-                        >
-                            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-2xl mb-6">
+                        <motion.div whileHover={{ y: -5 }} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex flex-col items-center text-center group">
+                            <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
                                 <i className="fa-solid fa-user-doctor"></i>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3 uppercase">Lead Specialists</h3>
-                            <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-                                Meet Dr. Piyush Sharma and our expert team dedicated to your holistic rehabilitation.
-                            </p>
-                            <Link to="/doctors" className="mt-auto px-6 py-2.5 bg-blue-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-800 transition-all">
-                                Meet Experts
+                            <h3 className="text-lg font-black text-slate-900 mb-2 uppercase tracking-tight">Lead Specialists</h3>
+                            <p className="text-slate-500 text-xs mb-6 font-medium leading-relaxed">Meet Dr. Piyush Sharma and our dedicated expert team.</p>
+                            <Link to="/doctors" className="mt-auto text-blue-700 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+                                Meet Experts <i className="fa-solid fa-arrow-right"></i>
                             </Link>
                         </motion.div>
 
                         {/* Exercises Teaser */}
-                        <motion.div 
-                            whileHover={{ y: -10 }}
-                            className="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center"
-                        >
-                            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-2xl mb-6">
+                        <motion.div whileHover={{ y: -5 }} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex flex-col items-center text-center group">
+                            <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
                                 <i className="fa-solid fa-person-running"></i>
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3 uppercase">Recovery Support</h3>
-                            <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-                                Access our clinical exercise protocols and recovery guides designed by our specialists.
-                            </p>
-                            <Link to="/exercises" className="mt-auto px-6 py-2.5 bg-blue-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-800 transition-all">
-                                View Guides
+                            <h3 className="text-lg font-black text-slate-900 mb-2 uppercase tracking-tight">Recovery Support</h3>
+                            <p className="text-slate-500 text-xs mb-6 font-medium leading-relaxed">Access clinical protocols and guides designed for you.</p>
+                            <Link to="/exercises" className="mt-auto text-blue-700 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+                                View Guides <i className="fa-solid fa-arrow-right"></i>
                             </Link>
                         </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Featured Exercises Section */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700">
+                            Home Rehabilitation · घर पर पुनर्वास
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight">
+                            Featured Clinical <span className="text-blue-700">Recovery Guides</span>
+                        </h2>
+                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
+                            Access our most effective home-based protocols designed by our expert physiotherapists.
+                        </p>
+                    </div>
+
+                    <Exercises limit={4} isHomePage={true} />
+
+                    <div className="mt-16 text-center">
+                        <Link to="/exercises" className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-slate-200 group">
+                            Explore All Exercises 
+                            <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </Link>
                     </div>
                 </div>
             </section>
