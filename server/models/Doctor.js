@@ -21,6 +21,14 @@ const doctorSchema = new mongoose.Schema({
         type: String, // URL or local path
         required: true
     },
+    experience: {
+        type: String,
+        default: '5+ Years'
+    },
+    shift: {
+        type: String,
+        default: 'Morning 10 AM - 1 PM | Evening 5 PM - 8 PM'
+    },
     createdAt: {
         type: Date,
         default: Date.now
