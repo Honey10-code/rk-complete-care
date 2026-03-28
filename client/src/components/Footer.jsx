@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/images/LOGO.png";
+import { getClinicInfo } from "../services/api";
 
 const Footer = () => {
     const [clinicInfo, setClinicInfo] = useState({
@@ -11,8 +12,8 @@ const Footer = () => {
     });
 
     useEffect(() => {
-        axios.get('/api/clinic-info')
-            .then(res => { if (res.data) setClinicInfo(res.data); })
+        getClinicInfo()
+            .then(data => { if (data) setClinicInfo(data); })
             .catch(() => { });
     }, []);
 
