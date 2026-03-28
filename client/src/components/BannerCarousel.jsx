@@ -11,27 +11,27 @@ const BannerCarousel = () => {
     const defaultSlides = [
         {
             id: 1,
-            image: "https://images.unsplash.com/photo-1576091160550-217358c7e618?q=80&w=2070&auto=format&fit=crop",
-            title: "Advanced Physiotherapy Care",
-            subtitle: "Regain Your Strength"
+            image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop",
+            title: "Premium Clinical Excellence",
+            subtitle: "Expert Physiotherapy & Rehabilitation Specialist"
         },
         {
             id: 2,
-            image: "https://plus.unsplash.com/premium_photo-1661764878654-3d0fc2eefcca?q=80&w=2070&auto=format&fit=crop",
-            title: "Personalized Rehabilitation",
-            subtitle: "Expert Care for Every Step"
+            image: "https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?q=80&w=2069&auto=format&fit=crop",
+            title: "Personalized Recovery Support",
+            subtitle: "Dedicated Care for Every Step of Your Journey"
         },
         {
             id: 3,
-            image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop",
+            image: "https://images.unsplash.com/photo-1598136490941-30d885318abd?q=80&w=2069&auto=format&fit=crop",
             title: "Sports Injury Recovery",
-            subtitle: "Get Back in the Game Faster"
+            subtitle: "Regain Your Peak Performance and Strength"
         },
         {
             id: 4,
-            image: "https://images.unsplash.com/photo-1516549655169-df83a092fc43?q=80&w=2070&auto=format&fit=crop",
-            title: "Holistic Healing",
-            subtitle: "Treating the Root Cause"
+            image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop",
+            title: "Advanced Manual Therapy",
+            subtitle: "Scientifically Proven Treatment Protocols"
         }
     ];
 

@@ -108,9 +108,9 @@ const Home = () => {
                             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
                                 <img
                                     src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop"
-                                    alt="Physiotherapy Treatment"
-                                    className="w-full h-auto object-cover"
-                                    onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Physiotherapy'; }}
+                                    alt="Physiotherapy & Wellness"
+                                    className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
+                                    onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Physiotherapy+Care'; }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 text-transparent to-transparent"></div>
                             </div>

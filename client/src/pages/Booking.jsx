@@ -202,8 +202,8 @@ RK - The Complete Care Physiotherapy Centre`;
                     <div className="lg:w-1/2 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-blue-900/40 z-10"></div>
                         <img
-                            src="https://images.unsplash.com/photo-1576091160550-217358c7e618?q=80&w=2070&auto=format&fit=crop"
-                            alt="Physiotherapy Treatment"
+                            src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop"
+                            alt="Physiotherapy & Wellness"
                             className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                             onError={(e) => { e.target.src = 'https://placehold.co/600x800?text=Physiotherapy+Care'; }}
                         />
