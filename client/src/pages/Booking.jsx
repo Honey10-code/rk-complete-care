@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import axios from 'axios';
+import { bookAppointment, getBookedSlots } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 
@@ -32,8 +32,8 @@ const Booking = () => {
     // Fetch booked slots when date changes
     React.useEffect(() => {
         if (formData.date) {
-            axios.get(`/api/appointments/booked-slots?date=${formData.date}`)
-                .then(res => setBookedSlots(res.data))
+            getBookedSlots(formData.date)
+                .then(res => setBookedSlots(res))
                 .catch(err => console.error("Error fetching slots", err));
         }
     }, [formData.date]);
@@ -51,7 +51,7 @@ const Booking = () => {
         setStatus(null);
 
         try {
-            await axios.post('/api/appointments', formData);
+            await bookAppointment(formData);
 
             setStatus('success');
 
