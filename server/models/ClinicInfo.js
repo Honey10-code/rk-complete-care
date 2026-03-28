@@ -28,6 +28,15 @@ const clinicInfoSchema = new mongoose.Schema({
         type: Number,
         default: 10
     },
+    dayWiseSlots: {
+        monday: { type: [String], default: [] },
+        tuesday: { type: [String], default: [] },
+        wednesday: { type: [String], default: [] },
+        thursday: { type: [String], default: [] },
+        friday: { type: [String], default: [] },
+        saturday: { type: [String], default: [] },
+        sunday: { type: [String], default: [] }
+    },
     showSlotAvailability: {
         type: Boolean,
         default: false

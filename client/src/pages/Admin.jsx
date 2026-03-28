@@ -958,6 +958,80 @@ const Admin = () => {
                                         )
                                     },
                                     {
+                                        title: "Weekly Slot Schedule", icon: "fa-calendar-days", content: (
+                                            <div className="space-y-6">
+                                                <p className="text-[10px] text-slate-500 italic uppercase font-bold tracking-widest border-l-2 border-blue-500 pl-3">
+                                                    Define custom time slots for each day. If a day has no custom slots, the system uses default "Morning" and "Evening" slots.
+                                                </p>
+                                                <div className="grid grid-cols-1 gap-6">
+                                                    {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map(day => (
+                                                        <div key={day} className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+                                                            <div className="flex items-center justify-between mb-3">
+                                                                <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                                                                    <i className="fa-solid fa-calendar-minus text-blue-400"></i> {day}
+                                                                </h4>
+                                                                <div className="flex items-center gap-2">
+                                                                    <input 
+                                                                        type="text" 
+                                                                        placeholder="e.g. 10AM - 12PM" 
+                                                                        className="text-[10px] py-1 px-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === 'Enter') {
+                                                                                e.preventDefault();
+                                                                                const val = e.target.value.trim();
+                                                                                if (val) {
+                                                                                    const currentSlots = clinicInfo.dayWiseSlots?.[day] || [];
+                                                                                    if (!currentSlots.includes(val)) {
+                                                                                        setClinicInfo({
+                                                                                            ...clinicInfo,
+                                                                                            dayWiseSlots: {
+                                                                                                ...(clinicInfo.dayWiseSlots || {}),
+                                                                                                [day]: [...currentSlots, val]
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                    e.target.value = '';
+                                                                                }
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    <span className="text-[9px] text-slate-400 italic font-medium">Press Enter to add</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-wrap gap-2 min-h-[40px] items-center">
+                                                                {(clinicInfo.dayWiseSlots?.[day] || []).length === 0 ? (
+                                                                    <span className="text-[10px] text-slate-300 font-bold tracking-widest uppercase py-1 px-3 border border-dashed border-slate-200 rounded-lg">Using Defaults</span>
+                                                                ) : (
+                                                                    (clinicInfo.dayWiseSlots?.[day] || []).map((slot, idx) => (
+                                                                        <span key={idx} className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-blue-100 text-blue-600 rounded-lg text-[10px] font-black group shadow-sm">
+                                                                            {slot}
+                                                                            <button 
+                                                                                type="button" 
+                                                                                onClick={() => {
+                                                                                    const updated = (clinicInfo.dayWiseSlots?.[day] || []).filter(s => s !== slot);
+                                                                                    setClinicInfo({
+                                                                                        ...clinicInfo,
+                                                                                        dayWiseSlots: {
+                                                                                            ...(clinicInfo.dayWiseSlots || {}),
+                                                                                            [day]: updated
+                                                                                        }
+                                                                                    });
+                                                                                }}
+                                                                                className="text-slate-300 hover:text-red-500 transition-colors"
+                                                                            >
+                                                                                <i className="fa-solid fa-xmark"></i>
+                                                                            </button>
+                                                                        </span>
+                                                                    ))
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    {
                                         title: "Social Links", icon: "fa-share-nodes", content: (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {[{ key: "facebook", icon: "fa-facebook-f", label: "Facebook" }, { key: "instagram", icon: "fa-instagram", label: "Instagram" }, { key: "twitter", icon: "fa-twitter", label: "Twitter" }, { key: "whatsapp", icon: "fa-whatsapp", label: "WhatsApp" }, { key: "google", icon: "fa-google", label: "Google Reviews" }].map(({ key, icon, label }) => (

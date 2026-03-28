@@ -22,6 +22,7 @@ const Booking = () => {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
     const [bookedSlots, setBookedSlots] = useState({
+        availableSlots: [],
         fullSlots: [],
         slotCounts: {},
         maxCapacity: 10,
@@ -30,16 +31,19 @@ const Booking = () => {
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [slotDropdownOpen, setSlotDropdownOpen] = useState(false);
 
-    const TIME_SLOTS = [
-        "Morning (9AM–1PM)",
-        "Evening (4PM–8PM)"
-    ];
-
     // Fetch booked slots when date changes
     React.useEffect(() => {
         if (formData.date) {
             getBookedSlots(formData.date)
-                .then(res => setBookedSlots(res))
+                .then(res => {
+                    setBookedSlots(res);
+                    // Automatically select first available slot if current one is invalid for this day
+                    if (res.availableSlots && res.availableSlots.length > 0) {
+                        if (!res.availableSlots.includes(formData.slot)) {
+                            setFormData(prev => ({ ...prev, slot: res.availableSlots[0] }));
+                        }
+                    }
+                })
                 .catch(err => console.error("Error fetching slots", err));
         }
     }, [formData.date]);
@@ -312,7 +316,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                                                 exit={{ opacity: 0, y: -10 }}
                                                                 className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 overflow-hidden"
                                                             >
-                                                                {TIME_SLOTS.map(slot => {
+                                                                {(bookedSlots.availableSlots || []).map(slot => {
                                                                     const isFull = (bookedSlots.fullSlots || []).includes(slot);
                                                                     if (isFull) return null;
                                                                     
@@ -351,10 +355,16 @@ RK - The Complete Care Physiotherapy Centre`;
                                                                         </button>
                                                                     );
                                                                 })}
-                                                                {TIME_SLOTS.every(s => (bookedSlots.fullSlots || []).includes(s)) && (
+                                                                {(bookedSlots.availableSlots || []).length > 0 && (bookedSlots.availableSlots || []).every(s => (bookedSlots.fullSlots || []).includes(s)) && (
                                                                     <div className="p-6 text-center text-slate-400">
                                                                         <i className="fa-solid fa-calendar-xmark text-2xl mb-2 block opacity-20"></i>
                                                                         <p className="text-xs font-bold">All slots full for this date</p>
+                                                                    </div>
+                                                                )}
+                                                                {(bookedSlots.availableSlots || []).length === 0 && (
+                                                                    <div className="p-6 text-center text-slate-400">
+                                                                        <i className="fa-solid fa-calendar-xmark text-2xl mb-2 block opacity-20"></i>
+                                                                        <p className="text-xs font-bold">No slots configured for this day</p>
                                                                     </div>
                                                                 )}
                                                             </motion.div>

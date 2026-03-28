@@ -3,6 +3,21 @@ const router = express.Router();
 const Appointment = require('../models/Appointment');
 const ClinicInfo = require('../models/ClinicInfo');
 
+// Helper to get active slots for a specific date
+const getActiveSlots = async (date) => {
+    const day = new Date(date).toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+    const info = await ClinicInfo.findOne();
+    
+    // Default Fallback
+    const defaults = ["Morning (9AM–1PM)", "Evening (4PM–8PM)"];
+    
+    if (info && info.dayWiseSlots && info.dayWiseSlots[day] && info.dayWiseSlots[day].length > 0) {
+        return info.dayWiseSlots[day];
+    }
+    
+    return defaults;
+};
+
 // GET full slots for a specific date (based on admin-set capacity)
 router.get('/booked-slots', async (req, res) => {
     try {
@@ -18,6 +33,9 @@ router.get('/booked-slots', async (req, res) => {
         const info = await ClinicInfo.findOne() || { maxBookingsPerSlot: 10, showSlotAvailability: false };
         const limit = (info.maxBookingsPerSlot === undefined) ? 10 : info.maxBookingsPerSlot;
         const showAvailability = !!info.showSlotAvailability;
+
+        // Identify active slots for this specific day
+        const availableSlots = await getActiveSlots(date);
 
         // Group by slot and count
         const counts = await Appointment.aggregate([
@@ -36,6 +54,7 @@ router.get('/booked-slots', async (req, res) => {
         }
 
         res.json({
+            availableSlots,
             fullSlots,
             slotCounts,
             maxCapacity: limit,
@@ -89,6 +108,12 @@ router.post('/', async (req, res) => {
         const appointmentId = `RK-${year}-${String(sequence).padStart(4, '0')}`;
 
         const { patientName, phone, date, slot, age, gender, problem, clinicVisit, videoConsultation, notes } = req.body;
+
+        // 🛑 Backend Enforcement: Check valid slot for the day
+        const activeSlots = await getActiveSlots(date);
+        if (!activeSlots.includes(slot)) {
+            return res.status(400).json({ message: "Invalid slot selected for this day." });
+        }
 
         // 🛑 Backend Enforcement: Check Capacity
         const info = await ClinicInfo.findOne() || { maxBookingsPerSlot: 10 };
