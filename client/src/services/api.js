@@ -36,7 +36,7 @@ export const getPatientStories = () => api.get("/patient-stories").then(safeArra
 export const getClinicInfo = () => api.get("/clinic-info").then(safeObject);
 export const getClinicPosters = () => api.get("/clinic-posters").then(safeArray);
 export const bookAppointment = (data) => api.post("/appointments", data).then(safeObject);
-export const getBookedSlots = (date) => api.get(`/appointments/booked-slots?date=${date}`).then(safeArray);
+export const getBookedSlots = (date) => api.get(`/appointments/booked-slots?date=${date}`).then(safeObject);
 
 // Administrative APIs
 export const getAppointments = (search = "") => api.get(`/appointments?search=${search}`).then(safeArray);
