@@ -264,34 +264,77 @@ RK - The Complete Care Physiotherapy Centre`;
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">SLOT</label>
-                                    <div className="relative">
-                                        <select
-                                            name="slot"
-                                            value={formData.slot}
-                                            onChange={handleChange}
-                                            disabled={!formData.date}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-blue focus:ring-4 focus:ring-blue-50 transition-all bg-white/70 hover:bg-white appearance-none"
-                                        >
-                                            <option value="">Select a time slot</option>
-                                            {TIME_SLOTS.map(slot => {
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">SELECT A SLOT</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {!formData.date ? (
+                                            <div className="col-span-2 py-4 px-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
+                                                <p className="text-xs text-slate-400 italic flex items-center justify-center gap-2">
+                                                    <i className="fa-solid fa-calendar-day"></i> Select date first to see available slots
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            TIME_SLOTS.map(slot => {
                                                 const isFull = (bookedSlots.fullSlots || []).includes(slot);
                                                 if (isFull) return null; // Hide if full per user request
                                                 
                                                 const count = (bookedSlots.slotCounts || {})[slot] || 0;
                                                 const capacity = bookedSlots.maxCapacity || 0;
                                                 const showCount = bookedSlots.showAvailability && capacity > 0;
+                                                const isSelected = formData.slot === slot;
+                                                const isMorning = slot.includes("Morning");
                                                 
                                                 return (
-                                                    <option key={slot} value={slot}>
-                                                        {slot} {showCount ? `(${capacity - count} slots left)` : ""}
-                                                    </option>
+                                                    <button
+                                                        key={slot}
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, slot })}
+                                                        className={`relative overflow-hidden group p-4 rounded-2xl border-2 transition-all duration-300 text-left ${
+                                                            isSelected 
+                                                            ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200" 
+                                                            : "bg-white border-slate-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50/30"
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-center gap-3 relative z-10">
+                                                            <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                                                                isSelected ? "bg-white/20 text-white" : "bg-blue-50 text-blue-600"
+                                                            }`}>
+                                                                <i className={`fa-solid ${isMorning ? "fa-sun" : "fa-moon"}`}></i>
+                                                            </span>
+                                                            <div>
+                                                                <p className={`font-black text-sm uppercase tracking-tight ${isSelected ? "text-white" : "text-slate-800"}`}>
+                                                                    {slot.split(' ')[0]}
+                                                                </p>
+                                                                <p className={`text-[10px] font-bold ${isSelected ? "text-blue-100" : "text-slate-400"}`}>
+                                                                    {slot.match(/\((.*?)\)/)?.[1] || ""}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {showCount && (
+                                                            <div className={`mt-3 pt-3 border-t text-[10px] font-black uppercase flex items-center justify-between ${
+                                                                isSelected ? "border-white/20 text-blue-50" : "border-slate-50 text-slate-400"
+                                                            }`}>
+                                                                <span>AVailablity</span>
+                                                                <span>{capacity - count} Left</span>
+                                                            </div>
+                                                        )}
+
+                                                        {isSelected && (
+                                                            <motion.div 
+                                                                layoutId="active-slot-glow"
+                                                                className="absolute top-0 right-0 w-16 h-16 bg-white/20 blur-2xl rounded-full -mr-8 -mt-8"
+                                                            />
+                                                        )}
+                                                    </button>
                                                 );
-                                            })}
-                                        </select>
-                                        <i className="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 pointer-events-none"></i>
-                                        {!formData.date && <p className="text-xs text-red-400 mt-1">* Select date first to see availability</p>}
+                                            })
+                                        )}
                                     </div>
+                                    {formData.date && TIME_SLOTS.every(s => (bookedSlots.fullSlots || []).includes(s)) && (
+                                        <p className="text-xs text-rose-500 font-bold bg-rose-50 p-3 rounded-xl border border-rose-100 text-center animate-pulse">
+                                            <i className="fa-solid fa-circle-exclamation mr-2"></i> No slots available for this date
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
