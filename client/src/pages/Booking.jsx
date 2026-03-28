@@ -270,13 +270,12 @@ RK - The Complete Care Physiotherapy Centre`;
                                         >
                                             <option value="">Select a time slot</option>
                                             {TIME_SLOTS.map(slot => {
-                                                const slotCount = bookedSlots.filter(s => s === slot).length;
-                                                const SLOT_CAPACITY = 10; // Change this to allow more/less people
-                                                const isFull = slotCount >= SLOT_CAPACITY;
+                                                const isFull = bookedSlots.includes(slot);
+                                                if (isFull) return null; // Hide if full per user request
                                                 
                                                 return (
-                                                    <option key={slot} value={slot} disabled={isFull} className={isFull ? "text-gray-400 bg-gray-100" : ""}>
-                                                        {slot} {isFull ? "(Full)" : slotCount > 0 ? `(${SLOT_CAPACITY - slotCount} slots left)` : ""}
+                                                    <option key={slot} value={slot}>
+                                                        {slot}
                                                     </option>
                                                 );
                                             })}

@@ -1,24 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const Appointment = require('../models/Appointment');
+const ClinicInfo = require('../models/ClinicInfo');
 
-// GET booked slots for a specific date
+// GET full slots for a specific date (based on admin-set capacity)
 router.get('/booked-slots', async (req, res) => {
     try {
         const { date } = req.query;
         if (!date) return res.status(400).json({ message: "Date is required" });
 
-        // Create start and end of the given date for range query
         const start = new Date(date);
         start.setHours(0, 0, 0, 0);
         const end = new Date(date);
         end.setHours(23, 59, 59, 999);
 
-        const appointments = await Appointment.find({
-            date: { $gte: start, $lte: end }
-        });
-        const bookedSlots = appointments.map(app => app.slot);
-        res.json(bookedSlots);
+        // Fetch limit from ClinicInfo
+        const info = await ClinicInfo.findOne() || { maxBookingsPerSlot: 10 };
+        const limit = info.maxBookingsPerSlot || 10;
+
+        // Group by slot and count
+        const counts = await Appointment.aggregate([
+            { $match: { date: { $gte: start, $lte: end } } },
+            { $group: { _id: "$slot", count: { $sum: 1 } } }
+        ]);
+
+        // Return only slots that are full
+        const fullSlots = counts.filter(c => c.count >= limit).map(c => c._id);
+        res.json(fullSlots);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -66,19 +74,40 @@ router.post('/', async (req, res) => {
 
         const appointmentId = `RK-${year}-${String(sequence).padStart(4, '0')}`;
 
+        const { patientName, phone, date, slot, age, gender, problem, clinicVisit, videoConsultation, notes } = req.body;
+
+        // 🛑 Backend Enforcement: Check Capacity
+        const info = await ClinicInfo.findOne() || { maxBookingsPerSlot: 10 };
+        const limit = info.maxBookingsPerSlot || 10;
+
+        if (limit > 0) {
+            const start = new Date(date);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(date);
+            end.setHours(23, 59, 59, 999);
+
+            const count = await Appointment.countDocuments({
+                date: { $gte: start, $lte: end },
+                slot: slot
+            });
+
+            if (count >= limit) {
+                return res.status(400).json({ message: "This slot is no longer available. Please select another time." });
+            }
+        }
+
         const appointment = new Appointment({
             appointmentId,
-            patientName: req.body.patientName,
-            age: req.body.age,
-            gender: req.body.gender,
-            phone: req.body.phone,
-            date: req.body.date,
-            slot: req.body.slot,
-            time: req.body.time,
-            problem: req.body.problem,
-            clinicVisit: req.body.clinicVisit,
-            videoConsultation: req.body.videoConsultation,
-            notes: req.body.notes
+            patientName,
+            age,
+            gender,
+            phone,
+            date,
+            slot,
+            problem,
+            clinicVisit,
+            videoConsultation,
+            notes
         });
 
         const newAppointment = await appointment.save();

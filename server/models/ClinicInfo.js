@@ -24,6 +24,10 @@ const clinicInfoSchema = new mongoose.Schema({
         whatsapp: String,
         google: String
     },
+    maxBookingsPerSlot: {
+        type: Number,
+        default: 10
+    },
     updatedAt: {
         type: Date,
         default: Date.now

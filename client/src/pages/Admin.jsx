@@ -931,6 +931,19 @@ const Admin = () => {
                                         )
                                     },
                                     {
+                                        title: "Booking Configuration", icon: "fa-calendar-check", content: (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Max Patients Per Slot</label>
+                                                    <div className="flex items-center gap-3">
+                                                        <input type="number" min="0" placeholder="e.g. 10" value={clinicInfo.maxBookingsPerSlot || ""} onChange={e => setClinicInfo({ ...clinicInfo, maxBookingsPerSlot: Number(e.target.value) })} className={inp} />
+                                                        <span className="text-[10px] text-slate-400 font-bold uppercase">(0 = Unlimited)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    {
                                         title: "Social Links", icon: "fa-share-nodes", content: (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {[{ key: "facebook", icon: "fa-facebook-f", label: "Facebook" }, { key: "instagram", icon: "fa-instagram", label: "Instagram" }, { key: "twitter", icon: "fa-twitter", label: "Twitter" }, { key: "whatsapp", icon: "fa-whatsapp", label: "WhatsApp" }, { key: "google", icon: "fa-google", label: "Google Reviews" }].map(({ key, icon, label }) => (
