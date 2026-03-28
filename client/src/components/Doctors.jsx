@@ -241,8 +241,3 @@ const Doctors = () => {
 };
 
 export default Doctors;
-   </section>
-    );
-};
-
-export default Doctors;
