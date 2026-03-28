@@ -21,6 +21,7 @@ const Booking = () => {
 
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
     const [bookedSlots, setBookedSlots] = useState({
         availableSlots: [],
         fullSlots: [],
@@ -94,6 +95,7 @@ RK - The Complete Care Physiotherapy Centre`;
 
         } catch (err) {
             console.error(err);
+            setErrorMessage(err.response?.data?.message || 'Something went wrong. Please try again or call us.');
             setStatus('error');
         } finally {
             setLoading(false);
@@ -163,6 +165,7 @@ RK - The Complete Care Physiotherapy Centre`;
 
         } catch (err) {
             console.error("Payment Initiation Error:", err);
+            setErrorMessage(err.response?.data?.message || 'Payment service unavailable. Please try again.');
             setStatus('error');
         } finally {
             setLoading(false);
@@ -251,7 +254,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                     <i className="fa-solid fa-circle-exclamation text-xl"></i>
                                     <div>
                                         <p className="font-bold">Booking Failed</p>
-                                        <p className="text-sm">Something went wrong. Please try again or call us.</p>
+                                        <p className="text-sm">{errorMessage || 'Something went wrong. Please try again or call us.'}</p>
                                     </div>
                                 </motion.div>
                             )}
