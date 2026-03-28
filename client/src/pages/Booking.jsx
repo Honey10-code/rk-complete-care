@@ -291,11 +291,6 @@ RK - The Complete Care Physiotherapy Centre`;
                                                     <div className="flex items-center gap-4">
                                                         <div className="text-right">
                                                             <p className="text-[10px] font-black text-slate-500 uppercase">{formData.slot.match(/\((.*?)\)/)?.[1] || ""}</p>
-                                                            {bookedSlots.showAvailability && bookedSlots.maxCapacity > 0 && (
-                                                                <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tighter">
-                                                                    {bookedSlots.maxCapacity - (bookedSlots.slotCounts?.[formData.slot] || 0)} Slots Left
-                                                                </p>
-                                                            )}
                                                         </div>
                                                         <i className={`fa-solid fa-chevron-down text-slate-300 text-xs transition-transform duration-300 ${slotDropdownOpen ? 'rotate-180' : ''}`}></i>
                                                     </div>
@@ -342,11 +337,6 @@ RK - The Complete Care Physiotherapy Centre`;
                                                                             
                                                                             <div className="text-right">
                                                                                 <span className="text-[10px] font-bold text-slate-400 block">{slot.match(/\((.*?)\)/)?.[1] || ""}</span>
-                                                                                {showCount && (
-                                                                                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-tighter">
-                                                                                        {capacity - count} Left
-                                                                                    </span>
-                                                                                )}
                                                                             </div>
                                                                         </button>
                                                                     );
