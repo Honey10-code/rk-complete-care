@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getDoctors } from '../services/api';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Doctors = () => {
     const [doctors, setDoctors] = useState([]);
