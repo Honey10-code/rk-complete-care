@@ -38,4 +38,26 @@ export const getClinicPosters = () => api.get("/clinic-posters").then(safeArray)
 export const bookAppointment = (data) => api.post("/appointments", data).then(safeObject);
 export const getBookedSlots = (date) => api.get(`/appointments/booked-slots?date=${date}`).then(safeArray);
 
+// Administrative APIs
+export const getAppointments = (search = "") => api.get(`/appointments?search=${search}`).then(safeArray);
+export const patchAppointment = (id, data) => api.patch(`/appointments/${id}`, data).then(safeObject);
+export const deleteAppointment = (id) => api.delete(`/appointments/${id}`).then(safeObject);
+
+export const postDoctor = (fd) => api.post(`/doctors`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deleteDoctor = (id) => api.delete(`/doctors/${id}`).then(safeObject);
+
+export const postTestimonial = (data) => api.post(`/testimonials`, data).then(safeObject);
+export const deleteTestimonial = (id) => api.delete(`/testimonials/${id}`).then(safeObject);
+
+export const postClinicInfo = (data) => api.post(`/clinic-info`, data).then(safeObject);
+
+export const postBanner = (fd) => api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deleteBanner = (id) => api.delete(`/banners/${id}`).then(safeObject);
+
+export const postPatientStory = (fd) => api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deletePatientStory = (id) => api.delete(`/patient-stories/${id}`).then(safeObject);
+
+export const postClinicPoster = (fd) => api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deleteClinicPoster = (id) => api.delete(`/clinic-posters/${id}`).then(safeObject);
+
 export default api;

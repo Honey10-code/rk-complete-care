@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
-const API = "/api";
+import api, { getAppointments, patchAppointment, deleteAppointment, getDoctors, postDoctor, deleteDoctor, getTestimonials, postTestimonial, deleteTestimonial, getClinicInfo, postClinicInfo, getBanners, postBanner } from "../services/api";
 
 // ─── Toast System ────────────────────────────────────────────────────────────
 const Toast = ({ toasts, removeToast }) => (
@@ -79,11 +77,8 @@ const Admin = () => {
         try {
             const token = localStorage.getItem("token");
             if (!token) { navigate("/login"); return; }
-            const res = await axios.get(`${API}/appointments?search=${search}`);
-            console.log("AppointmentsAPI: ", res.data);
-
-
-            setAppointments(Array.isArray(res.data) ? res.data : []);
+            const data = await getAppointments(search);
+            setAppointments(Array.isArray(data) ? data : []);
         } catch (err) {
             console.log("ERROR:", err?.response?.data || err.message);
 
@@ -117,7 +112,7 @@ const Admin = () => {
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
-            await axios.patch(`${API}/appointments/${id}`, { status: newStatus });
+            await api.patch(`/appointments/${id}`, { status: newStatus });
             fetchAppointments();
             addToast(`Status updated to ${newStatus}`, "success");
         } catch { addToast("Error updating status", "error"); }
@@ -126,7 +121,7 @@ const Admin = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this appointment?")) return;
         try {
-            await axios.delete(`${API}/appointments/${id}`);
+            await api.delete(`/appointments/${id}`);
             fetchAppointments();
             addToast("Appointment deleted", "success");
         } catch { addToast("Error deleting appointment", "error"); }
@@ -143,7 +138,7 @@ const Admin = () => {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.patch(`${API}/appointments/${editingAppointment._id}`, editingAppointment);
+            await api.patch(`/appointments/${editingAppointment._id}`, editingAppointment);
             setEditingAppointment(null);
             fetchAppointments();
             addToast("Appointment updated!", "success");
@@ -160,7 +155,7 @@ const Admin = () => {
                 ...editingPatient,
                 patientName: editingPatient.name
             };
-            await axios.patch(`${API}/appointments/patient/${editingPatient.originalPhone}`, updatePayload);
+            await api.patch(`/appointments/patient/${editingPatient.originalPhone}`, updatePayload);
             setEditingPatient(null);
             fetchAppointments();
             addToast("Patient details updated globally!", "success");
@@ -172,7 +167,7 @@ const Admin = () => {
     const handlePatientDelete = async () => {
         if (!deletingPatient) return;
         try {
-            await axios.delete(`${API}/appointments/patient/${deletingPatient.phone}`);
+            await api.delete(`/appointments/patient/${deletingPatient.phone}`);
             setDeletingPatient(null);
             fetchAppointments();
             addToast("All records for this patient have been deleted.", "success");
@@ -198,7 +193,7 @@ const Admin = () => {
     const handleCreateSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API}/appointments`, newAppointment);
+            await api.post(`/appointments`, newAppointment);
             if (newAppointment.whatsappNotify) {
                 const msg = encodeURIComponent(`*New Appointment*\n*Name:* ${newAppointment.patientName}\n*Phone:* ${newAppointment.phone}\n*Date:* ${newAppointment.date}\n*Slot:* ${newAppointment.slot}\n*Problem:* ${newAppointment.problem}`);
                 window.open(`https://wa.me/918769556475?text=${msg}`, "_blank");
@@ -215,7 +210,7 @@ const Admin = () => {
     const [newDoctor, setNewDoctor] = useState({ name: "", qualification: "", specialty: "", designation: "", imageUrl: "" });
     const [doctorUploadType, setDoctorUploadType] = useState("url");
     const [doctorFile, setDoctorFile] = useState(null);
-    const fetchDoctors = async () => { try { const r = await axios.get(`${API}/doctors`); setDoctors(Array.isArray(r.data) ? r.data : []); } catch { setDoctors([]); } };
+    const fetchDoctors = async () => { try { const r = await api.get(`/doctors`); setDoctors(Array.isArray(r.data) ? r.data : []); } catch { setDoctors([]); } };
     useEffect(() => { if (activeTab === "doctors") fetchDoctors(); }, [activeTab]);
     const handleDoctorSubmit = async (e) => {
         e.preventDefault();
@@ -224,7 +219,7 @@ const Admin = () => {
         if (doctorUploadType === "url") fd.append("imageUrl", newDoctor.imageUrl);
         else if (doctorFile) fd.append("image", doctorFile);
         try {
-            await axios.post(`${API}/doctors`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+            await api.post(`/doctors`, fd, { headers: { "Content-Type": "multipart/form-data" } });
             setNewDoctor({ name: "", qualification: "", specialty: "", designation: "", imageUrl: "" });
             setDoctorFile(null);
             fetchDoctors();
@@ -233,19 +228,19 @@ const Admin = () => {
     };
     const handleDeleteDoctor = async (id) => {
         if (!window.confirm("Delete this doctor?")) return;
-        try { await axios.delete(`${API}/doctors/${id}`); fetchDoctors(); addToast("Doctor deleted", "success"); }
+        try { await api.delete(`/doctors/${id}`); fetchDoctors(); addToast("Doctor deleted", "success"); }
         catch { addToast("Error deleting doctor", "error"); }
     };
 
     // ── Testimonials ──────────────────────────────────────────────────────────
     const [testimonials, setTestimonials] = useState([]);
     const [newTestimonial, setNewTestimonial] = useState({ name: "", location: "", message: "", rating: 5 });
-    const fetchTestimonials = async () => { try { const r = await axios.get(`${API}/testimonials`); setTestimonials(Array.isArray(r.data) ? r.data : []); } catch { setTestimonials([]); } };
+    const fetchTestimonials = async () => { try { const r = await api.get(`/testimonials`); setTestimonials(Array.isArray(r.data) ? r.data : []); } catch { setTestimonials([]); } };
     useEffect(() => { if (activeTab === "testimonials") fetchTestimonials(); }, [activeTab]);
     const handleTestimonialSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API}/testimonials`, newTestimonial);
+            await api.post(`/testimonials`, newTestimonial);
             setNewTestimonial({ name: "", location: "", message: "", rating: 5 });
             fetchTestimonials();
             addToast("Testimonial added!", "success");
@@ -253,18 +248,18 @@ const Admin = () => {
     };
     const handleDeleteTestimonial = async (id) => {
         if (!window.confirm("Delete this testimonial?")) return;
-        try { await axios.delete(`${API}/testimonials/${id}`); fetchTestimonials(); addToast("Deleted", "success"); }
+        try { await api.delete(`/testimonials/${id}`); fetchTestimonials(); addToast("Deleted", "success"); }
         catch { addToast("Error", "error"); }
     };
 
     // ── Clinic Info ───────────────────────────────────────────────────────────
     const [clinicInfo, setClinicInfo] = useState({ phones: ["", ""], email: "", address: "", openingHours: { morning: "", evening: "", sunday: "" }, socialLinks: { facebook: "", instagram: "", twitter: "", whatsapp: "", google: "" } });
     const [clinicInfoLoaded, setClinicInfoLoaded] = useState(false);
-    const fetchClinicInfo = async () => { try { const r = await axios.get(`${API}/clinic-info`); if (r.data) { setClinicInfo(r.data); setClinicInfoLoaded(true); } } catch { } };
+    const fetchClinicInfo = async () => { try { const r = await api.get(`/clinic-info`); if (r.data) { setClinicInfo(r.data); setClinicInfoLoaded(true); } } catch { } };
     useEffect(() => { if (activeTab === "settings" && !clinicInfoLoaded) fetchClinicInfo(); }, [activeTab]);
     const handleClinicInfoSubmit = async (e) => {
         e.preventDefault();
-        try { await axios.post(`${API}/clinic-info`, clinicInfo); addToast("Settings saved!", "success"); }
+        try { await api.post(`/clinic-info`, clinicInfo); addToast("Settings saved!", "success"); }
         catch { addToast("Error saving settings", "error"); }
     };
 
@@ -273,7 +268,7 @@ const Admin = () => {
     const [newBanner, setNewBanner] = useState({ image: "", title: "", subtitle: "" });
     const [uploadType, setUploadType] = useState("url");
     const [file, setFile] = useState(null);
-    const fetchBanners = async () => { try { const r = await axios.get(`${API}/banners`); setBanners(Array.isArray(r.data) ? r.data : []); } catch { setBanners([]); } };
+    const fetchBanners = async () => { try { const r = await api.get(`/banners`); setBanners(Array.isArray(r.data) ? r.data : []); } catch { setBanners([]); } };
     useEffect(() => { if (activeTab === "banners") fetchBanners(); }, [activeTab]);
     const handleBannerSubmit = async (e) => {
         e.preventDefault();
@@ -283,14 +278,14 @@ const Admin = () => {
         if (uploadType === "url") fd.append("imageUrl", newBanner.image);
         else if (file) fd.append("image", file);
         try {
-            await axios.post(`${API}/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+            await api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } });
             setNewBanner({ image: "", title: "", subtitle: "" }); setFile(null);
             fetchBanners(); addToast("Banner added!", "success");
         } catch { addToast("Error adding banner", "error"); }
     };
     const handleDeleteBanner = async (id) => {
         if (!window.confirm("Delete this banner?")) return;
-        try { await axios.delete(`${API}/banners/${id}`); fetchBanners(); addToast("Banner deleted", "success"); }
+        try { await api.delete(`/banners/${id}`); fetchBanners(); addToast("Banner deleted", "success"); }
         catch { addToast("Error", "error"); }
     };
 
@@ -300,7 +295,7 @@ const Admin = () => {
     const [newStory, setNewStory] = useState({ patientName: "", age: "", location: "", condition: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
     const [storyUploadType, setStoryUploadType] = useState("url");
     const [storyFile, setStoryFile] = useState(null);
-    const fetchStories = async () => { try { const r = await axios.get(API + "/patient-stories"); setStories(Array.isArray(r.data) ? r.data : []); } catch { setStories([]); } };
+    const fetchStories = async () => { try { const r = await api.get(`/patient-stories`); setStories(Array.isArray(r.data) ? r.data : []); } catch { setStories([]); } };
     useEffect(() => { if (activeTab === "stories") fetchStories(); }, [activeTab]);
     const handleStorySubmit = async (e) => {
         e.preventDefault();
@@ -310,14 +305,14 @@ const Admin = () => {
         if (storyUploadType === "url") fd.append("imageUrl", newStory.imageUrl);
         else if (storyFile) fd.append("image", storyFile);
         try {
-            await axios.post(API + "/patient-stories", fd, { headers: { "Content-Type": "multipart/form-data" } });
+            await api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } });
             setNewStory({ patientName: "", age: "", location: "", condition: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
             setStoryFile(null); fetchStories(); addToast("Story added!", "success");
         } catch { addToast("Error adding story", "error"); }
     };
     const handleDeleteStory = async (id) => {
         if (!window.confirm("Delete this story?")) return;
-        try { await axios.delete(API + "/patient-stories/" + id); fetchStories(); addToast("Story deleted", "success"); }
+        try { await api.delete(`/patient-stories/${id}`); fetchStories(); addToast("Story deleted", "success"); }
         catch { addToast("Error", "error"); }
     };
 
@@ -327,7 +322,7 @@ const Admin = () => {
     const [posterUploadType, setPosterUploadType] = useState("file");
     const [posterFile, setPosterFile] = useState(null);
     const POSTER_CATS = ["General", "Awareness", "Services", "Events", "Health Tips", "Offers"];
-    const fetchPosters = async () => { try { const r = await axios.get(API + "/clinic-posters"); setPosters(Array.isArray(r.data) ? r.data : []); } catch { setPosters([]); } };
+    const fetchPosters = async () => { try { const r = await api.get(`/clinic-posters`); setPosters(Array.isArray(r.data) ? r.data : []); } catch { setPosters([]); } };
     useEffect(() => { if (activeTab === "posters") fetchPosters(); }, [activeTab]);
     const handlePosterSubmit = async (e) => {
         e.preventDefault();
@@ -347,14 +342,14 @@ const Admin = () => {
         if (posterUploadType === "url") fd.append("imageUrl", newPoster.imageUrl);
         else if (posterFile) fd.append("image", posterFile);
         try {
-            await axios.post(API + "/clinic-posters", fd, { headers: { "Content-Type": "multipart/form-data" } });
+            await api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } });
             setNewPoster({ title: "", description: "", category: "General", imageUrl: "" });
             setPosterFile(null); fetchPosters(); addToast("Poster uploaded!", "success");
         } catch { addToast("Error uploading poster", "error"); }
     };
     const handleDeletePoster = async (id) => {
         if (!window.confirm("Delete this poster?")) return;
-        try { await axios.delete(API + "/clinic-posters/" + id); fetchPosters(); addToast("Poster deleted", "success"); }
+        try { await api.delete(`/clinic-posters/${id}`); fetchPosters(); addToast("Poster deleted", "success"); }
         catch { addToast("Error", "error"); }
     };
 
