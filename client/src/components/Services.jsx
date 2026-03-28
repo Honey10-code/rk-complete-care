@@ -1,3 +1,7 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+
 const services = [
     { title: 'Sports Injury Treatment', titleHi: '(खेल चोट उपचार)', image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=2070&auto=format&fit=crop', desc: 'Specialized recovery care for athletes to safely regain peak performance.', icon: 'fa-person-running' },
     { title: 'Neck Pain Treatment', titleHi: '(गर्दन दर्द उपचार)', image: 'https://images.unsplash.com/photo-1588286840104-44dad180e1b3?q=80&w=2070&auto=format&fit=crop', desc: 'Advanced relief for chronic neck pain and posture-related issues.', icon: 'fa-head-side-mask' },
