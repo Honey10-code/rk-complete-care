@@ -114,7 +114,7 @@ RK - The Complete Care Physiotherapy Centre`;
 
             // 2. Configure Razorpay Options
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SWe0NwKbuTz64F',
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SWfjeQTs0VReYV',
                 amount: order.amount,
                 currency: order.currency,
                 name: "RK The Complete Care",
