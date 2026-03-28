@@ -17,18 +17,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ SAFE RESPONSE HANDLER
-const safeData = (res) => {
-  console.log("API DATA:", res.data);
-  return res.data;
+// ✅ SAFE RESPONSE HANDLERS
+const safeArray = (res) => {
+  console.log("API DATA (Array):", res.data);
+  return Array.isArray(res.data) ? res.data : [];
+};
+
+const safeObject = (res) => {
+  console.log("API DATA (Object):", res.data);
+  return res.data || {};
 };
 
 // ✅ APIs
-export const getDoctors = () => api.get("/doctors").then(safeData);
-export const getBanners = () => api.get("/banners").then(safeData);
-export const getTestimonials = () => api.get("/testimonials").then(safeData);
-export const getPatientStories = () => api.get("/patient-stories").then(safeData);
-export const getClinicInfo = () => api.get("/clinic-info").then(safeData);
-export const getClinicPosters = () => api.get("/clinic-posters").then(safeData);
+export const getDoctors = () => api.get("/doctors").then(safeArray);
+export const getBanners = () => api.get("/banners").then(safeArray);
+export const getTestimonials = () => api.get("/testimonials").then(safeArray);
+export const getPatientStories = () => api.get("/patient-stories").then(safeArray);
+export const getClinicInfo = () => api.get("/clinic-info").then(safeObject);
+export const getClinicPosters = () => api.get("/clinic-posters").then(safeArray);
 
 export default api;

@@ -185,7 +185,7 @@ const Admin = () => {
 
     // -- Patient History ---------------------------------------------------------
     const [viewPatientHistory, setViewPatientHistory] = useState(null); // stores patient phone
-    const patientHistory = viewPatientHistory ? appointments.filter(a => a.phone === viewPatientHistory).sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+    const patientHistory = viewPatientHistory ? (Array.isArray(appointments) ? appointments : []).filter(a => a.phone === viewPatientHistory).sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
 
     // ── Create Appointment ────────────────────────────────────────────────────
     const blankAppt = { patientName: "", phone: "", age: "", gender: "Male", date: new Date().toISOString().split("T")[0], slot: "Morning (9AM–1PM)", problem: "", clinicVisit: true, videoConsultation: false, notes: "", whatsappNotify: false, status: "Pending" };
@@ -215,7 +215,7 @@ const Admin = () => {
     const [newDoctor, setNewDoctor] = useState({ name: "", qualification: "", specialty: "", designation: "", imageUrl: "" });
     const [doctorUploadType, setDoctorUploadType] = useState("url");
     const [doctorFile, setDoctorFile] = useState(null);
-    const fetchDoctors = async () => { try { const r = await axios.get(`${API}/doctors`); setDoctors(r.data); } catch { } };
+    const fetchDoctors = async () => { try { const r = await axios.get(`${API}/doctors`); setDoctors(Array.isArray(r.data) ? r.data : []); } catch { setDoctors([]); } };
     useEffect(() => { if (activeTab === "doctors") fetchDoctors(); }, [activeTab]);
     const handleDoctorSubmit = async (e) => {
         e.preventDefault();
@@ -240,7 +240,7 @@ const Admin = () => {
     // ── Testimonials ──────────────────────────────────────────────────────────
     const [testimonials, setTestimonials] = useState([]);
     const [newTestimonial, setNewTestimonial] = useState({ name: "", location: "", message: "", rating: 5 });
-    const fetchTestimonials = async () => { try { const r = await axios.get(`${API}/testimonials`); setTestimonials(r.data); } catch { } };
+    const fetchTestimonials = async () => { try { const r = await axios.get(`${API}/testimonials`); setTestimonials(Array.isArray(r.data) ? r.data : []); } catch { setTestimonials([]); } };
     useEffect(() => { if (activeTab === "testimonials") fetchTestimonials(); }, [activeTab]);
     const handleTestimonialSubmit = async (e) => {
         e.preventDefault();
@@ -273,7 +273,7 @@ const Admin = () => {
     const [newBanner, setNewBanner] = useState({ image: "", title: "", subtitle: "" });
     const [uploadType, setUploadType] = useState("url");
     const [file, setFile] = useState(null);
-    const fetchBanners = async () => { try { const r = await axios.get(`${API}/banners`); setBanners(r.data); } catch { } };
+    const fetchBanners = async () => { try { const r = await axios.get(`${API}/banners`); setBanners(Array.isArray(r.data) ? r.data : []); } catch { setBanners([]); } };
     useEffect(() => { if (activeTab === "banners") fetchBanners(); }, [activeTab]);
     const handleBannerSubmit = async (e) => {
         e.preventDefault();
@@ -300,7 +300,7 @@ const Admin = () => {
     const [newStory, setNewStory] = useState({ patientName: "", age: "", location: "", condition: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
     const [storyUploadType, setStoryUploadType] = useState("url");
     const [storyFile, setStoryFile] = useState(null);
-    const fetchStories = async () => { try { const r = await axios.get(API + "/patient-stories"); setStories(r.data); } catch { } };
+    const fetchStories = async () => { try { const r = await axios.get(API + "/patient-stories"); setStories(Array.isArray(r.data) ? r.data : []); } catch { setStories([]); } };
     useEffect(() => { if (activeTab === "stories") fetchStories(); }, [activeTab]);
     const handleStorySubmit = async (e) => {
         e.preventDefault();
@@ -327,7 +327,7 @@ const Admin = () => {
     const [posterUploadType, setPosterUploadType] = useState("file");
     const [posterFile, setPosterFile] = useState(null);
     const POSTER_CATS = ["General", "Awareness", "Services", "Events", "Health Tips", "Offers"];
-    const fetchPosters = async () => { try { const r = await axios.get(API + "/clinic-posters"); setPosters(r.data); } catch { } };
+    const fetchPosters = async () => { try { const r = await axios.get(API + "/clinic-posters"); setPosters(Array.isArray(r.data) ? r.data : []); } catch { setPosters([]); } };
     useEffect(() => { if (activeTab === "posters") fetchPosters(); }, [activeTab]);
     const handlePosterSubmit = async (e) => {
         e.preventDefault();
@@ -709,9 +709,10 @@ const Admin = () => {
                                         <h3 className="font-black text-slate-800 mb-6">Visit Type Distribution</h3>
                                         <div className="space-y-4">
                                             {(() => {
-                                                const clinicVisits = appointments.filter(a => a.clinicVisit).length;
-                                                const videoVisits = appointments.filter(a => a.videoConsultation).length;
-                                                const otherVisits = appointments.length - clinicVisits - videoVisits;
+                                                const safeAppts = Array.isArray(appointments) ? appointments : [];
+                                                const clinicVisits = safeAppts.filter(a => a.clinicVisit).length;
+                                                const videoVisits = safeAppts.filter(a => a.videoConsultation).length;
+                                                const otherVisits = safeAppts.length - clinicVisits - videoVisits;
                                                 return [
                                                     { label: "Clinic Visits", count: clinicVisits + otherVisits, color: "bg-blue-600", light: "bg-blue-50" },
                                                     { label: "Video Consults", count: videoVisits, color: "bg-purple-600", light: "bg-purple-100" },
@@ -719,12 +720,12 @@ const Admin = () => {
                                                     <div key={row.label}>
                                                         <div className="flex justify-between text-sm font-semibold text-slate-700 mb-1.5">
                                                             <span>{row.label}</span>
-                                                            <span>{row.count} ({appointments.length ? Math.round((row.count / appointments.length) * 100) : 0}%)</span>
+                                                            <span>{row.count} ({safeAppts.length ? Math.round((row.count / safeAppts.length) * 100) : 0}%)</span>
                                                         </div>
                                                         <div className={`h-3 rounded-full ${row.light} overflow-hidden`}>
                                                             <motion.div
                                                                 initial={{ width: 0 }}
-                                                                animate={{ width: appointments.length ? `${(row.count / appointments.length) * 100}%` : "0%" }}
+                                                                animate={{ width: safeAppts.length ? `${(row.count / safeAppts.length) * 100}%` : "0%" }}
                                                                 transition={{ duration: 0.8, ease: "easeOut" }}
                                                                 className={`h-full rounded-full ${row.color}`}
                                                             />
@@ -736,8 +737,9 @@ const Admin = () => {
                                         <div className="mt-6 pt-6 border-t border-slate-100">
                                             <h4 className="font-bold text-slate-700 mb-3 text-sm">Slot Preference</h4>
                                             {(() => {
-                                                const morning = appointments.filter(a => a.slot?.includes("Morning")).length;
-                                                const evening = appointments.filter(a => a.slot?.includes("Evening")).length;
+                                                const safeAppts = Array.isArray(appointments) ? appointments : [];
+                                                const morning = safeAppts.filter(a => a.slot?.includes("Morning")).length;
+                                                const evening = safeAppts.filter(a => a.slot?.includes("Evening")).length;
                                                 return [
                                                     { label: "Morning (9AM–1PM)", count: morning, color: "bg-[#d97706]", light: "bg-[rgba(217, 119, 6,0.12)]" },
                                                     { label: "Evening (4PM–9PM)", count: evening, color: "bg-blue-600", light: "bg-blue-50" },
@@ -747,7 +749,7 @@ const Admin = () => {
                                                             <span>{row.label}</span><span>{row.count}</span>
                                                         </div>
                                                         <div className={`h-2 rounded-full ${row.light} overflow-hidden`}>
-                                                            <motion.div initial={{ width: 0 }} animate={{ width: appointments.length ? `${(row.count / appointments.length) * 100}%` : "0%" }} transition={{ duration: 0.8 }} className={`h-full rounded-full ${row.color}`} />
+                                                            <motion.div initial={{ width: 0 }} animate={{ width: safeAppts.length ? `${(row.count / safeAppts.length) * 100}%` : "0%" }} transition={{ duration: 0.8 }} className={`h-full rounded-full ${row.color}`} />
                                                         </div>
                                                     </div>
                                                 ));
@@ -796,7 +798,7 @@ const Admin = () => {
                                     </form>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                                    {banners.map(b => (
+                                    {(Array.isArray(banners) ? banners : []).map(b => (
                                         <div key={b._id} className="group relative rounded-2xl overflow-hidden shadow-md h-52 border border-slate-200">
                                             <img src={b.image} alt={b.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-4 text-white">
@@ -843,7 +845,7 @@ const Admin = () => {
                                     </form>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                    {doctors.map(doc => (
+                                    {(Array.isArray(doctors) ? doctors : []).map(doc => (
                                         <div key={doc._id} className="group relative bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                                             <div className="h-52 overflow-hidden bg-slate-100">
                                                 <img src={doc.image} alt={doc.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" onError={e => { e.target.src = "https://placehold.co/400x300?text=Doctor"; }} />
@@ -886,7 +888,7 @@ const Admin = () => {
                                     </form>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {testimonials.map(t => (
+                                    {(Array.isArray(testimonials) ? testimonials : []).map(t => (
                                         <div key={t._id} className="group bg-white rounded-2xl shadow-sm border border-slate-100 p-5 hover:shadow-md transition-all relative">
                                             <div className="flex items-start gap-4">
                                                 <div className="w-11 h-11 rounded-full bg-blue-50 text-[#0f766e] flex items-center justify-center font-black text-lg flex-shrink-0">{t.name?.charAt(0)}</div>
@@ -1031,7 +1033,7 @@ const Admin = () => {
 
                                 {/* Stories List */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                    {stories.map(story => (
+                                    {(Array.isArray(stories) ? stories : []).map(story => (
                                         <div key={story._id} className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
                                             {story.image && <img src={story.image} alt={story.patientName} className="w-full h-40 object-cover" />}
                                             <div className="p-4">
@@ -1130,7 +1132,7 @@ const Admin = () => {
 
                                 {/* Posters Grid */}
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {posters.map(poster => (
+                                    {(Array.isArray(posters) ? posters : []).map(poster => (
                                         <div key={poster._id} className="group relative bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                                             <img src={poster.image} alt={poster.title || "Poster"} className="w-full object-cover group-hover:scale-105 transition-transform duration-500" style={{ minHeight: "160px" }} onError={e => { e.target.src = "https://placehold.co/400x500?text=Poster"; }} />
                                             {poster.category && poster.category !== "General" && (
@@ -1309,7 +1311,7 @@ const Admin = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
-                                        {patientHistory.map(app => (
+                                        {(Array.isArray(patientHistory) ? patientHistory : []).map(app => (
                                             <tr key={app._id} className="hover:bg-blue-50/30 transition-colors">
                                                 <td className="px-6 py-4">
                                                     <p className="font-bold text-slate-700 text-sm mb-0.5">{new Date(app.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</p>
