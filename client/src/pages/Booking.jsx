@@ -28,6 +28,7 @@ const Booking = () => {
         showAvailability: false
     });
     const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [slotDropdownOpen, setSlotDropdownOpen] = useState(false);
 
     const TIME_SLOTS = [
         "Morning (9AM–1PM)",
@@ -265,76 +266,104 @@ RK - The Complete Care Physiotherapy Centre`;
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">SELECT A SLOT</label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div className="relative">
                                         {!formData.date ? (
-                                            <div className="col-span-2 py-4 px-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
+                                            <div className="py-3 px-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
                                                 <p className="text-xs text-slate-400 italic flex items-center justify-center gap-2">
-                                                    <i className="fa-solid fa-calendar-day"></i> Select date first to see available slots
+                                                    <i className="fa-solid fa-calendar-day"></i> Select date first
                                                 </p>
                                             </div>
                                         ) : (
-                                            TIME_SLOTS.map(slot => {
-                                                const isFull = (bookedSlots.fullSlots || []).includes(slot);
-                                                if (isFull) return null; // Hide if full per user request
-                                                
-                                                const count = (bookedSlots.slotCounts || {})[slot] || 0;
-                                                const capacity = bookedSlots.maxCapacity || 0;
-                                                const showCount = bookedSlots.showAvailability && capacity > 0;
-                                                const isSelected = formData.slot === slot;
-                                                const isMorning = slot.includes("Morning");
-                                                
-                                                return (
-                                                    <button
-                                                        key={slot}
-                                                        type="button"
-                                                        onClick={() => setFormData({ ...formData, slot })}
-                                                        className={`relative overflow-hidden group p-4 rounded-2xl border-2 transition-all duration-300 text-left ${
-                                                            isSelected 
-                                                            ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200" 
-                                                            : "bg-white border-slate-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50/30"
-                                                        }`}
-                                                    >
-                                                        <div className="flex items-center gap-3 relative z-10">
-                                                            <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
-                                                                isSelected ? "bg-white/20 text-white" : "bg-blue-50 text-blue-600"
-                                                            }`}>
-                                                                <i className={`fa-solid ${isMorning ? "fa-sun" : "fa-moon"}`}></i>
-                                                            </span>
-                                                            <div>
-                                                                <p className={`font-black text-sm uppercase tracking-tight ${isSelected ? "text-white" : "text-slate-800"}`}>
-                                                                    {slot.split(' ')[0]}
+                                            <div className="relative">
+                                                {/* Custom Dropdown Trigger */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSlotDropdownOpen(!slotDropdownOpen)}
+                                                    className="w-full flex items-center justify-between p-4 bg-white border-2 border-slate-100 rounded-2xl hover:border-blue-200 transition-all text-left shadow-sm group"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                                            <i className={`fa-solid ${formData.slot.includes("Morning") ? "fa-sun" : "fa-moon"}`}></i>
+                                                        </span>
+                                                        <span className="font-black text-slate-800 text-sm">{formData.slot.split(' ')[0]}</span>
+                                                    </div>
+                                                    
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="text-right">
+                                                            <p className="text-[10px] font-black text-slate-500 uppercase">{formData.slot.match(/\((.*?)\)/)?.[1] || ""}</p>
+                                                            {bookedSlots.showAvailability && bookedSlots.maxCapacity > 0 && (
+                                                                <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tighter">
+                                                                    {bookedSlots.maxCapacity - (bookedSlots.slotCounts?.[formData.slot] || 0)} Slots Left
                                                                 </p>
-                                                                <p className={`text-[10px] font-bold ${isSelected ? "text-blue-100" : "text-slate-400"}`}>
-                                                                    {slot.match(/\((.*?)\)/)?.[1] || ""}
-                                                                </p>
-                                                            </div>
+                                                            )}
                                                         </div>
-                                                        
-                                                        {showCount && (
-                                                            <div className={`mt-3 pt-3 border-t text-[10px] font-black uppercase flex items-center justify-between ${
-                                                                isSelected ? "border-white/20 text-blue-50" : "border-slate-50 text-slate-400"
-                                                            }`}>
-                                                                <span>AVailablity</span>
-                                                                <span>{capacity - count} Left</span>
-                                                            </div>
-                                                        )}
+                                                        <i className={`fa-solid fa-chevron-down text-slate-300 text-xs transition-transform duration-300 ${slotDropdownOpen ? 'rotate-180' : ''}`}></i>
+                                                    </div>
+                                                </button>
 
-                                                        {isSelected && (
-                                                            <motion.div 
-                                                                layoutId="active-slot-glow"
-                                                                className="absolute top-0 right-0 w-16 h-16 bg-white/20 blur-2xl rounded-full -mr-8 -mt-8"
-                                                            />
-                                                        )}
-                                                    </button>
-                                                );
-                                            })
+                                                {/* Dropdown Menu */}
+                                                <AnimatePresence>
+                                                    {slotDropdownOpen && (
+                                                        <>
+                                                            <div className="fixed inset-0 z-10" onClick={() => setSlotDropdownOpen(false)}></div>
+                                                            <motion.div
+                                                                initial={{ opacity: 0, y: -10 }}
+                                                                animate={{ opacity: 1, y: 0 }}
+                                                                exit={{ opacity: 0, y: -10 }}
+                                                                className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 overflow-hidden"
+                                                            >
+                                                                {TIME_SLOTS.map(slot => {
+                                                                    const isFull = (bookedSlots.fullSlots || []).includes(slot);
+                                                                    if (isFull) return null;
+                                                                    
+                                                                    const count = (bookedSlots.slotCounts || {})[slot] || 0;
+                                                                    const capacity = bookedSlots.maxCapacity || 0;
+                                                                    const showCount = bookedSlots.showAvailability && capacity > 0;
+                                                                    const isSelected = formData.slot === slot;
+                                                                    
+                                                                    return (
+                                                                        <button
+                                                                            key={slot}
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                setFormData({ ...formData, slot });
+                                                                                setSlotDropdownOpen(false);
+                                                                            }}
+                                                                            className={`w-full flex items-center justify-between p-4 transition-colors ${
+                                                                                isSelected ? "bg-blue-50" : "hover:bg-slate-50"
+                                                                            }`}
+                                                                        >
+                                                                            <div className="flex items-center gap-3">
+                                                                                <i className={`fa-solid ${slot.includes("Morning") ? "fa-sun text-amber-500" : "fa-moon text-indigo-400"} text-xs`}></i>
+                                                                                <span className={`text-sm font-bold ${isSelected ? "text-blue-600" : "text-slate-700"}`}>
+                                                                                    {slot.split(' ')[0]}
+                                                                                </span>
+                                                                            </div>
+                                                                            
+                                                                            <div className="text-right">
+                                                                                <span className="text-[10px] font-bold text-slate-400 block">{slot.match(/\((.*?)\)/)?.[1] || ""}</span>
+                                                                                {showCount && (
+                                                                                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-tighter">
+                                                                                        {capacity - count} Left
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                                {TIME_SLOTS.every(s => (bookedSlots.fullSlots || []).includes(s)) && (
+                                                                    <div className="p-6 text-center text-slate-400">
+                                                                        <i className="fa-solid fa-calendar-xmark text-2xl mb-2 block opacity-20"></i>
+                                                                        <p className="text-xs font-bold">All slots full for this date</p>
+                                                                    </div>
+                                                                )}
+                                                            </motion.div>
+                                                        </>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
                                         )}
                                     </div>
-                                    {formData.date && TIME_SLOTS.every(s => (bookedSlots.fullSlots || []).includes(s)) && (
-                                        <p className="text-xs text-rose-500 font-bold bg-rose-50 p-3 rounded-xl border border-rose-100 text-center animate-pulse">
-                                            <i className="fa-solid fa-circle-exclamation mr-2"></i> No slots available for this date
-                                        </p>
-                                    )}
                                 </div>
                             </div>
 
