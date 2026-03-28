@@ -202,10 +202,10 @@ RK - The Complete Care Physiotherapy Centre`;
                     <div className="lg:w-1/2 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-blue-900/40 z-10"></div>
                         <img
-                            src="/dr-piyush-sharma.png"
-                            alt="Dr. Piyush Sharma"
-                            className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                            onError={(e) => { e.target.src = 'https://placehold.co/600x800?text=Dr.+Piyush+Sharma'; }}
+                            src="https://images.unsplash.com/photo-1576091160550-217358c7e618?q=80&w=2070&auto=format&fit=crop"
+                            alt="Physiotherapy Treatment"
+                            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                            onError={(e) => { e.target.src = 'https://placehold.co/600x800?text=Physiotherapy+Care'; }}
                         />
                         <div className="absolute bottom-0 left-0 w-full p-10 z-20 bg-gradient-to-t from-blue-900/90 to-transparent text-white">
                             <h3 className="text-3xl font-black mb-2">Recover Stronger</h3>
