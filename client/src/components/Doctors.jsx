@@ -194,17 +194,6 @@ const Doctors = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                                        <a href="tel:+918769556475" className="flex-1 py-4 bg-blue-700 text-white rounded-xl font-black text-xs text-center uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg shadow-blue-200">
-                                            Call For Appointment
-                                        </a>
-                                        <button 
-                                            onClick={() => { closeModal(); window.location.href = '/booking'; }}
-                                            className="flex-1 py-4 border-2 border-slate-200 text-slate-800 rounded-xl font-black text-xs text-center uppercase tracking-widest hover:bg-slate-50 transition-all underline decoration-blue-500/30 underline-offset-4"
-                                        >
-                                            Book Online
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </motion.div>
