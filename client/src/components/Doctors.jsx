@@ -13,10 +13,12 @@ const Doctors = () => {
             _id: 'fallback-1',
             name: 'Dr. Piyush Sharma',
             suffix: '(PT)',
-            qualification: 'BPT, MPT (Orthopedics & Sports), MIAP',
+            qualification: 'BPT, MPT (ORTHO AND SPORTS)',
             designation: 'CHIEF PHYSIOTHERAPIST',
             image: '/dr-piyush-sharma.png',
             specialty: 'Orthopaedic & Sports',
+            hospital: 'WELTON HOSPITAL',
+            address: '219-220 MANDIR MARG, MAHAVIR NAGAR DURGAPURA JAIPUR',
             experience: '12+ Years Experience',
             bio: 'Dr. Piyush Sharma is the Chief Physiotherapist at Welton Hospital. He specializes in treating patients with orthopedic problems and disabilities, bringing years of expertise and a compassionate approach to patient care. With a vast experience in the field, he has successfully treated thousands of patients suffering from conditions such as:',
             expertise: [
@@ -31,7 +33,7 @@ const Doctors = () => {
             _id: 'fallback-2',
             name: 'Dr. Soniya Pathak',
             suffix: '(PT)',
-            qualification: 'BPT, MIAP',
+            qualification: 'BPT (CDNT,CCT)',
             designation: 'CONSULTANT PHYSIOTHERAPIST',
             image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1974&auto=format&fit=crop',
             specialty: 'Neuro & Pediatric',
@@ -95,7 +97,7 @@ const Doctors = () => {
                 ) : (
                     <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
                         {doctors.map((doc) => (
-                            <motion.div 
+                            <motion.div
                                 key={doc._id}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -119,21 +121,28 @@ const Doctors = () => {
                                         <h3 className="text-2xl font-black text-blue-900 mb-2 tracking-tight">
                                             {doc.name} {doc.suffix}
                                         </h3>
-                                        
+
                                         {/* Divider Line */}
                                         <div className="w-2/3 h-[1px] bg-blue-200 mx-auto mb-4"></div>
-                                        
+
                                         <div className="space-y-4">
                                             <p className="text-slate-700 font-bold text-sm leading-relaxed uppercase tracking-wide px-4">
                                                 {doc.qualification}
                                             </p>
-                                            
-                                            <p className="text-slate-500 text-[10px] font-black leading-relaxed max-w-[250px] mx-auto opacity-80 uppercase tracking-widest">
+
+                                            <p className="text-slate-500 text-[10px] font-black leading-relaxed max-w-[250px] mx-auto opacity-80 uppercase tracking-widest mb-3">
                                                 {doc.designation}
                                             </p>
 
-                                            <div className="pt-6">
-                                                <button 
+                                            {(doc.hospital || doc.address) && (
+                                                <div className="text-xs text-slate-500 max-w-[200px] mx-auto leading-snug">
+                                                    {doc.hospital && <p className="font-black text-slate-800 uppercase tracking-wider">{doc.hospital}</p>}
+                                                    {doc.address && <p className="text-[10px] opacity-80 mt-1">{doc.address}</p>}
+                                                </div>
+                                            )}
+
+                                            <div className="pt-5">
+                                                <button
                                                     onClick={() => openModal(doc)}
                                                     className="px-10 py-2 border-2 border-slate-800 text-slate-800 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm"
                                                 >
@@ -153,21 +162,21 @@ const Doctors = () => {
             <AnimatePresence>
                 {isModalOpen && selectedDoctor && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 overflow-hidden">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={closeModal}
                             className="absolute inset-0 bg-slate-900/60 backdrop-blur-lg"
                         />
-                        <motion.div 
+                        <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 30 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 30 }}
                             className="relative w-full max-w-6xl bg-white rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] border border-blue-50/50"
                         >
                             {/* Close Button */}
-                            <button 
+                            <button
                                 onClick={closeModal}
                                 className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-900 hover:bg-red-500 hover:text-white transition-all shadow-md group"
                             >
@@ -176,8 +185,8 @@ const Doctors = () => {
 
                             {/* LEFT COLUMN: HERO IMAGE & OVERLAY */}
                             <div className="md:w-[35%] relative min-h-[400px] md:min-h-0 bg-slate-100">
-                                <img 
-                                    src={selectedDoctor.image} 
+                                <img
+                                    src={selectedDoctor.image}
                                     alt={selectedDoctor.name}
                                     className="w-full h-full object-cover object-top"
                                 />
@@ -186,7 +195,14 @@ const Doctors = () => {
                                     <h3 className="text-xl font-black mb-1 leading-tight">{selectedDoctor.name} {selectedDoctor.suffix}</h3>
                                     <p className="text-blue-300 text-[10px] font-black uppercase tracking-widest mb-2">{selectedDoctor.designation}</p>
                                     <div className="w-10 h-0.5 bg-blue-500 mb-3"></div>
-                                    <p className="text-white/80 text-[11px] font-bold leading-relaxed">{selectedDoctor.qualification}</p>
+                                    <p className="text-white/80 text-[11px] font-bold leading-relaxed mb-2">{selectedDoctor.qualification}</p>
+
+                                    {(selectedDoctor.hospital || selectedDoctor.address) && (
+                                        <div className="mt-3 pt-3 border-t border-blue-400/30">
+                                            {selectedDoctor.hospital && <p className="text-[10px] font-black text-blue-200 uppercase tracking-widest">{selectedDoctor.hospital}</p>}
+                                            {selectedDoctor.address && <p className="text-[10px] text-white/70 leading-snug mt-1">{selectedDoctor.address}</p>}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 to-transparent pointer-events-none"></div>
                             </div>
@@ -208,7 +224,7 @@ const Doctors = () => {
                                     {/* Detailed Bio Paragraphs */}
                                     <div className="space-y-6 text-slate-600 leading-relaxed text-lg font-medium">
                                         <p>{selectedDoctor.bio}</p>
-                                        
+
                                         {/* Expertise Checklist Grid */}
                                         {selectedDoctor.expertise && (
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 pt-4 pb-8 border-t border-b border-slate-100">
