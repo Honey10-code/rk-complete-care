@@ -65,4 +65,14 @@ export const deletePatientStory = (id) => api.delete(`/patient-stories/${id}`).t
 export const postClinicPoster = (fd) => api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
 export const deleteClinicPoster = (id) => api.delete(`/clinic-posters/${id}`).then(safeObject);
 
+export const getGalleryImages = () => api.get("/gallery").then(safeArray);
+export const postGalleryImage = (fd) => api.post(`/gallery`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deleteGalleryImage = (id) => api.delete(`/gallery/${id}`).then(safeObject);
+
+// Contact APIs
+export const submitContactMessage = (data) => api.post("/contacts", data).then(safeObject);
+export const getContactMessages = () => api.get("/contacts").then(safeArray);
+export const deleteContactMessage = (id) => api.delete(`/contacts/${id}`).then(safeObject);
+export const markContactRead = (id) => api.patch(`/contacts/${id}/read`).then(safeObject);
+
 export default api;

@@ -84,7 +84,7 @@ const BannerCarousel = () => {
     }
 
     return (
-        <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden group z-0 mt-28">
+        <div className="relative w-full h-[60vh] md:h-[85vh] overflow-hidden group z-10">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentIndex}
@@ -95,47 +95,95 @@ const BannerCarousel = () => {
                     className="absolute inset-0"
                 >
                     <div
-                        className="w-full h-full bg-cover bg-center"
+                        className="w-full h-full bg-cover bg-center relative"
                         style={{ backgroundImage: `url(${slides[currentIndex].image})` }}
                     >
+                        {/* Premium Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-transparent"></div>
+                        <div className="absolute inset-0 bg-blue-900/20 mix-blend-multiply"></div>
+
                         {(slides[currentIndex].title || slides[currentIndex].subtitle) && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center items-start px-10 md:px-20 text-white">
+                            <div className="absolute inset-0 flex flex-col justify-center items-start px-8 md:px-24 max-w-7xl text-white z-10">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2, duration: 0.8 }}
+                                    className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg"
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                                    <span className="text-xs md:text-sm font-medium tracking-wider uppercase text-blue-50">RK The Complete Care</span>
+                                </motion.div>
+
                                 <motion.h2
-                                    initial={{ y: 20, opacity: 0 }}
+                                    initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.3 }}
-                                    className="text-4xl md:text-6xl font-bold mb-2 drop-shadow-lg"
+                                    transition={{ delay: 0.4, duration: 0.8 }}
+                                    className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight drop-shadow-2xl"
                                 >
                                     {slides[currentIndex].title}
                                 </motion.h2>
+
                                 <motion.p
-                                    initial={{ y: 20, opacity: 0 }}
+                                    initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.5 }}
-                                    className="text-xl md:text-2xl font-light drop-shadow-md"
+                                    transition={{ delay: 0.6, duration: 0.8 }}
+                                    className="text-lg md:text-2xl font-light text-slate-200 drop-shadow-md max-w-2xl mb-10 border-l-4 border-blue-500 pl-6"
                                 >
                                     {slides[currentIndex].subtitle}
                                 </motion.p>
+                                
+                                <motion.div
+                                    initial={{ y: 30, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.8, duration: 0.8 }}
+                                    className="flex flex-wrap gap-4"
+                                >
+                                    <a href="/booking" className="book-btn px-8 py-4 bg-primary-blue hover:bg-blue-700 text-white rounded-full font-semibold shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3 group">
+                                        Book Consultation
+                                        <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                    </a>
+                                    <a href="/services" className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full font-semibold border border-white/30 transition-all duration-300 transform hover:-translate-y-1">
+                                        Explore Therapies
+                                    </a>
+                                </motion.div>
                             </div>
                         )}
                     </div>
                 </motion.div>
             </AnimatePresence>
 
-            {/* Navigation Arrows */}
+            {/* Premium Navigation Arrows */}
             <button
                 onClick={prevSlide}
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center text-white transition-all hover:scale-110 z-20 group-hover:opacity-100 opacity-0 md:opacity-100"
+                className="absolute top-1/2 left-4 md:left-8 transform -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 hover:scale-110 z-20 group-hover:opacity-100 opacity-0 md:opacity-100 shadow-xl"
+                aria-label="Previous slide"
             >
                 <i className="fa-solid fa-chevron-left text-xl"></i>
             </button>
 
             <button
                 onClick={nextSlide}
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center text-white transition-all hover:scale-110 z-20 group-hover:opacity-100 opacity-0 md:opacity-100"
+                className="absolute top-1/2 right-4 md:right-8 transform -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 hover:scale-110 z-20 group-hover:opacity-100 opacity-0 md:opacity-100 shadow-xl"
+                aria-label="Next slide"
             >
                 <i className="fa-solid fa-chevron-right text-xl"></i>
             </button>
+
+            {/* Slide Indicators */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
+                {slides.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentIndex(index)}
+                        className={`transition-all duration-500 rounded-full ${
+                            index === currentIndex 
+                            ? 'w-12 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]' 
+                            : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

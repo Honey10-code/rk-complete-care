@@ -13,12 +13,15 @@ import ClinicPosters from './pages/ClinicPosters';
 import DoctorsPage from './pages/DoctorsPage';
 import ServicesPage from './pages/ServicesPage';
 import ExercisesPage from './pages/ExercisesPage';
+import GalleryPage from './pages/GalleryPage';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import GlobalScroll from './components/GlobalScroll';
 
 function App() {
   return (
     <Router>
+      <GlobalScroll />
       <div className="min-h-screen text-text-dark font-sans">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -26,6 +29,7 @@ function App() {
           <Route path="/doctors" element={<DoctorsPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/exercises" element={<ExercisesPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={

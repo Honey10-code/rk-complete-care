@@ -224,7 +224,7 @@ RK - The Complete Care Physiotherapy Centre`;
                     </div>
 
                     {/* Right Column: Form */}
-                    <div className="lg:w-1/2 p-8 lg:p-12">
+                    <div id="booking" className="lg:w-1/2 p-8 lg:p-12">
                         <div className="mb-8">
                             <h2 className="text-3xl font-black text-slate-800 mb-2">Book Appointment</h2>
                             <p className="text-slate-500 font-medium">Fill in the details below to schedule your consultation.</p>

@@ -29,8 +29,8 @@ const Toast = ({ toasts, removeToast }) => (
 );
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-const StatCard = ({ title, value, icon, color, sub }) => (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col card-hover-simple">
+const StatCard = ({ title, value, icon, color, sub, onClick, isActive }) => (
+    <div onClick={onClick} className={`bg-white rounded-2xl p-6 shadow-sm border ${isActive ? 'border-blue-400 ring-2 ring-blue-50' : 'border-slate-100 hover:border-slate-300'} flex flex-col card-hover-simple cursor-pointer transition-all`}>
         <div className="flex items-center justify-between mb-4">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${color === 'blue' ? 'bg-blue-50 text-blue-600' :
                 color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
@@ -106,9 +106,11 @@ const Admin = () => {
         });
     }, [appointments]);
 
-    const filteredAppointments = (appointments || []).filter(a =>
-        statusFilter === "All" ? true : a.status === statusFilter
-    );
+    const filteredAppointments = (appointments || []).filter(a => {
+        if (statusFilter === "All") return true;
+        if (statusFilter === "Today") return new Date(a.date).toDateString() === new Date().toDateString();
+        return a.status === statusFilter;
+    });
 
     const handleStatusUpdate = async (id, newStatus) => {
         try {
@@ -359,11 +361,88 @@ const Admin = () => {
         catch { addToast("Error", "error"); }
     };
 
+    // ── Gallery Images ────────────────────────────────────────────────────────
+    const [galleryImages, setGalleryImages] = useState([]);
+    const [newGalleryImage, setNewGalleryImage] = useState({ title: "", category: "Clinic", imageUrl: "" });
+    const [galleryUploadType, setGalleryUploadType] = useState("file");
+    const [galleryFile, setGalleryFile] = useState(null);
+    const GALLERY_CATS = ["Clinic", "Therapy", "Equipment"];
+    
+    const fetchGalleryImages = async () => {
+        try {
+            const r = await api.get(`/gallery`);
+            setGalleryImages(Array.isArray(r.data) ? r.data : []);
+        } catch { setGalleryImages([]); }
+    };
+    useEffect(() => { if (activeTab === "gallery") fetchGalleryImages(); }, [activeTab]);
+
+    const handleGallerySubmit = async (e) => {
+        e.preventDefault();
+        if (galleryUploadType === "file" && !galleryFile) return addToast("Please select a file", "error");
+        if (galleryUploadType === "url" && !newGalleryImage.imageUrl) return addToast("Please enter an image URL", "error");
+
+        const fd = new FormData();
+        ["title", "category"].forEach(k => fd.append(k, newGalleryImage[k]));
+        if (galleryUploadType === "url") fd.append("imageUrl", newGalleryImage.imageUrl);
+        else if (galleryFile) fd.append("image", galleryFile);
+        
+        try {
+            await api.post(`/gallery`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+            setNewGalleryImage({ title: "", category: "Clinic", imageUrl: "" });
+            setGalleryFile(null);
+            fetchGalleryImages();
+            addToast("Gallery Image uploaded!", "success");
+        } catch { addToast("Error uploading gallery image", "error"); }
+    };
+
+    const handleDeleteGalleryImage = async (id) => {
+        if (!window.confirm("Delete this image?")) return;
+        try {
+            await api.delete(`/gallery/${id}`);
+            fetchGalleryImages();
+            addToast("Image deleted", "success");
+        } catch { addToast("Error", "error"); }
+    };
+
+    // ── Contact Messages ────────────────────────────────────────────────────────
+    const [messages, setMessages] = useState([]);
+    const fetchMessages = async () => {
+        try {
+            const r = await api.get(`/contacts`);
+            setMessages(Array.isArray(r.data) ? r.data : []);
+        } catch { setMessages([]); }
+    };
+    // Fetch once on load to get the unread count for badge
+    useEffect(() => { fetchMessages(); }, []);
+    // Re-fetch when tab is opened
+    useEffect(() => { if (activeTab === "messages") fetchMessages(); }, [activeTab]);
+
+    const handleDeleteMessage = async (id) => {
+        if (!window.confirm("Delete this message?")) return;
+        try {
+            await api.delete(`/contacts/${id}`);
+            fetchMessages();
+            addToast("Message deleted", "success");
+        } catch { addToast("Error", "error"); }
+    };
+
+    const handleMarkRead = async (id) => {
+        try {
+            await api.patch(`/contacts/${id}/read`);
+            fetchMessages();
+            addToast("Marked as read", "success");
+        } catch { addToast("Error", "error"); }
+    };
+
+    const unreadMessagesCount = messages.filter(m => m.status === 'Unread').length;
+
     const navItems = [
         { id: "appointments", icon: "fa-calendar-check", label: "Appointments", badge: stats.pending > 0 ? stats.pending : null },
         { id: "patients", icon: "fa-users", label: "Patients" },
+        { id: "messages", icon: "fa-envelope", label: "Messages", badge: unreadMessagesCount > 0 ? unreadMessagesCount : null },
         { id: "reports", icon: "fa-chart-pie", label: "Reports" },
         { id: "stories", icon: "fa-heart-pulse", label: "Patient Stories" },
+        { id: "gallery", icon: "fa-photo-film", label: "Gallery" },
         { id: "posters", icon: "fa-image", label: "Clinic Posters" },
         { id: "banners", icon: "fa-images", label: "Banners" },
         { id: "doctors", icon: "fa-user-doctor", label: "Doctors" },
@@ -484,12 +563,12 @@ const Admin = () => {
                     {
                         activeTab === "appointments" && (
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-                                <StatCard title="Total" value={stats.total} icon="fa-calendar-days" color="blue" />
-                                <StatCard title="Pending" value={stats.pending} icon="fa-clock" color="amber" />
-                                <StatCard title="Confirmed" value={stats.confirmed} icon="fa-check-circle" color="emerald" />
-                                <StatCard title="Completed" value={stats.completed} icon="fa-flag-checkered" color="blue" />
-                                <StatCard title="Cancelled" value={stats.cancelled} icon="fa-ban" color="rose" />
-                                <StatCard title="Today" value={stats.today} icon="fa-user-clock" color="emerald" sub="Live" />
+                                <StatCard title="Total" value={stats.total} icon="fa-calendar-days" color="blue" onClick={() => setStatusFilter('All')} isActive={statusFilter === 'All'} />
+                                <StatCard title="Pending" value={stats.pending} icon="fa-clock" color="amber" onClick={() => setStatusFilter('Pending')} isActive={statusFilter === 'Pending'} />
+                                <StatCard title="Confirmed" value={stats.confirmed} icon="fa-check-circle" color="emerald" onClick={() => setStatusFilter('Confirmed')} isActive={statusFilter === 'Confirmed'} />
+                                <StatCard title="Completed" value={stats.completed} icon="fa-flag-checkered" color="blue" onClick={() => setStatusFilter('Completed')} isActive={statusFilter === 'Completed'} />
+                                <StatCard title="Cancelled" value={stats.cancelled} icon="fa-ban" color="rose" onClick={() => setStatusFilter('Cancelled')} isActive={statusFilter === 'Cancelled'} />
+                                <StatCard title="Today" value={stats.today} icon="fa-user-clock" color="emerald" sub="Live" onClick={() => setStatusFilter('Today')} isActive={statusFilter === 'Today'} />
                             </div>
                         )
                     }
@@ -501,7 +580,7 @@ const Admin = () => {
                                 {/* Table toolbar */}
                                 <div className="p-5 border-b border-slate-100 flex flex-wrap gap-3 items-center justify-between">
                                     <div className="flex gap-2 flex-wrap">
-                                        {["All", "Pending", "Confirmed", "Completed", "Cancelled"].map(s => (
+                                        {["All", "Pending", "Confirmed", "Completed", "Cancelled", "Today"].map(s => (
                                             <button key={s} onClick={() => setStatusFilter(s)}
                                                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === s ? "bg-blue-600 text-white shadow-md" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}>
                                                 {s}
@@ -649,6 +728,79 @@ const Admin = () => {
                                                 <tr><td colSpan="5" className="py-16 text-center text-slate-400">
                                                     <i className="fa-solid fa-users text-4xl mb-3 block opacity-30"></i>
                                                     <p className="font-semibold">No patients yet. Appointments will appear here.</p>
+                                                </td></tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {/* ── Messages Tab ── */}
+                    {
+                        activeTab === "messages" && (
+                            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                                <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                                    <h2 className="font-black text-slate-800">Messages <span className="ml-2 text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{messages.length}</span></h2>
+                                    <button onClick={fetchMessages} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors">
+                                        <i className="fa-solid fa-rotate-right mr-1.5"></i> Refresh
+                                    </button>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                                            <tr>
+                                                <th className="px-5 py-4 border-b border-slate-100 w-1/4">Sender Details</th>
+                                                <th className="px-5 py-4 border-b border-slate-100 w-[15%]">Topic</th>
+                                                <th className="px-5 py-4 border-b border-slate-100 w-[40%]">Message</th>
+                                                <th className="px-5 py-4 border-b border-slate-100 w-[10%]">Status</th>
+                                                <th className="px-5 py-4 border-b border-slate-100 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            {messages.map((m) => (
+                                                <tr key={m._id} className={`hover:bg-slate-50 transition-colors ${m.status === 'Unread' ? 'bg-blue-50/20' : ''}`}>
+                                                    <td className="px-5 py-4">
+                                                        <p className="font-bold text-slate-800 text-sm mb-1">{m.name}</p>
+                                                        <p className="text-xs text-slate-500 mb-0.5"><i className="fa-solid fa-phone text-[10px] mr-1.5 text-slate-400"></i>{m.phone}</p>
+                                                        <p className="text-xs text-slate-500"><i className="fa-solid fa-envelope text-[10px] mr-1.5 text-slate-400"></i>{m.email}</p>
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        <span className="bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md">{m.topic}</span>
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        <p className="text-sm text-slate-600 leading-relaxed max-h-20 overflow-y-auto pr-2 custom-scrollbar">{m.message}</p>
+                                                        <p className="text-[10px] text-slate-400 font-medium mt-2">{new Date(m.createdAt).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        {m.status === 'Unread' ? (
+                                                            <span className="bg-amber-50 text-amber-600 border border-amber-100 text-[10px] font-bold px-2.5 py-1 rounded-full"><i className="fa-solid fa-circle text-[8px] mr-1.5"></i>Unread</span>
+                                                        ) : (
+                                                            <span className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-bold px-2.5 py-1 rounded-full"><i className="fa-solid fa-check text-[8px] mr-1.5"></i>Read</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-4 text-right">
+                                                        <div className="flex justify-end gap-1.5">
+                                                            {m.status === 'Unread' && (
+                                                                <button onClick={() => handleMarkRead(m._id)} className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition-all" title="Mark as Read">
+                                                                    <i className="fa-solid fa-check text-xs"></i>
+                                                                </button>
+                                                            )}
+                                                            <a href={`mailto:${m.email}`} className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-all" title="Reply via Email">
+                                                                <i className="fa-solid fa-reply text-xs"></i>
+                                                            </a>
+                                                            <button onClick={() => handleDeleteMessage(m._id)} className="w-8 h-8 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 flex items-center justify-center transition-all" title="Delete Message">
+                                                                <i className="fa-solid fa-trash text-[10px]"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {messages.length === 0 && (
+                                                <tr><td colSpan="5" className="py-16 text-center text-slate-400">
+                                                    <i className="fa-solid fa-inbox text-4xl mb-3 block opacity-30"></i>
+                                                    <p className="font-semibold">No messages yet. They will appear here when submitted.</p>
                                                 </td></tr>
                                             )}
                                         </tbody>
@@ -812,6 +964,63 @@ const Admin = () => {
                                         </div>
                                     ))}
                                     {banners.length === 0 && <div className="col-span-3 py-16 text-center text-slate-400"><i className="fa-solid fa-images text-4xl mb-3 block opacity-30"></i><p className="font-semibold">No banners yet</p></div>}
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {/* ── Gallery Tab ── */}
+                    {
+                        activeTab === "gallery" && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                                    <h3 className="font-black text-slate-800 mb-4">Add Gallery Image</h3>
+                                    <div className="flex gap-3 mb-4">
+                                        {["url", "file"].map(t => (
+                                            <button key={t} type="button" onClick={() => setGalleryUploadType(t)}
+                                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${galleryUploadType === t ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}>
+                                                <i className={`fa-solid ${t === "url" ? "fa-link" : "fa-upload"} mr-2`}></i>{t === "url" ? "Image URL" : "Upload File"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <form onSubmit={handleGallerySubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                        <div className="md:col-span-2 space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{galleryUploadType === "url" ? "Image URL" : "Select File"}</label>
+                                            {galleryUploadType === "url" ? (
+                                                <input type="text" placeholder="https://..." value={newGalleryImage.imageUrl} onChange={e => setNewGalleryImage({ ...newGalleryImage, imageUrl: e.target.value })} required className={inp} />
+                                            ) : (
+                                                <input type="file" accept="image/*" onChange={e => setGalleryFile(e.target.files[0])} required className={`${inp} file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600`} />
+                                            )}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title/Alt Text</label>
+                                            <input type="text" placeholder="Clinic interior..." value={newGalleryImage.title} onChange={e => setNewGalleryImage({ ...newGalleryImage, title: e.target.value })} className={inp} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
+                                            <select value={newGalleryImage.category} onChange={e => setNewGalleryImage({ ...newGalleryImage, category: e.target.value })} className={inp}>
+                                                {GALLERY_CATS.map(c => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
+                                        <button type="submit" className="md:col-start-4 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all">
+                                            <i className="fa-solid fa-plus mr-2"></i>Upload Image
+                                        </button>
+                                    </form>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
+                                    {(Array.isArray(galleryImages) ? galleryImages : []).map(g => (
+                                        <div key={g._id} className="group relative rounded-2xl overflow-hidden shadow-md h-48 border border-slate-200">
+                                            <img src={g.image} alt={g.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex flex-col justify-end p-4 text-white">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-blue-300">{g.category}</span>
+                                                <h4 className="font-bold text-sm leading-tight truncate">{g.title || 'Untitled Image'}</h4>
+                                            </div>
+                                            <button onClick={() => handleDeleteGalleryImage(g._id)} className="absolute top-3 right-3 w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-600 shadow-lg">
+                                                <i className="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {galleryImages.length === 0 && <div className="col-span-full py-16 text-center text-slate-400"><i className="fa-solid fa-camera text-4xl mb-3 block opacity-30"></i><p className="font-semibold">No gallery images yet</p></div>}
                                 </div>
                             </div>
                         )

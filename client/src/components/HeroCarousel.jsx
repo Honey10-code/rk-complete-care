@@ -88,7 +88,7 @@ const HeroCarousel = () => {
                     </p>
 
                     <div className="flex gap-4">
-                        <a href="tel:+918769556475" className="btn btn-primary inline-block">Get Consultation</a>
+                        <button className="book-btn btn btn-primary inline-block">Get Consultation</button>
                         <a href="#services" className="px-8 py-3 rounded-full border-2 border-accent-gold text-accent-gold font-semibold hover:bg-accent-gold hover:text-white transition-all flex items-center justify-center">
                             Explore Services
                         </a>

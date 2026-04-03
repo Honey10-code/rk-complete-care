@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { submitContactMessage } from '../services/api';
 
 const Contact = () => {
     const [activeAccordion, setActiveAccordion] = useState(null);
@@ -13,6 +14,9 @@ const Contact = () => {
         message: ''
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState(null); // { type: 'success' | 'error', message: '' }
+
     const toggleAccordion = (index) => {
         setActiveAccordion(activeAccordion === index ? null : index);
     };
@@ -21,10 +25,21 @@ const Contact = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert('Message sent successfully! We will get back to you soon.');
-        setFormData({ name: '', email: '', phone: '', topic: 'General Inquiry', message: '' });
+        setIsSubmitting(true);
+        setSubmitStatus(null);
+        try {
+            await submitContactMessage(formData);
+            setSubmitStatus({ type: 'success', message: 'Message sent successfully! We will get back to you soon.' });
+            setFormData({ name: '', email: '', phone: '', topic: 'General Inquiry', message: '' });
+        } catch (error) {
+            setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
+        } finally {
+            setIsSubmitting(false);
+            // Hide notification after 5 seconds
+            setTimeout(() => setSubmitStatus(null), 5000);
+        }
     };
 
     const faqs = [
@@ -147,6 +162,13 @@ const Contact = () => {
                                 <p className="text-slate-500 mt-3 font-medium">Fill out the form and our team will get back to you shortly.</p>
                             </div>
 
+                            {submitStatus && (
+                                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${submitStatus.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                                    <i className={`fa-solid ${submitStatus.type === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-circle-exclamation text-rose-500'}`}></i>
+                                    <span className="font-bold">{submitStatus.message}</span>
+                                </div>
+                            )}
+
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
@@ -212,8 +234,8 @@ const Contact = () => {
                                         placeholder="Tell us what you need help with..."
                                     ></textarea>
                                 </div>
-                                <button type="submit" className="btn btn-primary w-full py-4 text-base font-black shadow-lg shadow-blue-100">
-                                    Send Message Now
+                                <button disabled={isSubmitting} type="submit" className="btn btn-primary w-full py-4 text-base font-black shadow-lg shadow-blue-100 disabled:opacity-70 disabled:cursor-not-allowed">
+                                    {isSubmitting ? 'Sending...' : 'Send Message Now'}
                                 </button>
                             </form>
                         </div>

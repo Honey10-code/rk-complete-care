@@ -169,7 +169,7 @@ const PatientStories = () => {
                 <div className="max-w-3xl mx-auto px-6 text-center text-white">
                     <h2 className="text-3xl font-black mb-3">Start Your Recovery Journey</h2>
                     <p className="text-white/80 mb-8 font-medium">Join hundreds of patients who have transformed their lives with expert physiotherapy care.</p>
-                    <a href="/booking" className="inline-flex items-center gap-2 bg-white text-blue-600 font-black px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-0.5 transition-all">
+                    <a href="/booking" className="book-btn inline-flex items-center gap-2 bg-white text-blue-600 font-black px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-0.5 transition-all">
                         <i className="fa-solid fa-calendar-check"></i> Book Your Appointment
                     </a>
                 </div>
@@ -204,7 +204,7 @@ const PatientStories = () => {
                                     </div>
                                 )}
                                 <div className="mt-6 pt-6 border-t border-slate-100 flex justify-end">
-                                    <a href="/booking" className="inline-flex items-center gap-2 bg-blue-600 text-white font-black px-8 py-3 rounded-xl transition-all text-sm hover:bg-blue-700 shadow-lg shadow-blue-100">
+                                    <a href="/booking" className="book-btn inline-flex items-center gap-2 bg-blue-600 text-white font-black px-8 py-3 rounded-xl transition-all text-sm hover:bg-blue-700 shadow-lg shadow-blue-100">
                                         <i className="fa-solid fa-calendar-check"></i> Book Appointment
                                     </a>
                                 </div>
