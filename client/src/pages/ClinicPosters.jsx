@@ -26,7 +26,7 @@ const ClinicPosters = () => {
             <Navbar />
 
             {/* Hero */}
-            <section className="relative pt-32 pb-20 bg-slate-900 overflow-hidden">
+            <section className="relative pt-16 pb-20 bg-slate-900 overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)", backgroundSize: "40px 40px" }}></div>
                 <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />

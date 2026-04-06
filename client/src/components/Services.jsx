@@ -74,7 +74,7 @@ const ConditionDetail = ({ service, onBack, onSelectService, allServices }) => {
                                 <i className={`fa-solid ${service.icon}`}></i>
                             </div>
                             <div>
-                                <h3 className="font-black text-slate-800 text-lg">{service.title} — Overview</h3>
+                                <h3 className="font-black text-slate-800 text-lg">{service.title} ({service.titleHi}) — Overview</h3>
                                 <p className="text-slate-400 text-xs">RK The Complete Care, Jaipur</p>
                             </div>
                         </div>
@@ -88,14 +88,12 @@ const ConditionDetail = ({ service, onBack, onSelectService, allServices }) => {
                         </div>
 
                         <div className="mt-8 flex flex-wrap gap-4">
-                            <a
-                                href="https://wa.me/918769556475"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-sm px-6 py-3.5 rounded-xl transition-all shadow-md active:scale-95"
+                            <Link
+                                to="/booking"
+                                className="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-black text-sm px-6 py-3.5 rounded-xl transition-all shadow-md active:scale-95 shadow-emerald-100"
                             >
-                                <i className="fa-brands fa-whatsapp text-lg"></i> Book via WhatsApp
-                            </a>
+                                <i className="fa-solid fa-calendar-check text-lg"></i> Book Appointment
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -234,7 +232,7 @@ const Services = ({ limit, isHomePage = false }) => {
                                                 <h3 className="text-xl font-black text-slate-800 leading-tight group-hover:text-cyan-600 transition-colors">
                                                     {service.title}
                                                 </h3>
-                                                <span className="text-[10px] font-bold text-cyan-600/50 uppercase tracking-widest">{service.titleHi}</span>
+                                                <span className="text-[10px] font-black text-cyan-700 uppercase tracking-widest">({service.titleHi})</span>
                                             </div>
                                             <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-grow font-medium">
                                                 {service.desc}

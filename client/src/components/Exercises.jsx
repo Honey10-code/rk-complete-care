@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExercises } from '../services/api';
 
@@ -6,12 +7,20 @@ const Exercises = ({ limit, isHomePage = false }) => {
     const [exercises, setExercises] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedExercise, setSelectedExercise] = useState(null);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
         const fetchExercises = async () => {
             try {
                 const data = await getExercises();
                 setExercises(data);
+                
+                // Deep linking: Open modal if ID is in URL
+                const exerciseId = searchParams.get('id');
+                if (exerciseId && data.length > 0) {
+                    const found = data.find(e => e.id === exerciseId);
+                    if (found) setSelectedExercise(found);
+                }
             } catch (err) {
                 console.error("Error fetching exercises:", err);
             } finally {
@@ -19,7 +28,7 @@ const Exercises = ({ limit, isHomePage = false }) => {
             }
         };
         fetchExercises();
-    }, []);
+    }, [searchParams]);
 
     const displayedExercises = limit ? exercises.slice(0, limit) : exercises;
 
@@ -94,8 +103,8 @@ const Exercises = ({ limit, isHomePage = false }) => {
                                 <h3 className="text-[1.15rem] font-black text-slate-800 mb-1 leading-tight group-hover:text-emerald-600 transition-colors">
                                     {exercise.title}
                                 </h3>
-                                <p className="text-emerald-600/70 font-bold text-[10px] uppercase tracking-widest leading-none mb-5">
-                                    {exercise.hindi}
+                                <p className="text-emerald-600 font-black text-[10px] uppercase tracking-widest leading-none mb-5">
+                                    ({exercise.hindi})
                                 </p>
                                 
                                 <div className="mt-auto w-full flex justify-center">
@@ -169,8 +178,8 @@ const Exercises = ({ limit, isHomePage = false }) => {
                                 <h3 className="text-3xl font-black text-slate-900 mb-1 leading-tight">
                                     {selectedExercise.title}
                                 </h3>
-                                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-6">
-                                    {selectedExercise.hindi}
+                                <p className="text-slate-500 font-black text-xs uppercase tracking-widest mb-6">
+                                    ({selectedExercise.hindi})
                                 </p>
                                 
                                 <div className="prose prose-slate prose-sm text-slate-600 font-medium leading-relaxed mb-8">
@@ -186,14 +195,20 @@ const Exercises = ({ limit, isHomePage = false }) => {
                                 </div>
 
                                 <div className="mt-auto pt-6 border-t border-slate-100 flex flex-wrap gap-4">
-                                    <a 
-                                        href="https://wa.me/918769556475"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                    <Link 
+                                        to="/booking"
+                                        onClick={(e) => {
+                                            if (isHomePage) {
+                                                e.preventDefault();
+                                                setSelectedExercise(null);
+                                                const el = document.getElementById('book-appointment');
+                                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                            }
+                                        }}
                                         className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm px-6 py-3.5 rounded-xl transition-all shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5 text-center flex items-center justify-center gap-2"
                                     >
-                                        <i className="fa-brands fa-whatsapp text-lg"></i> Consult Doctor
-                                    </a>
+                                        <i className="fa-solid fa-calendar-check text-lg"></i> Book Appointment
+                                    </Link>
                                 </div>
                             </div>
                         </motion.div>

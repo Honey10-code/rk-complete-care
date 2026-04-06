@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getBanners } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const BannerCarousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,25 +12,25 @@ const BannerCarousel = () => {
     const defaultSlides = [
         {
             id: 1,
-            image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop",
+            image: "",
             title: "Premium Clinical Excellence",
             subtitle: "Expert Physiotherapy & Rehabilitation Specialist"
         },
         {
             id: 2,
-            image: "https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?q=80&w=2069&auto=format&fit=crop",
+            image: "",
             title: "Personalized Recovery Support",
             subtitle: "Dedicated Care for Every Step of Your Journey"
         },
         {
             id: 3,
-            image: "https://images.unsplash.com/photo-1598136490941-30d885318abd?q=80&w=2069&auto=format&fit=crop",
+            image: "",
             title: "Sports Injury Recovery",
             subtitle: "Regain Your Peak Performance and Strength"
         },
         {
             id: 4,
-            image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop",
+            image: "",
             title: "Advanced Manual Therapy",
             subtitle: "Scientifically Proven Treatment Protocols"
         }
@@ -131,20 +132,35 @@ const BannerCarousel = () => {
                                 >
                                     {slides[currentIndex].subtitle}
                                 </motion.p>
-                                
+
                                 <motion.div
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.8, duration: 0.8 }}
                                     className="flex flex-wrap gap-4"
                                 >
-                                    <a href="/booking" className="book-btn px-8 py-4 bg-primary-blue hover:bg-blue-700 text-white rounded-full font-semibold shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3 group">
+                                    <Link 
+                                        to="/booking"
+                                        onClick={(e) => {
+                                            if (location.pathname === '/' || location.pathname === '/home') {
+                                                const el = document.getElementById('book-appointment');
+                                                if (el) {
+                                                    e.preventDefault();
+                                                    el.scrollIntoView({ behavior: 'smooth' });
+                                                }
+                                            }
+                                        }}
+                                        className="book-btn px-8 py-4 bg-primary-blue hover:bg-blue-700 text-white rounded-full font-semibold shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3 group"
+                                    >
                                         Book Consultation
                                         <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                                    </a>
-                                    <a href="/services" className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full font-semibold border border-white/30 transition-all duration-300 transform hover:-translate-y-1">
+                                    </Link>
+                                    <Link 
+                                        to="/services"
+                                        className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full font-semibold border border-white/30 transition-all duration-300 transform hover:-translate-y-1"
+                                    >
                                         Explore Therapies
-                                    </a>
+                                    </Link>
                                 </motion.div>
                             </div>
                         )}
@@ -175,11 +191,10 @@ const BannerCarousel = () => {
                     <button
                         key={index}
                         onClick={() => setCurrentIndex(index)}
-                        className={`transition-all duration-500 rounded-full ${
-                            index === currentIndex 
-                            ? 'w-12 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]' 
-                            : 'w-2 h-2 bg-white/50 hover:bg-white/80'
-                        }`}
+                        className={`transition-all duration-500 rounded-full ${index === currentIndex
+                                ? 'w-12 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]'
+                                : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                            }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
                 ))}

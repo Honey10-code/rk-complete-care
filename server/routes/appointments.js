@@ -154,6 +154,13 @@ router.post('/', async (req, res) => {
         });
 
         const newAppointment = await appointment.save();
+
+        // 🔔 REAL-TIME NOTIFICATION (Socket.io)
+        const io = req.app.get('io');
+        if (io) {
+            io.to('admin-room').emit('new-appointment', newAppointment);
+        }
+
         res.status(201).json(newAppointment);
     } catch (err) {
         res.status(400).json({ message: err.message });

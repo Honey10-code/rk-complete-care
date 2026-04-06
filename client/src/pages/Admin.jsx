@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/images/LOGO.png";
+import { io } from "socket.io-client";
+import toast from "react-hot-toast";
 import api, {
     getAppointments, patchAppointment, deleteAppointment,
     getDoctors, postDoctor, deleteDoctor,
@@ -9,7 +11,8 @@ import api, {
     getClinicInfo, postClinicInfo,
     getBanners, postBanner,
     getServices, postService, updateService, deleteService,
-    getExercises, postExercise, updateExercise, deleteExercise
+    getExercises, postExercise, updateExercise, deleteExercise,
+    getBroadcasts, postBroadcast, retryBroadcast, deleteBroadcast
 } from "../services/api";
 
 // ─── Toast System ────────────────────────────────────────────────────────────
@@ -67,6 +70,9 @@ const Admin = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [toasts, setToasts] = useState([]);
+    const [notifications, setNotifications] = useState([]);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef(null);
 
     // Toast helpers
     const addToast = useCallback((message, type = "info") => {
@@ -100,6 +106,65 @@ const Admin = () => {
     }, [search, navigate]);
 
     useEffect(() => { if (activeTab === "appointments") fetchAppointments(); }, [search, activeTab, fetchAppointments]);
+
+    // ── Socket.io Setup ──────────────────────────────────────────────────────
+    useEffect(() => {
+        const socketUrl = (import.meta.env.VITE_API_URL || "http://127.0.0.1:5001/api").replace('/api', '');
+        const socket = io(socketUrl);
+
+        socket.on('connect', () => {
+            console.log('🔌 Connected to real-time server');
+            socket.emit('join-admin-room');
+        });
+
+        socket.on('new-appointment', (data) => {
+            console.log('🔔 New appointment received:', data);
+            
+            // 🔊 Play Notification Sound
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            audio.play().catch(err => console.error("Audio play failed:", err));
+
+            // Add to history
+            setNotifications(prev => [{ ...data, timestamp: new Date(), read: false }, ...prev]);
+
+            // Show toast (Manual dismissal required)
+            toast.success((t) => (
+                <div className="flex items-center justify-between w-full gap-4">
+                    <div className="flex-1">
+                        <p className="font-black text-xs uppercase tracking-wider text-blue-400 mb-1">New Booking</p>
+                        <p>{data.patientName}</p>
+                    </div>
+                    <button 
+                        onClick={() => toast.dismiss(t.id)}
+                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                        <i className="fa-solid fa-xmark text-xs opacity-50"></i>
+                    </button>
+                </div>
+            ), {
+                duration: Infinity, 
+                icon: '📅',
+                position: 'top-right',
+                style: {
+                    borderRadius: '20px',
+                    background: '#1e293b',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    border: '1px solid #334155',
+                    padding: '8px 12px 12px 16px',
+                    boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.5)',
+                    minWidth: '320px'
+                },
+            });
+
+            // Refresh list
+            fetchAppointments();
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [fetchAppointments]);
 
     useEffect(() => {
         const today = new Date().toDateString();
@@ -264,10 +329,24 @@ const Admin = () => {
     };
 
     // ── Clinic Info ───────────────────────────────────────────────────────────
-    const [clinicInfo, setClinicInfo] = useState({ phones: ["", ""], email: "", address: "", openingHours: { morning: "", evening: "", sunday: "" }, socialLinks: { facebook: "", instagram: "", twitter: "", whatsapp: "", google: "" } });
+    const [clinicInfo, setClinicInfo] = useState({ phones: ["", ""], email: "", address: "", openingHours: { morning: "", evening: "", sunday: "" }, socialLinks: { facebook: "", instagram: "", twitter: "", whatsapp: "", google: "" }, automations: { birthday: true, medicine: true, followUp: true } });
     const [clinicInfoLoaded, setClinicInfoLoaded] = useState(false);
     const fetchClinicInfo = async () => { try { const r = await api.get(`/clinic-info`); if (r.data) { setClinicInfo(r.data); setClinicInfoLoaded(true); } } catch { } };
-    useEffect(() => { if (activeTab === "settings" && !clinicInfoLoaded) fetchClinicInfo(); }, [activeTab]);
+    useEffect(() => { if ((activeTab === "settings" || activeTab === "broadcasts") && !clinicInfoLoaded) fetchClinicInfo(); }, [activeTab]);
+
+    const toggleAutomation = async (key) => {
+        const updatedAutomations = { 
+            ...(clinicInfo.automations || { birthday: true, medicine: true, followUp: true }), 
+            [key]: !clinicInfo?.automations?.[key] 
+        };
+        const updatedInfo = { ...clinicInfo, automations: updatedAutomations };
+        setClinicInfo(updatedInfo);
+        try {
+            await api.post(`/clinic-info`, updatedInfo);
+            addToast(`${key.charAt(0).toUpperCase() + key.slice(1)} automation ${updatedAutomations[key] ? 'Enabled' : 'Disabled'}`, "success");
+        } catch { addToast("Error updating automation", "error"); }
+    };
+
     const handleClinicInfoSubmit = async (e) => {
         e.preventDefault();
         try { await api.post(`/clinic-info`, clinicInfo); addToast("Settings saved!", "success"); }
@@ -309,7 +388,7 @@ const Admin = () => {
     // ── Nav items ─────────────────────────────────────────────────────────────
     // Patient Stories state
     const [stories, setStories] = useState([]);
-    const [newStory, setNewStory] = useState({ patientName: "", age: "", location: "", condition: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
+    const [newStory, setNewStory] = useState({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
     const [storyUploadType, setStoryUploadType] = useState("url");
     const [storyFile, setStoryFile] = useState(null);
     const fetchStories = async () => { try { const r = await api.get(`/patient-stories`); setStories(Array.isArray(r.data) ? r.data : []); } catch { setStories([]); } };
@@ -317,13 +396,13 @@ const Admin = () => {
     const handleStorySubmit = async (e) => {
         e.preventDefault();
         const fd = new FormData();
-        ["patientName", "age", "location", "condition", "story", "outcome", "rating"].forEach(k => fd.append(k, newStory[k]));
+        ["patientName", "age", "location", "condition", "conditionHi", "story", "outcome", "rating"].forEach(k => fd.append(k, newStory[k]));
         fd.append("featured", String(newStory.featured));
         if (storyUploadType === "url") fd.append("imageUrl", newStory.imageUrl);
         else if (storyFile) fd.append("image", storyFile);
         try {
             await api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } });
-            setNewStory({ patientName: "", age: "", location: "", condition: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
+            setNewStory({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
             setStoryFile(null); fetchStories(); addToast("Story added!", "success");
         } catch { addToast("Error adding story", "error"); }
     };
@@ -552,9 +631,51 @@ const Admin = () => {
 
     const unreadMessagesCount = messages.filter(m => m.status === 'Unread').length;
 
+    // ── Broadcasts ────────────────────────────────────────────────────────────
+    const [broadcasts, setBroadcasts] = useState([]);
+    const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
+    const [newBroadcast, setNewBroadcast] = useState({ title: "", message: "", imageUrl: "", target: "All", scheduledAt: "" });
+    
+    const fetchBroadcasts = async () => {
+        try {
+            const data = await getBroadcasts();
+            setBroadcasts(Array.isArray(data) ? data : []);
+        } catch { setBroadcasts([]); }
+    };
+    useEffect(() => { if (activeTab === "broadcasts") fetchBroadcasts(); }, [activeTab]);
+
+    const handleBroadcastSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await postBroadcast(newBroadcast);
+            setIsBroadcastModalOpen(false);
+            setNewBroadcast({ title: "", message: "", imageUrl: "", target: "All", scheduledAt: "" });
+            fetchBroadcasts();
+            addToast("Broadcast queued successfully!", "success");
+        } catch { addToast("Error sending broadcast", "error"); }
+    };
+
+    const handleRetryBroadcast = async (id) => {
+        try {
+            await retryBroadcast(id);
+            fetchBroadcasts();
+            addToast("Retried successfully", "success");
+        } catch { addToast("Retry failed", "error"); }
+    };
+
+    useEffect(() => {
+        const socketUrl = (import.meta.env.VITE_API_URL || "http://127.0.0.1:5001/api").replace('/api', '');
+        const socket = io(socketUrl);
+        // ... (existing listeners)
+        socket.on('broadcast-sent', () => fetchBroadcasts());
+        socket.on('broadcast-status-update', () => fetchBroadcasts());
+        return () => { socket.disconnect(); };
+    }, []);
+
     const navItems = [
         { id: "appointments", icon: "fa-calendar-check", label: "Appointments", badge: stats.pending > 0 ? stats.pending : null },
         { id: "patients", icon: "fa-users", label: "Patients" },
+        { id: "broadcasts", icon: "fa-bullhorn", label: "Broadcasts" },
         { id: "messages", icon: "fa-envelope", label: "Messages", badge: unreadMessagesCount > 0 ? unreadMessagesCount : null },
         { id: "services", icon: "fa-stethoscope", label: "Services" },
         { id: "exercises", icon: "fa-person-running", label: "Exercises" },
@@ -667,6 +788,66 @@ const Admin = () => {
                         <div className="text-right hidden sm:block">
                             <p className="text-2xl font-black text-blue-600 tabular-nums">{clock.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
                         </div>
+                        
+                        {/* 🔔 Notification Bell */}
+                        <div className="relative" ref={notificationRef}>
+                            <button 
+                                onClick={() => {
+                                    setShowNotifications(!showNotifications);
+                                    if (!showNotifications) {
+                                        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+                                    }
+                                }}
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all relative ${showNotifications ? "bg-blue-600 text-white shadow-lg" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                            >
+                                <i className="fa-solid fa-bell"></i>
+                                {notifications.filter(n => !n.read).length > 0 && (
+                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white animate-bounce">
+                                        {notifications.filter(n => !n.read).length}
+                                    </span>
+                                )}
+                            </button>
+
+                            <AnimatePresence>
+                                {showNotifications && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute right-0 mt-3 w-80 bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden z-[100]"
+                                    >
+                                        <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                                            <h4 className="font-black text-slate-800 text-sm uppercase tracking-wide">Recent Bookings</h4>
+                                            <button onClick={() => setNotifications([])} className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase">Clear All</button>
+                                        </div>
+                                        <div className="max-h-[400px] overflow-y-auto">
+                                            {notifications.length > 0 ? (
+                                                notifications.map((n, i) => (
+                                                    <div key={i} className="p-4 border-b border-slate-50 hover:bg-blue-50/50 transition-colors cursor-default">
+                                                        <div className="flex gap-3">
+                                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-black text-xs uppercase">
+                                                                {n.patientName?.charAt(0)}
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <p className="text-sm font-bold text-slate-800 truncate">{n.patientName}</p>
+                                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{n.slot} &bull; {new Date(n.date).toLocaleDateString()}</p>
+                                                                <p className="text-[10px] text-blue-600 font-black mt-1 uppercase">New Appointment Received</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="p-8 text-center text-slate-400">
+                                                    <i className="fa-solid fa-bell-slash text-2xl mb-2 opacity-20"></i>
+                                                    <p className="text-xs font-bold">No new notifications</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
                         {activeTab === "appointments" && (
                             <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all">
                                 <i className="fa-solid fa-plus"></i> New Appointment
@@ -1006,7 +1187,7 @@ const Admin = () => {
                                                     <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                                                     <div className="absolute bottom-2 left-3">
-                                                        <p className="text-white font-black text-sm">{s.title}</p>
+                                                        <p className="text-white font-black text-sm">{s.title} ({s.titleHi})</p>
                                                         <p className="text-blue-300 text-[10px] font-bold uppercase tracking-widest">{s.id}</p>
                                                     </div>
                                                 </div>
@@ -1091,7 +1272,7 @@ const Admin = () => {
                                                     <img src={ex.image} alt={ex.title} className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                                                     <div className="absolute bottom-2 left-3">
-                                                        <p className="text-white font-black text-sm">{ex.title}</p>
+                                                        <p className="text-white font-black text-sm">{ex.title} ({ex.hindi})</p>
                                                         <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest">{ex.id}</p>
                                                     </div>
                                                 </div>
@@ -1104,6 +1285,224 @@ const Admin = () => {
                                                 </div>
                                             </div>
                                         ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {/* ── Broadcasts Tab ── */}
+                    {
+                        activeTab === "broadcasts" && (
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    {/* Create Broadcast Card */}
+                                    <div className="lg:col-span-2 bg-white rounded-[2rem] shadow-sm border border-slate-100 p-8">
+                                        <div className="flex items-center justify-between mb-8">
+                                            <div>
+                                                <h2 className="text-2xl font-black text-slate-800">New Broadcast</h2>
+                                                <p className="text-sm text-slate-400 font-bold uppercase tracking-wider mt-1">Send manual or scheduled alerts</p>
+                                            </div>
+                                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
+                                                <i className="fa-solid fa-bullhorn text-xl"></i>
+                                            </div>
+                                        </div>
+
+                                        <form onSubmit={handleBroadcastSubmit} className="space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Broadcast Title</label>
+                                                    <input type="text" placeholder="e.g. Free Health Camp Alert" value={newBroadcast.title} onChange={e => setNewBroadcast({ ...newBroadcast, title: e.target.value })} className={inp} required />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Target Filter</label>
+                                                    <select value={newBroadcast.target} onChange={e => setNewBroadcast({ ...newBroadcast, target: e.target.value })} className={inp}>
+                                                        <option value="All">All Patients</option>
+                                                        <option value="Today">Today's Patients</option>
+                                                        <option value="Recent">Last 7 Days Patients</option>
+                                                        <option value="Custom">Custom Target</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Message Body</label>
+                                                <textarea rows="4" placeholder="Type your broadcast message here..." value={newBroadcast.message} onChange={e => setNewBroadcast({ ...newBroadcast, message: e.target.value })} className={inp} required></textarea>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image URL (Optional)</label>
+                                                    <input type="text" placeholder="https://example.com/banner.jpg" value={newBroadcast.imageUrl} onChange={e => setNewBroadcast({ ...newBroadcast, imageUrl: e.target.value })} className={inp} />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Schedule Notification (Optional)</label>
+                                                    <div className="relative">
+                                                        <input type="datetime-local" value={newBroadcast.scheduledAt} onChange={e => setNewBroadcast({ ...newBroadcast, scheduledAt: e.target.value })} className={inp} />
+                                                        <i className="fa-solid fa-clock absolute right-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                                                <div className="flex items-center gap-2 text-slate-400">
+                                                    <i className="fa-solid fa-circle-info text-xs"></i>
+                                                    <p className="text-[10px] font-bold uppercase tracking-wide">Messages will be queued for processing</p>
+                                                </div>
+                                                <button type="submit" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                                                    <i className="fa-solid fa-paper-plane"></i>
+                                                    {newBroadcast.scheduledAt ? "Schedule Notification" : "Send Broadcast Now"}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    {/* Sidebar: Automations & Quick Stats */}
+                                    <div className="space-y-6">
+                                        <div className="bg-[#0f172a] rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                                            <h3 className="text-lg font-black mb-6 flex items-center gap-2">
+                                                <i className="fa-solid fa-bolt text-amber-400"></i>
+                                                Auto-Reminders
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {[
+                                                    { id: 'birthday', label: 'Birthday Wishes', icon: 'fa-cake-candles', color: 'text-pink-400' },
+                                                    { id: 'followUp', label: 'Follow-up Alerts', icon: 'fa-stethoscope', color: 'text-blue-400' },
+                                                    { id: 'medicine', label: 'Medicine Reminders', icon: 'fa-pills', color: 'text-emerald-400' },
+                                                ].map(auto => {
+                                                    const isActive = clinicInfo?.automations?.[auto.id] !== false;
+                                                    return (
+                                                        <div key={auto.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors group">
+                                                            <div className="flex items-center gap-3">
+                                                                <i className={`fa-solid ${auto.icon} ${auto.color}`}></i>
+                                                                <span className="text-sm font-bold">{auto.label}</span>
+                                                            </div>
+                                                            <button 
+                                                                type="button"
+                                                                onClick={() => toggleAutomation(auto.id)}
+                                                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${isActive ? 'bg-blue-600' : 'bg-slate-700'}`}
+                                                            >
+                                                                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all duration-200 ${isActive ? 'right-1' : 'left-1'}`}></div>
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            <p className="mt-8 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Automations run daily at 9:00 AM</p>
+                                        </div>
+
+                                        <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
+                                            <h3 className="font-black text-slate-800 mb-6 uppercase text-xs tracking-widest border-b border-slate-50 pb-4">Target Audience</h3>
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-end">
+                                                    <div>
+                                                        <p className="text-2xl font-black text-slate-800">{uniquePatients.length}</p>
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase">Total Patients</p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-2xl font-black text-blue-600">{(Array.isArray(appointments) ? appointments : []).filter(a => new Date(a.date).toDateString() === new Date().toDateString()).length}</p>
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase">Today's Reach</p>
+                                                    </div>
+                                                </div>
+                                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-blue-600 rounded-full" style={{ width: '65%' }}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Broadcast History Table */}
+                                <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-xl font-black text-slate-800">Broadcast History</h3>
+                                            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Status & Delivery Tracking</p>
+                                        </div>
+                                        <button onClick={fetchBroadcasts} className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center">
+                                            <i className="fa-solid fa-rotate"></i>
+                                        </button>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-slate-50/50">
+                                                <tr>
+                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Broadcast Information</th>
+                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Target</th>
+                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Metrics</th>
+                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {broadcasts.length > 0 ? broadcasts.map(b => (
+                                                    <tr key={b._id} className="hover:bg-slate-50/50 transition-colors group">
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg ${b.autoType !== 'Manual' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'}`}>
+                                                                    <i className={`fa-solid ${b.autoType === 'Birthday' ? 'fa-cake-candles' : b.autoType === 'Followup' ? 'fa-stethoscope' : 'fa-bullhorn'}`}></i>
+                                                                </div>
+                                                                <div>
+                                                                    <p className="font-black text-slate-800">{b.title}</p>
+                                                                    <p className="text-xs text-slate-400 font-bold truncate max-w-[200px]">{b.message}</p>
+                                                                    <p className="text-[10px] text-slate-300 font-black mt-1 uppercase tracking-tighter">
+                                                                        {new Date(b.createdAt).toLocaleString()}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                                                {b.target}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className={`w-2 h-2 rounded-full ${
+                                                                    b.status === 'Sent' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse' : 
+                                                                    b.status === 'Failed' ? 'bg-rose-500' : 
+                                                                    b.status === 'Pending' ? 'bg-amber-500' : 'bg-blue-500'
+                                                                }`}></div>
+                                                                <span className="text-sm font-black text-slate-700">{b.status}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex flex-col items-center">
+                                                                <div className="flex gap-1 mb-1">
+                                                                    <span className="text-xs font-black text-slate-800">{b.metrics?.sent || 0}</span>
+                                                                    <span className="text-xs font-bold text-slate-400">/ {b.metrics?.total || 0}</span>
+                                                                </div>
+                                                                <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                                                    <div className="h-full bg-blue-600" style={{ width: `${(b.metrics?.sent / b.metrics?.total) * 100 || 0}%` }}></div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6 text-right">
+                                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                {b.status === 'Failed' && (
+                                                                    <button onClick={() => handleRetryBroadcast(b._id)} className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition-all shadow-sm">
+                                                                        <i className="fa-solid fa-rotate-right text-xs"></i>
+                                                                    </button>
+                                                                )}
+                                                                <button onClick={async () => { if(window.confirm('Clear record?')) { await deleteBroadcast(b._id); fetchBroadcasts(); } }} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-all shadow-sm">
+                                                                    <i className="fa-solid fa-trash text-xs"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )) : (
+                                                    <tr>
+                                                        <td colSpan="5" className="px-8 py-20 text-center">
+                                                            <div className="flex flex-col items-center opacity-20">
+                                                                <i className="fa-solid fa-paper-plane text-5xl mb-4 text-slate-300"></i>
+                                                                <p className="font-black text-slate-400 uppercase tracking-widest text-sm">No broadcast history found</p>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -1555,6 +1954,34 @@ const Admin = () => {
                                         )
                                     },
                                     {
+                                        title: "Automations", icon: "fa-robot", content: (
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                {[
+                                                    { id: 'birthday', label: 'Birthday Wishes', icon: 'fa-cake-candles', desc: 'Daily at 9:00 AM' },
+                                                    { id: 'followUp', label: 'Follow-up Alerts', icon: 'fa-stethoscope', desc: 'Daily at 10:00 AM' },
+                                                    { id: 'medicine', label: 'Meds Reminders', icon: 'fa-pills', desc: 'Coming soon' },
+                                                ].map(auto => (
+                                                    <div key={auto.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <div className="flex items-center gap-2">
+                                                                <i className={`fa-solid ${auto.icon} text-blue-600`}></i>
+                                                                <span className="text-xs font-black text-slate-800">{auto.label}</span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => toggleAutomation(auto.id)}
+                                                                className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${clinicInfo?.automations?.[auto.id] !== false ? 'bg-blue-600' : 'bg-slate-300'}`}
+                                                            >
+                                                                <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${clinicInfo?.automations?.[auto.id] !== false ? 'translate-x-4' : 'translate-x-0'}`} />
+                                                            </button>
+                                                        </div>
+                                                        <p className="text-[9px] text-slate-400 font-bold uppercase">{auto.desc}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )
+                                    },
+                                    {
                                         title: "Weekly Slot Schedule", icon: "fa-calendar-days", content: (
                                             <div className="space-y-6">
                                                 <p className="text-[10px] text-slate-500 italic uppercase font-bold tracking-widest border-l-2 border-blue-500 pl-3">
@@ -1684,8 +2111,9 @@ const Admin = () => {
                                             <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Age</label><input type="text" placeholder="e.g. 45" value={newStory.age} onChange={e => setNewStory({ ...newStory, age: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50" /></div>
                                             <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label><input type="text" placeholder="e.g. Jaipur, Rajasthan" value={newStory.location} onChange={e => setNewStory({ ...newStory, location: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50" /></div>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Condition / Diagnosis *</label><input required type="text" placeholder="e.g. Lower Back Pain, Knee Injury" value={newStory.condition} onChange={e => setNewStory({ ...newStory, condition: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50" /></div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Condition / Diagnosis *</label><input required type="text" placeholder="e.g. Lower Back Pain" value={newStory.condition} onChange={e => setNewStory({ ...newStory, condition: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50" /></div>
+                                            <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Condition (Hindi)</label><input type="text" placeholder="e.g. कमर दर्द" value={newStory.conditionHi} onChange={e => setNewStory({ ...newStory, conditionHi: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50" /></div>
                                             <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Outcome / Result</label><input type="text" placeholder="e.g. Fully recovered in 4 weeks" value={newStory.outcome} onChange={e => setNewStory({ ...newStory, outcome: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50" /></div>
                                         </div>
                                         <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Patient Story *</label><textarea required rows={4} placeholder="Write the patient's recovery story in their own words..." value={newStory.story} onChange={e => setNewStory({ ...newStory, story: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 ring-blue-500/30 focus:border-blue-100/50 resize-none" /></div>
@@ -1737,7 +2165,7 @@ const Admin = () => {
                                                     </div>
                                                     {story.featured && <span className="bg-[rgba(217, 119, 6,0.12)] text-[#d97706] text-xs font-bold px-2 py-0.5 rounded-full">Featured</span>}
                                                 </div>
-                                                <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full mb-2">{story.condition}</span>
+                                                <span className="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full mb-2">{story.condition} {story.conditionHi && <span className="font-black">({story.conditionHi})</span>}</span>
                                                 <p className="text-slate-600 text-xs leading-relaxed line-clamp-3 italic">"{story.story}"</p>
                                                 {story.outcome && <p className="text-[#4a8a68] text-xs font-bold mt-2"><i className="fa-solid fa-circle-check mr-1"></i>{story.outcome}</p>}
                                             </div>

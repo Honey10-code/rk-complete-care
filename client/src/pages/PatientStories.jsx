@@ -33,7 +33,7 @@ const PatientStories = () => {
             <Navbar />
 
             {/* Hero */}
-            <section className="relative pt-32 pb-20 bg-slate-900 overflow-hidden">
+            <section className="relative pt-16 pb-20 bg-slate-900 overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)", backgroundSize: "40px 40px" }}></div>
                 <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 right-0 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -147,7 +147,7 @@ const PatientStories = () => {
                                         </div>
                                         <StarRating rating={story.rating} />
                                     </div>
-                                    <span className="inline-block bg-blue-50 text-blue-600 text-xs font-black px-3 py-1.5 rounded-xl mb-3">{story.condition}</span>
+                                    <span className="inline-block bg-blue-50 text-blue-600 text-xs font-black px-3 py-1.5 rounded-xl mb-3">{story.condition} {story.conditionHi && <span className="font-black">({story.conditionHi})</span>}</span>
                                     <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 italic">"{story.story}"</p>
                                     {story.outcome && (
                                         <p className="mt-3 text-emerald-600 font-bold text-xs flex items-center gap-1.5">
@@ -190,7 +190,7 @@ const PatientStories = () => {
                                     <button onClick={() => setSelected(null)} className="w-9 h-9 rounded-full bg-slate-100 text-slate-400 hover:bg-rose-100 hover:text-rose-500 flex items-center justify-center transition-all flex-shrink-0"><i className="fa-solid fa-xmark"></i></button>
                                 </div>
                                 <div className="flex items-center gap-3 mb-6">
-                                    <span className="bg-indigo-100 text-indigo-700 text-sm font-bold px-3 py-1 rounded-full">{selected.condition}</span>
+                                    <span className="bg-indigo-100 text-indigo-700 text-sm font-bold px-3 py-1 rounded-full">{selected.condition} {selected.conditionHi && <span className="font-black">({selected.conditionHi})</span>}</span>
                                     <StarRating rating={selected.rating} />
                                 </div>
                                 <p className="text-slate-700 leading-relaxed text-base italic mb-6">"{selected.story}"</p>

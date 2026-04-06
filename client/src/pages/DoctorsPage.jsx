@@ -12,7 +12,7 @@ const DoctorsPage = () => {
                 <meta name="description" content="Meet our expert physiotherapists at RK The Complete Care. Dr. Piyush Sharma and specialists dedicated to your recovery." />
             </Helmet>
             <Navbar />
-            <div className="pt-20">
+            <div>
                 <Doctors />
             </div>
             <Footer />

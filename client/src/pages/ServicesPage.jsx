@@ -12,7 +12,7 @@ const ServicesPage = () => {
                 <meta name="description" content="Explore our wide range of physiotherapy and rehabilitation services. Orthopedic rehab, sports injury management, and pain relief." />
             </Helmet>
             <Navbar />
-            <div className="pt-24 pb-12">
+            <div className="pt-4 pb-12">
                 <Services />
             </div>
             <Footer />

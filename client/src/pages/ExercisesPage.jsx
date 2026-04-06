@@ -12,7 +12,7 @@ const ExercisesPage = () => {
                 <meta name="description" content="Access our specialized exercise guides for orthopedic rehabilitation and general pain relief. Dr. Piyush Sharma's recovery protocols." />
             </Helmet>
             <Navbar />
-            <div className="pt-24 pb-12">
+            <div className="pt-4 pb-12">
                 <Exercises />
             </div>
             <Footer />

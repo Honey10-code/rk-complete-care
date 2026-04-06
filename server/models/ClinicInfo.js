@@ -41,6 +41,11 @@ const clinicInfoSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    automations: {
+        birthday: { type: Boolean, default: true },
+        medicine: { type: Boolean, default: true },
+        followUp: { type: Boolean, default: true }
+    },
     updatedAt: {
         type: Date,
         default: Date.now

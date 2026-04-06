@@ -86,7 +86,7 @@ const GalleryPage = () => {
             <Navbar />
 
             {/* Header Section */}
-            <header className="pt-40 pb-16 relative overflow-hidden bg-white border-b border-slate-200">
+            <header className="pt-20 pb-16 relative overflow-hidden bg-white border-b border-slate-200">
                 <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50 via-white to-white"></div>
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>

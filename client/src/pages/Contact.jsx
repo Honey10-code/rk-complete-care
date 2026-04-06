@@ -66,7 +66,7 @@ const Contact = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative pt-40 pb-20 bg-slate-900 border-b-4 border-blue-700 overflow-hidden">
+            <section className="relative pt-16 pb-20 bg-slate-900 border-b-4 border-blue-700 overflow-hidden">
                 <div className="absolute inset-0 opacity-20">
                     <img
                         src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"

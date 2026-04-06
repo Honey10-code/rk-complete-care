@@ -91,4 +91,10 @@ export const getVideos = () => api.get("/videos").then(safeArray);
 export const postVideo = (data) => api.post("/videos", data).then(safeObject);
 export const deleteVideo = (id) => api.delete(`/videos/${id}`).then(safeObject);
 
+// Broadcast APIs
+export const getBroadcasts = () => api.get("/broadcasts").then(safeArray);
+export const postBroadcast = (data) => api.post("/broadcasts", data).then(safeObject);
+export const retryBroadcast = (id) => api.post(`/broadcasts/${id}/retry`).then(safeObject);
+export const deleteBroadcast = (id) => api.delete(`/broadcasts/${id}`).then(safeObject);
+
 export default api;

@@ -5,6 +5,7 @@ const PatientStorySchema = new mongoose.Schema({
     age: { type: String },
     location: { type: String },
     condition: { type: String, required: true },
+    conditionHi: { type: String },
     story: { type: String, required: true },
     outcome: { type: String },
     image: { type: String },

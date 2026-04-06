@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/images/LOGO.png";
-import { getServices } from "../services/api";
+import { getServices, getExercises } from "../services/api";
 
 const shimmerStyle = `
   @keyframes shimmer {
@@ -18,24 +18,30 @@ const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [servicesOpen, setServicesOpen] = useState(false);
+    const [exercisesOpen, setExercisesOpen] = useState(false);
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+    const [mobileExercisesOpen, setMobileExercisesOpen] = useState(false);
     const [mobileGalleryOpen, setMobileGalleryOpen] = useState(false);
     const [services, setServices] = useState([]);
+    const [exercises, setExercises] = useState([]);
     const location = useLocation();
     const servicesRef = useRef(null);
+    const exercisesRef = useRef(null);
     const galleryRef = useRef(null);
 
     useEffect(() => {
-        const fetchServices = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getServices();
-                setServices(data || []);
+                const sData = await getServices();
+                setServices(sData || []);
+                const eData = await getExercises();
+                setExercises(eData || []);
             } catch (err) {
-                console.error("Failed to fetch nav services:", err);
+                console.error("Failed to fetch nav data:", err);
             }
         };
-        fetchServices();
+        fetchData();
     }, []);
 
     useEffect(() => {
@@ -54,6 +60,7 @@ const Navbar = () => {
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (servicesRef.current && !servicesRef.current.contains(e.target)) setServicesOpen(false);
+            if (exercisesRef.current && !exercisesRef.current.contains(e.target)) setExercisesOpen(false);
             if (galleryRef.current && !galleryRef.current.contains(e.target)) setGalleryOpen(false);
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -76,16 +83,16 @@ const Navbar = () => {
         { label: "Home", to: "/", type: "link" },
         { label: "About", to: "/about", type: "link" },
         { label: "Services", to: "/services", type: "dropdown" },
-        { label: "Gallery", to: "/gallery", type: "dropdown" },
-        { label: "Exercises", to: "/exercises", type: "link" },
+        { label: "Exercises", to: "/exercises", type: "dropdown" },
         { label: "Doctors", to: "/doctors", type: "link" },
         { label: "Stories", to: "/patient-stories", type: "link" },
         { label: "Blogs", to: "/clinic-posters", type: "link" },
+        { label: "Gallery", to: "/gallery", type: "dropdown" },
         { label: "Contact", to: "/contact", type: "link" },
     ];
 
     return (
-        <div className="sticky top-0 w-full z-[110] transition-all duration-500 bg-white">
+        <div className="fixed top-0 left-0 w-full z-[110] transition-all duration-500 bg-white">
             <style>{shimmerStyle}</style>
             <motion.nav
                 initial={{ y: -100, opacity: 0 }}
@@ -159,14 +166,14 @@ const Navbar = () => {
                                                                     <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center text-blue-600">
                                                                         <i className={`fa-solid ${s.icon || 'fa-notes-medical'}`}></i>
                                                                     </div>
-                                                                    {s.title}
+                                                                    {s.title} <span className="ml-1 text-[9px] font-black text-blue-600/60 lowercase tracking-normal">({s.titleHi})</span>
                                                                 </Link>
                                                             ))}
                                                         </div>
                                                         {/* View All Footer */}
                                                         <div className="mt-1 p-1">
-                                                            <Link 
-                                                                to="/services" 
+                                                            <Link
+                                                                to="/services"
                                                                 className="flex items-center justify-center gap-2 w-full p-4 bg-slate-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
                                                                 onClick={() => setServicesOpen(false)}
                                                                 title="View all clinical services"
@@ -222,6 +229,69 @@ const Navbar = () => {
                                     );
                                 }
 
+                                if (link.label === "Exercises") {
+                                    return (
+                                        <div
+                                            key={link.label}
+                                            className="relative"
+                                            ref={exercisesRef}
+                                            onMouseEnter={() => setExercisesOpen(true)}
+                                            onMouseLeave={() => setExercisesOpen(false)}
+                                        >
+                                            <button
+                                                onClick={() => setExercisesOpen(!exercisesOpen)}
+                                                className={`relative px-2 xl:px-3 py-2 rounded-full text-[11px] xl:text-[13px] 2xl:text-[14px] font-bold transition-all flex items-center gap-1 xl:gap-1.5 ${isActive ? 'text-blue-700 bg-blue-50/50' : 'text-slate-600 hover:text-blue-600'} group z-10 whitespace-nowrap`}
+                                            >
+                                                <i className="fa-solid fa-person-running opacity-70"></i>
+                                                {link.label}
+                                                <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${exercisesOpen ? 'rotate-180' : ''}`}></i>
+                                            </button>
+                                            <AnimatePresence>
+                                                {exercisesOpen && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 15, x: "-50%" }}
+                                                        animate={{ opacity: 1, y: 0, x: "-50%" }}
+                                                        exit={{ opacity: 0, y: 15, x: "-50%" }}
+                                                        className="absolute top-full left-1/2 mt-4 w-[480px] bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden z-[150] p-2"
+                                                    >
+                                                        <div className="relative h-20 bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-5 flex items-center mb-2">
+                                                            <div className="z-10 text-white">
+                                                                <h4 className="font-black text-base uppercase">Recovery Protocols</h4>
+                                                                <p className="text-[10px] opacity-80">Home-based exercise guides</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 gap-1 p-1">
+                                                            {exercises.slice(0, 8).map(e => (
+                                                                <Link
+                                                                    key={e._id}
+                                                                    to={`/exercises?id=${e.id}`}
+                                                                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50/50 transition-all text-[10px] font-bold text-slate-800 uppercase"
+                                                                    onClick={() => setExercisesOpen(false)}
+                                                                >
+                                                                    <div className="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center text-emerald-600">
+                                                                        <i className={`fa-solid ${e.icon || 'fa-person-running'}`}></i>
+                                                                    </div>
+                                                                    {e.title} <span className="ml-1 text-[9px] font-black text-emerald-600/60 lowercase tracking-normal">({e.hindi})</span>
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+                                                        <div className="mt-1 p-1">
+                                                            <Link
+                                                                to="/exercises"
+                                                                className="flex items-center justify-center gap-2 w-full p-4 bg-slate-50 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+                                                                onClick={() => setExercisesOpen(false)}
+                                                            >
+                                                                View All Home Recovery Guides
+                                                                <i className="fa-solid fa-circle-arrow-right"></i>
+                                                            </Link>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    );
+                                }
+
                                 return (
                                     <div key={link.label} className={`relative ${(link.label === "Stories" || link.label === "Blogs") ? "hidden xl:flex" : "flex"}`}>
                                         <Link to={link.to} className={`relative px-2 xl:px-3 py-2 rounded-full text-[11px] xl:text-[13px] 2xl:text-[14px] font-bold transition-all flex items-center gap-1 xl:gap-1.5 ${isActive ? 'text-blue-700 bg-blue-50/50' : 'text-slate-600 hover:text-blue-600'} group z-10 whitespace-nowrap`}>
@@ -236,7 +306,19 @@ const Navbar = () => {
 
                     {/* Block 3: CTA */}
                     <div className="flex-none shrink-0 flex justify-end z-[120]">
-                        <Link to="/booking" className="px-5 xl:px-8 py-2 md:py-3.5 rounded-full font-black text-[11px] 2xl:text-[14px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+                        <Link 
+                            to="/booking" 
+                            onClick={(e) => {
+                                if (location.pathname === '/' || location.pathname === '/home') {
+                                    const el = document.getElementById('book-appointment');
+                                    if (el) {
+                                        e.preventDefault();
+                                        el.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }
+                            }}
+                            className="px-5 xl:px-8 py-2 md:py-3.5 rounded-full font-black text-[11px] 2xl:text-[14px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap flex-shrink-0"
+                        >
                             Book Appointment <i className="fa-solid fa-calendar-check text-[15px]"></i>
                         </Link>
                     </div>
@@ -265,32 +347,58 @@ const Navbar = () => {
                                     <motion.div key={link.label} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + (i * 0.05) }}>
                                         {link.type === "dropdown" ? (
                                             <div className="space-y-1">
-                                                <button onClick={() => link.label === "Services" ? setMobileServicesOpen(!mobileServicesOpen) : setMobileGalleryOpen(!mobileGalleryOpen)} className="flex items-center justify-between w-full px-5 py-4 rounded-xl font-bold text-lg text-slate-600 hover:bg-slate-50">
-                                                    <div className="flex items-center gap-3"><i className={`fa-solid ${link.label === "Services" ? "fa-hand-holding-medical" : "fa-images"} opacity-50`}></i>{link.label}</div>
-                                                    <i className={`fa-solid fa-chevron-down text-sm transition-transform ${(link.label === "Services" ? mobileServicesOpen : mobileGalleryOpen) ? "rotate-180" : ""}`}></i>
+                                                <button onClick={() => {
+                                                    if (link.label === "Services") setMobileServicesOpen(!mobileServicesOpen);
+                                                    else if (link.label === "Exercises") setMobileExercisesOpen(!mobileExercisesOpen);
+                                                    else setMobileGalleryOpen(!mobileGalleryOpen);
+                                                }} className="flex items-center justify-between w-full px-5 py-4 rounded-xl font-bold text-lg text-slate-600 hover:bg-slate-50">
+                                                    <div className="flex items-center gap-3"><i className={`fa-solid ${link.label === "Services" ? "fa-hand-holding-medical" : link.label === "Exercises" ? "fa-person-running" : "fa-images"} opacity-50`}></i>{link.label}</div>
+                                                    <i className={`fa-solid fa-chevron-down text-sm transition-transform ${(link.label === "Services" ? mobileServicesOpen : link.label === "Exercises" ? mobileExercisesOpen : mobileGalleryOpen) ? "rotate-180" : ""}`}></i>
                                                 </button>
                                                 <AnimatePresence>
-                                                    {(link.label === "Services" ? mobileServicesOpen : mobileGalleryOpen) && (
+                                                    {((link.label === "Services" && mobileServicesOpen) || (link.label === "Exercises" && mobileExercisesOpen) || (link.label === "Gallery" && mobileGalleryOpen)) && (
                                                         <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} className="overflow-hidden pl-4 space-y-1 border-l-2 border-blue-50/50 my-2">
                                                             {link.label === "Services" ? (
                                                                 <>
                                                                     {services.slice(0, 10).map(s => (
-                                                                        <Link 
-                                                                            key={s._id} 
-                                                                            to={`/services?condition=${s.id}`} 
-                                                                            onClick={() => setIsOpen(false)} 
+                                                                        <Link
+                                                                            key={s._id}
+                                                                            to={`/services?condition=${s.id}`}
+                                                                            onClick={() => setIsOpen(false)}
                                                                             className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-500 font-semibold text-sm hover:text-blue-600 hover:bg-blue-50/50 transition-all"
                                                                         >
                                                                             <i className="fa-solid fa-notes-medical text-[10px] opacity-40"></i>
-                                                                            {s.title}
+                                                                            {s.title} <span className="ml-1 text-[10px] font-bold text-blue-600/50">({s.titleHi})</span>
                                                                         </Link>
                                                                     ))}
-                                                                    <Link 
-                                                                        to="/services" 
-                                                                        onClick={() => setIsOpen(false)} 
+                                                                    <Link
+                                                                        to="/services"
+                                                                        onClick={() => setIsOpen(false)}
                                                                         className="flex items-center justify-between px-5 py-4 rounded-xl text-blue-600 font-black text-[11px] uppercase tracking-[0.2em] bg-blue-50/50 mt-2 shadow-inner"
                                                                     >
                                                                         View All Expert Services
+                                                                         <i className="fa-solid fa-arrow-right-long"></i>
+                                                                    </Link>
+                                                                </>
+                                                            ) : link.label === "Exercises" ? (
+                                                                <>
+                                                                    {exercises.slice(0, 10).map(e => (
+                                                                        <Link
+                                                                            key={e._id}
+                                                                            to={`/exercises?id=${e.id}`}
+                                                                            onClick={() => setIsOpen(false)}
+                                                                            className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-500 font-semibold text-sm hover:text-emerald-600 hover:bg-emerald-50/50 transition-all"
+                                                                        >
+                                                                            <i className="fa-solid fa-person-running text-[10px] opacity-40"></i>
+                                                                            {e.title} <span className="ml-1 text-[10px] font-bold text-emerald-600/50">({e.hindi})</span>
+                                                                        </Link>
+                                                                    ))}
+                                                                    <Link
+                                                                        to="/exercises"
+                                                                        onClick={() => setIsOpen(false)}
+                                                                        className="flex items-center justify-between px-5 py-4 rounded-xl text-emerald-600 font-black text-[11px] uppercase tracking-[0.2em] bg-emerald-50/50 mt-2 shadow-inner"
+                                                                    >
+                                                                        View All Recovery Guides
                                                                         <i className="fa-solid fa-arrow-right-long"></i>
                                                                     </Link>
                                                                 </>

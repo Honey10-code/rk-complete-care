@@ -61,6 +61,17 @@ const appointmentSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    dob: {
+        type: Date
+    },
+    medications: [{
+        name: String,
+        timing: String,
+        dosage: String
+    }],
+    followUpDate: {
+        type: Date
+    },
     paymentStatus: {
         type: String,
         enum: ['Pending', 'Completed', 'Failed', 'N/A'],

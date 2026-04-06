@@ -14,7 +14,7 @@ const About = () => {
             </Helmet>
             <Navbar />
             
-            <section className="pt-32 pb-20 relative overflow-hidden bg-slate-50">
+            <section className="pt-16 pb-20 relative overflow-hidden bg-slate-50">
                 <div className="container mx-auto px-6">
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         {/* Clinic Image Section */}

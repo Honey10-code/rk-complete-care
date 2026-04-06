@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Services from '../components/Services';
 import Exercises from '../components/Exercises';
-import Doctors from '../components/Doctors';
 import Testimonials from '../components/Testimonials';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import BannerCarousel from '../components/BannerCarousel';
+import BookingSection from '../components/BookingSection';
 
 const stats = [
     { value: "5000+", label: "Patients Treated", icon: "fa-users" },
@@ -75,7 +75,7 @@ const Home = () => {
                                 <span className="block text-4xl md:text-5xl lg:text-[4.5rem] text-blue-700 mt-1">
                                     Physiotherapy Centre
                                 </span>
-                                <span className="block text-4xl md:text-2xl lg:text-[2.5rem] text-blue-700 mt-1">
+                                <span className="block text-2xl md:text-3xl lg:text-[2.5rem] text-blue-600 mt-1 font-bold">
                                     Where Recovery Begins
                                 </span>
                             </h1>
@@ -85,10 +85,18 @@ const Home = () => {
                             </p>
 
                             <div className="flex flex-wrap items-center gap-5">
-                                <button
+                                <a
+                                    href="#book-appointment"
+                                    onClick={(e) => {
+                                        const el = document.getElementById('book-appointment');
+                                        if (el) {
+                                            e.preventDefault();
+                                            el.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }}
                                     className="book-btn px-8 py-4 bg-slate-900 text-white rounded-full font-bold text-[15px] flex items-center gap-3 transition-all duration-300 hover:bg-blue-700 hover:shadow-[0_8px_25px_rgba(29,78,216,0.25)] hover:-translate-y-1 transform group">
                                     <i className="fa-solid fa-calendar-check text-blue-400 group-hover:text-white transition-colors"></i> Book Consultation
-                                </button>
+                                </a>
                                 <a href="#services"
                                     className="px-8 py-4 bg-white border border-slate-200 text-slate-700 rounded-full font-bold text-[15px] hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm transition-all duration-300 flex items-center gap-2 group">
                                     Our Services <i className="fa-solid fa-arrow-right text-slate-400 group-hover:translate-x-1 transition-all"></i>
@@ -128,13 +136,13 @@ const Home = () => {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                             </div>
-                            
+
                             {/* Decorative elements */}
                             <div className="absolute top-10 -right-6 w-24 h-24 bg-[radial-gradient(circle,_rgba(226,232,240,1)_1px,_transparent_1px)] bg-[length:8px_8px] -z-10"></div>
                             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-blue-100 rounded-full -z-10 blur-xl"></div>
 
                             {/* Glassmorphic Stats Float */}
-                            <motion.div 
+                            <motion.div
                                 initial={{ y: 20, opacity: 0 }}
                                 whileInView={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.6, duration: 0.5 }}
@@ -145,7 +153,7 @@ const Home = () => {
                                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm">
                                             <i className="fa-solid fa-ranking-star"></i>
                                         </div>
-                                        <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest leading-tight">Recovery<br/>Rate</p>
+                                        <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest leading-tight">Recovery<br />Rate</p>
                                     </div>
                                     <p className="font-black text-slate-900 text-3xl">98<span className="text-blue-600 text-xl">%</span></p>
                                 </div>
@@ -155,7 +163,7 @@ const Home = () => {
                                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm">
                                             <i className="fa-solid fa-clock-rotate-left"></i>
                                         </div>
-                                        <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest leading-tight">Years<br/>Active</p>
+                                        <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest leading-tight">Years<br />Active</p>
                                     </div>
                                     <p className="font-black text-slate-900 text-3xl">15<span className="text-blue-600 text-xl">+</span></p>
                                 </div>
@@ -173,8 +181,8 @@ const Home = () => {
                         <div className="absolute inset-0 bg-white/40 backdrop-blur-3xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/80"></div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 relative z-10 divide-x divide-slate-100">
                             {stats.map((stat, i) => (
-                                <motion.div 
-                                    key={i} 
+                                <motion.div
+                                    key={i}
                                     whileHover={{ scale: 1.05 }}
                                     className="flex flex-col items-center text-center px-4"
                                 >
@@ -204,12 +212,12 @@ const Home = () => {
             <section className="py-24 bg-slate-50 border-b border-slate-100 relative">
                 {/* Decorative mesh */}
                 <div className="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-                
+
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="grid md:grid-cols-3 gap-8">
                         {/* Services Teaser */}
-                        <motion.div 
-                            whileHover={{ y: -10 }} 
+                        <motion.div
+                            whileHover={{ y: -10 }}
                             className="bg-white p-10 rounded-[2rem] border border-slate-100/80 shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex flex-col items-center text-center group transition-all duration-500 relative overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[100px] -z-10 transition-all duration-500 group-hover:bg-blue-600"></div>
@@ -224,8 +232,8 @@ const Home = () => {
                         </motion.div>
 
                         {/* Doctors Teaser */}
-                        <motion.div 
-                            whileHover={{ y: -10 }} 
+                        <motion.div
+                            whileHover={{ y: -10 }}
                             className="bg-white p-10 rounded-[2rem] border border-slate-100/80 shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex flex-col items-center text-center group transition-all duration-500 relative overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[100px] -z-10 transition-all duration-500 group-hover:bg-indigo-600"></div>
@@ -240,8 +248,8 @@ const Home = () => {
                         </motion.div>
 
                         {/* Exercises Teaser */}
-                        <motion.div 
-                            whileHover={{ y: -10 }} 
+                        <motion.div
+                            whileHover={{ y: -10 }}
                             className="bg-white p-10 rounded-[2rem] border border-slate-100/80 shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex flex-col items-center text-center group transition-all duration-500 relative overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[100px] -z-10 transition-all duration-500 group-hover:bg-emerald-500"></div>
@@ -277,7 +285,7 @@ const Home = () => {
 
                     <div className="mt-16 text-center">
                         <Link to="/services" className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-slate-200 group">
-                            Explore All Services 
+                            Explore All Services
                             <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </Link>
                     </div>
@@ -295,7 +303,7 @@ const Home = () => {
                             Featured Clinical <span className="text-blue-700">Recovery Guides</span>
                         </h2>
                         <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
-                            Access our most effective home-based protocols designed by our expert physiotherapists.
+                            Access our most effective home-based protocols designed by our physiotherapists.
                         </p>
                     </div>
 
@@ -303,7 +311,7 @@ const Home = () => {
 
                     <div className="mt-16 text-center">
                         <Link to="/exercises" className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-slate-200 group">
-                            Explore All Exercises 
+                            Explore All Exercises
                             <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </Link>
                     </div>
@@ -311,6 +319,7 @@ const Home = () => {
             </section>
 
             <Testimonials />
+            <BookingSection />
             <Contact />
             <Footer />
         </>

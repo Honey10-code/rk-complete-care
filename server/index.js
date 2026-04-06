@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const { Server } = require('socket.io');
+const { initScheduler } = require('./utils/scheduler');
 require('dotenv').config();
 
 // Ensure uploads directory exists
@@ -17,6 +20,31 @@ const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
+const server = http.createServer(app);
+
+// ✅ Socket.io Setup
+const io = new Server(server, {
+    cors: {
+        origin: "*", // allow all for dev
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log(`🔌 New client connected: ${socket.id}`);
+
+    socket.on('join-admin-room', () => {
+        socket.join('admin-room');
+        console.log(`🛡️  Admin joined room: ${socket.id}`);
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`🔌 Client disconnected: ${socket.id}`);
+    });
+});
+
+// Make io accessible to routes
+app.set('io', io);
 
 // ENV
 const PORT = process.env.PORT || 5001;
@@ -41,6 +69,7 @@ mongoose.connect(MONGO_URI)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/doctors', require('./routes/doctors'));
 app.use('/api/appointments', require('./routes/appointments'));
+app.use('/api/broadcasts', require('./routes/broadcast'));
 app.use('/api/banners', require('./routes/banners'));
 app.use('/api/testimonials', require('./routes/testimonials'));
 app.use('/api/clinic-info', require('./routes/clinicInfo'));
@@ -80,6 +109,7 @@ process.on("unhandledRejection", (err) => {
 });
 
 // 🚀 Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} with Socket.io 지원 ✨`);
+  initScheduler(app); // Initialize background tasks
 });
