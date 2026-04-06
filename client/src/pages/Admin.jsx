@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import api, { getAppointments, patchAppointment, deleteAppointment, getDoctors, postDoctor, deleteDoctor, getTestimonials, postTestimonial, deleteTestimonial, getClinicInfo, postClinicInfo, getBanners, postBanner } from "../services/api";
+import logo from "../assets/images/LOGO.png";
+import api, {
+    getAppointments, patchAppointment, deleteAppointment,
+    getDoctors, postDoctor, deleteDoctor,
+    getTestimonials, postTestimonial, deleteTestimonial,
+    getClinicInfo, postClinicInfo,
+    getBanners, postBanner,
+    getServices, postService, updateService, deleteService,
+    getExercises, postExercise, updateExercise, deleteExercise
+} from "../services/api";
 
 // ─── Toast System ────────────────────────────────────────────────────────────
 const Toast = ({ toasts, removeToast }) => (
@@ -404,6 +413,36 @@ const Admin = () => {
         } catch { addToast("Error", "error"); }
     };
 
+    // ── Videos Management ──────────────────────────────────────────────────
+    const [videos, setVideos] = useState([]);
+    const [newVideo, setNewVideo] = useState({ title: "", videoUrl: "", category: "General" });
+    const fetchVideos = async () => {
+        try {
+            const r = await api.get(`/videos`);
+            setVideos(Array.isArray(r.data) ? r.data : []);
+        } catch { setVideos([]); }
+    };
+    useEffect(() => { if (activeTab === "videos") fetchVideos(); }, [activeTab]);
+
+    const handleVideoSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post(`/videos`, newVideo);
+            setNewVideo({ title: "", videoUrl: "", category: "General" });
+            fetchVideos();
+            addToast("Video added successfully!", "success");
+        } catch { addToast("Error adding video", "error"); }
+    };
+
+    const handleDeleteVideo = async (id) => {
+        if (!window.confirm("Delete this video?")) return;
+        try {
+            await api.delete(`/videos/${id}`);
+            fetchVideos();
+            addToast("Video deleted", "success");
+        } catch { addToast("Error", "error"); }
+    };
+
     // ── Contact Messages ────────────────────────────────────────────────────────
     const [messages, setMessages] = useState([]);
     const fetchMessages = async () => {
@@ -434,16 +473,96 @@ const Admin = () => {
         } catch { addToast("Error", "error"); }
     };
 
+
+    // ── Services ──────────────────────────────────────────────────────────────
+    const [services, setServices] = useState([]);
+    const [newService, setNewService] = useState({ title: "", titleHi: "", id: "", icon: "fa-stethoscope", tagline: "", desc: "", content: "" });
+    const [serviceUploadType, setServiceUploadType] = useState("url");
+    const [serviceFile, setServiceFile] = useState(null);
+    const [editingService, setEditingService] = useState(null);
+
+    const fetchServices = async () => { try { const r = await api.get(`/services`); setServices(Array.isArray(r.data) ? r.data : []); } catch { setServices([]); } };
+    useEffect(() => { if (activeTab === "services") fetchServices(); }, [activeTab]);
+
+    const handleServiceSubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData();
+        ["title", "titleHi", "id", "icon", "tagline", "desc", "content"].forEach(k => fd.append(k, editingService ? editingService[k] : newService[k]));
+        if (serviceUploadType === "url") fd.append("imageUrl", editingService ? editingService.image : newService.imageUrl);
+        else if (serviceFile) fd.append("image", serviceFile);
+
+        try {
+            if (editingService) {
+                await updateService(editingService._id, fd);
+                addToast("Service updated!", "success");
+            } else {
+                await postService(fd);
+                addToast("Service added!", "success");
+            }
+            setNewService({ title: "", titleHi: "", id: "", icon: "fa-stethoscope", tagline: "", desc: "", content: "" });
+            setEditingService(null);
+            setServiceFile(null);
+            fetchServices();
+        } catch { addToast("Error saving service", "error"); }
+    };
+
+    const handleDeleteService = async (id) => {
+        if (!window.confirm("Delete this service?")) return;
+        try { await deleteService(id); fetchServices(); addToast("Service deleted", "success"); }
+        catch { addToast("Error deleting service", "error"); }
+    };
+
+    // ── Exercises ─────────────────────────────────────────────────────────────
+    const [exercises, setExercises] = useState([]);
+    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running", fullDetails: "" });
+    const [exerciseUploadType, setExerciseUploadType] = useState("url");
+    const [exerciseFile, setExerciseFile] = useState(null);
+    const [editingExercise, setEditingExercise] = useState(null);
+
+    const fetchExercises = async () => { try { const r = await api.get(`/exercises`); setExercises(Array.isArray(r.data) ? r.data : []); } catch { setExercises([]); } };
+    useEffect(() => { if (activeTab === "exercises") fetchExercises(); }, [activeTab]);
+
+    const handleExerciseSubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData();
+        ["title", "hindi", "id", "icon", "fullDetails"].forEach(k => fd.append(k, editingExercise ? editingExercise[k] : newExercise[k]));
+        if (exerciseUploadType === "url") fd.append("imageUrl", editingExercise ? editingExercise.image : newExercise.imageUrl);
+        else if (exerciseFile) fd.append("image", exerciseFile);
+
+        try {
+            if (editingExercise) {
+                await updateExercise(editingExercise._id, fd);
+                addToast("Exercise updated!", "success");
+            } else {
+                await postExercise(fd);
+                addToast("Exercise added!", "success");
+            }
+            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running", fullDetails: "" });
+            setEditingExercise(null);
+            setExerciseFile(null);
+            fetchExercises();
+        } catch { addToast("Error saving exercise", "error"); }
+    };
+
+    const handleDeleteExercise = async (id) => {
+        if (!window.confirm("Delete this exercise?")) return;
+        try { await deleteExercise(id); fetchExercises(); addToast("Exercise deleted", "success"); }
+        catch { addToast("Error deleting exercise", "error"); }
+    };
+
     const unreadMessagesCount = messages.filter(m => m.status === 'Unread').length;
 
     const navItems = [
         { id: "appointments", icon: "fa-calendar-check", label: "Appointments", badge: stats.pending > 0 ? stats.pending : null },
         { id: "patients", icon: "fa-users", label: "Patients" },
         { id: "messages", icon: "fa-envelope", label: "Messages", badge: unreadMessagesCount > 0 ? unreadMessagesCount : null },
+        { id: "services", icon: "fa-stethoscope", label: "Services" },
+        { id: "exercises", icon: "fa-person-running", label: "Exercises" },
         { id: "reports", icon: "fa-chart-pie", label: "Reports" },
         { id: "stories", icon: "fa-heart-pulse", label: "Patient Stories" },
         { id: "gallery", icon: "fa-photo-film", label: "Gallery" },
-        { id: "posters", icon: "fa-image", label: "Clinic Posters" },
+        { id: "videos", icon: "fa-circle-play", label: "Videos" },
+        { id: "posters", icon: "fa-image", label: "Blogs" },
         { id: "banners", icon: "fa-images", label: "Banners" },
         { id: "doctors", icon: "fa-user-doctor", label: "Doctors" },
         { id: "testimonials", icon: "fa-star", label: "Testimonials" },
@@ -486,13 +605,13 @@ const Admin = () => {
 
             {/* ── Sidebar ── */}
             <aside className={`w-64 flex-shrink-0 bg-[#0f172a] text-white flex flex-col shadow-2xl z-40 fixed inset-y-0 left-0 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} border-r border-slate-800`}>
-                <div className="p-6 border-b border-slate-800">
+                <div className="p-5 border-b border-slate-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg">
-                            <i className="fa-solid fa-staff-snake text-white text-lg"></i>
+                        <div className="relative w-11 h-11 rounded-full bg-white border-2 border-blue-500/50 shadow-lg shrink-0 overflow-hidden flex items-center justify-center">
+                            <img src={logo} alt="RK" className="w-10 h-10 object-contain" />
                         </div>
                         <div>
-                            <p className="text-xs font-black text-white leading-tight uppercase tracking-wider">RK CARE</p>
+                            <p className="text-xs font-black text-white leading-tight">RK CARE</p>
                             <p className="text-[10px] font-black text-blue-500 leading-tight">MANAGEMENT</p>
                         </div>
                     </div>
@@ -810,6 +929,187 @@ const Admin = () => {
                         )
                     }
 
+                    {/* ── Services Tab ── */}
+                    {
+                        activeTab === "services" && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                                    <h2 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
+                                        <i className="fa-solid fa-plus-circle text-blue-600"></i>
+                                        {editingService ? "Edit Service" : "Add New Service"}
+                                    </h2>
+                                    <form onSubmit={handleServiceSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Title (English)</label>
+                                            <input type="text" placeholder="Neck Pain" value={editingService ? editingService.title : newService.title} onChange={e => editingService ? setEditingService({ ...editingService, title: e.target.value }) : setNewService({ ...newService, title: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Title (Hindi)</label>
+                                            <input type="text" placeholder="गर्दन का दर्द" value={editingService ? editingService.titleHi : newService.titleHi} onChange={e => editingService ? setEditingService({ ...editingService, titleHi: e.target.value }) : setNewService({ ...newService, titleHi: e.target.value })} className={inp} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Slug/ID (URL)</label>
+                                            <input type="text" placeholder="neck-pain" value={editingService ? editingService.id : newService.id} onChange={e => editingService ? setEditingService({ ...editingService, id: e.target.value }) : setNewService({ ...newService, id: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">FontAwesome Icon</label>
+                                            <input type="text" placeholder="fa-user-doctor" value={editingService ? editingService.icon : newService.icon} onChange={e => editingService ? setEditingService({ ...editingService, icon: e.target.value }) : setNewService({ ...newService, icon: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tagline</label>
+                                            <input type="text" placeholder="Cervical Spondylosis" value={editingService ? editingService.tagline : newService.tagline} onChange={e => editingService ? setEditingService({ ...editingService, tagline: e.target.value }) : setNewService({ ...newService, tagline: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Short Desc (Grid)</label>
+                                            <input type="text" placeholder="Relieve chronic neck stiffness..." value={editingService ? editingService.desc : newService.desc} onChange={e => editingService ? setEditingService({ ...editingService, desc: e.target.value }) : setNewService({ ...newService, desc: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="md:col-span-2 lg:col-span-3 space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Details Content (Paragraphs)</label>
+                                            <textarea rows="4" placeholder="Enter service details. Use new lines for separate paragraphs." value={editingService ? (Array.isArray(editingService.content) ? editingService.content.join('\n') : editingService.content) : (Array.isArray(newService.content) ? newService.content.join('\n') : newService.content)} onChange={e => {
+                                                const lines = e.target.value.split('\n');
+                                                editingService ? setEditingService({ ...editingService, content: lines }) : setNewService({ ...newService, content: lines })
+                                            }} className={inp} required></textarea>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image Upload</label>
+                                            <div className="flex gap-2">
+                                                <select value={serviceUploadType} onChange={e => setServiceUploadType(e.target.value)} className="px-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none">
+                                                    <option value="url">URL</option>
+                                                    <option value="file">File</option>
+                                                </select>
+                                                {serviceUploadType === "url" ? (
+                                                    <input type="text" placeholder="Image URL" value={editingService ? editingService.image : newService.imageUrl} onChange={e => editingService ? setEditingService({ ...editingService, image: e.target.value }) : setNewService({ ...newService, imageUrl: e.target.value })} className={inp} />
+                                                ) : (
+                                                    <input type="file" onChange={e => setServiceFile(e.target.files[0])} className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
+                                            {editingService && (
+                                                <button type="button" onClick={() => { setEditingService(null); setServiceFile(null); }} className="px-6 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">Cancel</button>
+                                            )}
+                                            <button type="submit" className="px-8 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all">
+                                                {editingService ? "Update Service" : "Add Service"}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="p-5 border-b border-slate-100">
+                                        <h2 className="font-black text-slate-800">Current Services <span className="ml-2 text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{services.length}</span></h2>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+                                        {services.map(s => (
+                                            <div key={s._id} className="group relative bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
+                                                <div className="h-32 relative">
+                                                    <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                                                    <div className="absolute bottom-2 left-3">
+                                                        <p className="text-white font-black text-sm">{s.title}</p>
+                                                        <p className="text-blue-300 text-[10px] font-bold uppercase tracking-widest">{s.id}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3">
+                                                    <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">{s.desc}</p>
+                                                    <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
+                                                        <button onClick={() => { setEditingService({ ...s }); setServiceUploadType("url"); }} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all"><i className="fa-solid fa-pen text-xs"></i></button>
+                                                        <button onClick={() => handleDeleteService(s._id)} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-rose-600 flex items-center justify-center transition-all"><i className="fa-solid fa-trash text-xs"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {/* ── Exercises Tab ── */}
+                    {
+                        activeTab === "exercises" && (
+                            <div className="space-y-6">
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                                    <h2 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
+                                        <i className="fa-solid fa-plus-circle text-emerald-600"></i>
+                                        {editingExercise ? "Edit Exercise" : "Add New Exercise"}
+                                    </h2>
+                                    <form onSubmit={handleExerciseSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Title</label>
+                                            <input type="text" placeholder="Neck Stretch" value={editingExercise ? editingExercise.title : newExercise.title} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, title: e.target.value }) : setNewExercise({ ...newExercise, title: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hindi Label</label>
+                                            <input type="text" placeholder="(गर्दन का व्यायाम)" value={editingExercise ? editingExercise.hindi : newExercise.hindi} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, hindi: e.target.value }) : setNewExercise({ ...newExercise, hindi: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Slug/ID</label>
+                                            <input type="text" placeholder="neck-stretch" value={editingExercise ? editingExercise.id : newExercise.id} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, id: e.target.value }) : setNewExercise({ ...newExercise, id: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">FontAwesome Icon</label>
+                                            <input type="text" placeholder="fa-person-running" value={editingExercise ? editingExercise.icon : newExercise.icon} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, icon: e.target.value }) : setNewExercise({ ...newExercise, icon: e.target.value })} className={inp} required />
+                                        </div>
+                                        <div className="md:col-span-2 lg:col-span-3 space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Protocol Details</label>
+                                            <textarea rows="4" placeholder="Enter step-by-step instructions..." value={editingExercise ? editingExercise.fullDetails : newExercise.fullDetails} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, fullDetails: e.target.value }) : setNewExercise({ ...newExercise, fullDetails: e.target.value })} className={inp} required></textarea>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image Upload</label>
+                                            <div className="flex gap-2">
+                                                <select value={exerciseUploadType} onChange={e => setExerciseUploadType(e.target.value)} className="px-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none">
+                                                    <option value="url">URL</option>
+                                                    <option value="file">File</option>
+                                                </select>
+                                                {exerciseUploadType === "url" ? (
+                                                    <input type="text" placeholder="Image URL" value={editingExercise ? editingExercise.image : newExercise.imageUrl} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, image: e.target.value }) : setNewExercise({ ...newExercise, imageUrl: e.target.value })} className={inp} />
+                                                ) : (
+                                                    <input type="file" onChange={e => setExerciseFile(e.target.files[0])} className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
+                                            {editingExercise && (
+                                                <button type="button" onClick={() => { setEditingExercise(null); setExerciseFile(null); }} className="px-6 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">Cancel</button>
+                                            )}
+                                            <button type="submit" className="px-8 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-emerald-700 transition-all">
+                                                {editingExercise ? "Update Exercise" : "Add Exercise"}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="p-5 border-b border-slate-100">
+                                        <h2 className="font-black text-slate-800">Current Exercises <span className="ml-2 text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{exercises.length}</span></h2>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+                                        {exercises.map(ex => (
+                                            <div key={ex._id} className="group relative bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
+                                                <div className="h-32 relative">
+                                                    <img src={ex.image} alt={ex.title} className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                                                    <div className="absolute bottom-2 left-3">
+                                                        <p className="text-white font-black text-sm">{ex.title}</p>
+                                                        <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest">{ex.id}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3">
+                                                    <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">{ex.fullDetails}</p>
+                                                    <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
+                                                        <button onClick={() => { setEditingExercise({ ...ex }); setExerciseUploadType("url"); }} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-emerald-600 flex items-center justify-center transition-all"><i className="fa-solid fa-pen text-xs"></i></button>
+                                                        <button onClick={() => handleDeleteExercise(ex._id)} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-rose-600 flex items-center justify-center transition-all"><i className="fa-solid fa-trash text-xs"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+
                     {/* ── Reports Tab ── */}
                     {
                         activeTab === "reports" && (
@@ -1021,6 +1321,88 @@ const Admin = () => {
                                         </div>
                                     ))}
                                     {galleryImages.length === 0 && <div className="col-span-full py-16 text-center text-slate-400"><i className="fa-solid fa-camera text-4xl mb-3 block opacity-30"></i><p className="font-semibold">No gallery images yet</p></div>}
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {/* ── Videos Tab ── */}
+                    {
+                        activeTab === "videos" && (
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h2 className="text-xl font-black text-slate-800">Video Gallery</h2>
+                                        <p className="text-sm text-slate-400 mt-0.5">Manage clinical and informational videos</p>
+                                    </div>
+                                    <a href="/gallery?tab=videos" target="_blank" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-colors">
+                                        <i className="fa-solid fa-arrow-up-right-from-square text-xs"></i> View Gallery
+                                    </a>
+                                </div>
+
+                                {/* Add Video Form */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                                    <h3 className="font-black text-slate-800 mb-5 flex items-center gap-2 text-base">
+                                        <span className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i className="fa-solid fa-plus"></i></span>
+                                        Add New Video
+                                    </h3>
+                                    <form onSubmit={handleVideoSubmit} className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Video Title *</label>
+                                                <input required type="text" placeholder="e.g. Spine Recovery Exercises" value={newVideo.title} onChange={e => setNewVideo({ ...newVideo, title: e.target.value })} className={inp} />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
+                                                <select value={newVideo.category} onChange={e => setNewVideo({ ...newVideo, category: e.target.value })} className={inp}>
+                                                    <option value="General">General</option>
+                                                    <option value="Clinical">Clinical</option>
+                                                    <option value="Tutorial">Tutorial</option>
+                                                    <option value="Success Stories">Success Stories</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Video URL (YouTube/Vimeo) *</label>
+                                            <div className="relative">
+                                                <i className="fa-solid fa-link absolute left-3 top-3.5 text-slate-400 text-xs"></i>
+                                                <input required type="url" placeholder="https://www.youtube.com/watch?v=..." value={newVideo.videoUrl} onChange={e => setNewVideo({ ...newVideo, videoUrl: e.target.value })} className={`${inp} pl-9`} />
+                                            </div>
+                                            <p className="text-[10px] text-slate-400 mt-1 font-medium italic">Paste the full URL from your browser address bar.</p>
+                                        </div>
+                                        <div className="flex justify-end">
+                                            <button type="submit" className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-sm shadow-md hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
+                                                <i className="fa-solid fa-circle-play mr-2"></i>Add Video
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {/* Videos List */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                    {(Array.isArray(videos) ? videos : []).map(video => (
+                                        <div key={video._id} className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
+                                            <div className="relative aspect-video bg-slate-900 flex items-center justify-center">
+                                                <i className="fa-solid fa-circle-play text-4xl text-white/20 group-hover:text-blue-500 transition-colors"></i>
+                                                <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <button onClick={() => handleDeleteVideo(video._id)} className="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transform scale-90 group-hover:scale-100 transition-all shadow-lg">
+                                                        <i className="fa-solid fa-trash text-sm"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="p-4">
+                                                <span className="bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full mb-2 inline-block">{video.category}</span>
+                                                <h4 className="font-bold text-slate-800 text-sm line-clamp-1">{video.title}</h4>
+                                                <p className="text-[10px] text-slate-400 mt-1 truncate">{video.videoUrl}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {videos.length === 0 && (
+                                        <div className="col-span-full py-20 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
+                                            <i className="fa-solid fa-film text-4xl mb-3 block opacity-30"></i>
+                                            <p className="font-semibold italic">No videos added yet</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )
@@ -1378,8 +1760,8 @@ const Admin = () => {
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h2 className="text-xl font-black text-slate-800">Clinic Posters</h2>
-                                        <p className="text-sm text-slate-400 mt-0.5">Upload and manage clinic promotional posters</p>
+                                        <h2 className="text-xl font-black text-slate-800">Blogs</h2>
+                                        <p className="text-sm text-slate-400 mt-0.5">Upload and manage clinic blogs</p>
                                     </div>
                                     <a href="/clinic-posters" target="_blank" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-colors">
                                         <i className="fa-solid fa-arrow-up-right-from-square text-xs"></i> View Public Page
@@ -1390,7 +1772,7 @@ const Admin = () => {
                                 <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                                     <h3 className="font-black text-slate-800 mb-5 flex items-center gap-2 text-base">
                                         <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i className="fa-solid fa-upload"></i></span>
-                                        Upload New Poster
+                                        Upload New Blog
                                     </h3>
                                     <form onSubmit={handlePosterSubmit} className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

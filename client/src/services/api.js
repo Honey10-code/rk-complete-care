@@ -32,12 +32,16 @@ const safeObject = (res) => {
 };
 
 // ✅ APIs
+// ✅ APIs
 export const getDoctors = () => api.get("/doctors").then(safeArray);
 export const getBanners = () => api.get("/banners").then(safeArray);
 export const getTestimonials = () => api.get("/testimonials").then(safeArray);
 export const getPatientStories = () => api.get("/patient-stories").then(safeArray);
 export const getClinicInfo = () => api.get("/clinic-info").then(safeObject);
 export const getClinicPosters = () => api.get("/clinic-posters").then(safeArray);
+export const getServices = () => api.get("/services").then(safeArray);
+export const getExercises = () => api.get("/exercises").then(safeArray);
+export const getGalleryImages = () => api.get("/gallery").then(safeArray);
 export const bookAppointment = (data) => api.post("/appointments", data).then(safeObject);
 export const getBookedSlots = (date) => api.get(`/appointments/booked-slots?date=${date}`).then(safeObject);
 export const createPaymentOrder = (data) => api.post("/payment/create-order", data).then(safeObject);
@@ -65,14 +69,26 @@ export const deletePatientStory = (id) => api.delete(`/patient-stories/${id}`).t
 export const postClinicPoster = (fd) => api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
 export const deleteClinicPoster = (id) => api.delete(`/clinic-posters/${id}`).then(safeObject);
 
-export const getGalleryImages = () => api.get("/gallery").then(safeArray);
 export const postGalleryImage = (fd) => api.post(`/gallery`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
 export const deleteGalleryImage = (id) => api.delete(`/gallery/${id}`).then(safeObject);
+
+export const postService = (fd) => api.post(`/services`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const updateService = (id, fd) => api.put(`/services/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deleteService = (id) => api.delete(`/services/${id}`).then(safeObject);
+
+export const postExercise = (fd) => api.post(`/exercises`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const updateExercise = (id, fd) => api.put(`/exercises/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const deleteExercise = (id) => api.delete(`/exercises/${id}`).then(safeObject);
 
 // Contact APIs
 export const submitContactMessage = (data) => api.post("/contacts", data).then(safeObject);
 export const getContactMessages = () => api.get("/contacts").then(safeArray);
 export const deleteContactMessage = (id) => api.delete(`/contacts/${id}`).then(safeObject);
 export const markContactRead = (id) => api.patch(`/contacts/${id}/read`).then(safeObject);
+
+// Video APIs
+export const getVideos = () => api.get("/videos").then(safeArray);
+export const postVideo = (data) => api.post("/videos", data).then(safeObject);
+export const deleteVideo = (id) => api.delete(`/videos/${id}`).then(safeObject);
 
 export default api;

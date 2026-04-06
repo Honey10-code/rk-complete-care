@@ -33,6 +33,8 @@ const Booking = () => {
     const [slotDropdownOpen, setSlotDropdownOpen] = useState(false);
 
     // Fetch booked slots when date changes
+    const today = new Date().toISOString().split('T')[0];
+
     React.useEffect(() => {
         if (formData.date) {
             getBookedSlots(formData.date)
@@ -337,6 +339,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                             name="date"
                                             value={formData.date}
                                             onChange={handleChange}
+                                            min={today}
                                             className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-blue focus:ring-4 focus:ring-blue-50 transition-all bg-white/70 hover:bg-white"
                                         />
                                     </div>

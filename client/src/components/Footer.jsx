@@ -42,8 +42,15 @@ const Footer = () => {
 
                         {/* Column 1: Brand */}
                         <div>
-                            <div className="mb-6 bg-white p-2 rounded-lg inline-block">
-                                <img src={logo} alt="RK The Complete Care" className="h-10 w-auto object-contain" />
+                            <div className="mb-6 flex items-center gap-3">
+                                <div className="relative p-1.5 rounded-full bg-white border-2 border-blue-600/30 shadow-lg shrink-0 overflow-hidden w-16 h-16 flex items-center justify-center">
+                                    <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-green-400/10 pointer-events-none" />
+                                    <img src={logo} alt="RK The Complete Care" className="w-full h-full object-cover scale-[1.35]" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-white font-black text-sm leading-tight">RK The Complete Care</span>
+                                    <span className="text-blue-400 text-[9px] font-bold uppercase tracking-widest">Where Recovery Begins</span>
+                                </div>
                             </div>
                             <p className="text-slate-400 mb-6 leading-relaxed text-sm">
                                 Dedicated to your recovery. Experience professional, personalized physiotherapy care for a better, pain-free life.
@@ -79,17 +86,22 @@ const Footer = () => {
                             </ul>
                         </div>
 
-                        {/* Column 3: Treatments */}
+                        {/* Column 3: Physiotherapy Treatments */}
                         <div>
-                            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-6">
-                                Our Treatments
+                            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <i className="fa-solid fa-stethoscope text-blue-500 text-xs"></i>
+                                Physiotherapy
                             </h3>
-                            <ul className="space-y-3">
-                                {['Sports Injury', 'Back & Neck Pain', 'Knee Pain', 'Slip Disc', 'Paralysis Rehab', 'Post Surgery'].map(t => (
+                            <ul className="grid grid-cols-2 gap-x-3 gap-y-2">
+                                {[
+                                    'Neck Pain', 'Back Pain', 'Knee Pain', 'Shoulder Pain',
+                                    'Frozen Shoulder', 'Slip/Herniated Disc', 'Sciatica', 'Ankle Pain',
+                                    'Rheumatoid Arthritis', 'Sports Rehab', 'Tennis Elbow', 'Vertigo', 'Osteoporosis'
+                                ].map(t => (
                                     <li key={t}>
-                                        <a href="#services"
-                                            className="text-slate-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2">
-                                            <i className="fa-solid fa-chevron-right text-[10px] text-blue-500/50"></i>
+                                        <a href="/services"
+                                            className="text-slate-400 hover:text-blue-400 transition-colors text-xs flex items-center gap-1.5 leading-snug">
+                                            <i className="fa-solid fa-chevron-right text-[9px] text-blue-500/50 shrink-0"></i>
                                             {t}
                                         </a>
                                     </li>

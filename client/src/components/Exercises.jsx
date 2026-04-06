@@ -1,76 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const exercises = [
-    { 
-        id: 'neck-stretch',
-        title: 'Neck Stretch', 
-        hindi: '(गर्दन का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop',
-        icon: 'fa-user-nurse',
-        fullDetails: 'Perform this stretch slowly to relieve tension in the cervical spine. Sit straight, gently tilt your right ear toward your right shoulder using your hand for light pressure. Hold for 30 seconds. Switch sides. This effectively combats "text neck" and poor posture-induced stiffness.'
-    },
-    { 
-        id: 'shoulder-rotation',
-        title: 'Shoulder Rotation', 
-        hindi: '(कंधे का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop',
-        icon: 'fa-dumbbell',
-        fullDetails: 'Essential for maintaining rotator cuff health and scapular mobility. Keep your arms relaxed at your sides. Slowly roll your shoulders up, back, down, and forward in smooth, large circles. Perform 10 backward rotations, then 10 forward rotations to lubricate the shoulder joint.'
-    },
-    { 
-        id: 'back-stretch',
-        title: 'Back Stretch', 
-        hindi: '(पीठ का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1600881333168-2ef49b341f30?q=80&w=2070&auto=format&fit=crop',
-        icon: 'fa-child-reaching',
-        fullDetails: 'The Child’s Pose (Balasana) is highly recommended for lower back decompression. Kneel on the floor, toes together, knees apart. Sit on your heels and walk your hands forward until your forehead touches the floor. Breathe deeply into your lower back and hold for 1 minute.'
-    },
-    { 
-        id: 'knee-bending',
-        title: 'Knee Bending', 
-        hindi: '(घुटने का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?q=80&w=2052&auto=format&fit=crop',
-        icon: 'fa-bed',
-        fullDetails: 'Critical for post-op knee recovery or arthritis management (Heel Slides). Lie flat on your back or sit straight. Slowly slide your heel toward your glutes, bending your knee as far as comfortably possible. Hold for 5 seconds, then slowly straighten. Repeat 15 times per leg.'
-    },
-    { 
-        id: 'ankle-rotation',
-        title: 'Ankle Rotation', 
-        hindi: '(टखने का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1598136490941-30d885318abd?q=80&w=2069&auto=format&fit=crop',
-        icon: 'fa-shoe-prints',
-        fullDetails: 'Improves proprioception and joint mobility. Lift your foot slightly off the floor. Draw a large, slow circle in the air with your big toe. Make 10 clockwise circles, followed by 10 counter-clockwise circles. This is excellent for recovering from sprains or prolonged immobilization.'
-    },
-    { 
-        id: 'leg-raise',
-        title: 'Leg Raise', 
-        hindi: '(पैर उठाने का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=2069&auto=format&fit=crop',
-        icon: 'fa-arrows-up-to-line',
-        fullDetails: 'The Straight Leg Raise (SLR) is a fundamental isometric exercise for strengthening the quadriceps without stressing the knee joint. Lie on your back, keep one knee bent and the other straight. Tighten the thigh muscle of the straight leg and lift it about 12 inches. Hold for 5 seconds, lower slowly. Do 15 reps.'
-    },
-    { 
-        id: 'bridging',
-        title: 'Bridging', 
-        hindi: '(कमर उठाने का व्यायाम)', 
-        image: 'https://images.unsplash.com/photo-1544367563-12123d8d5e58?q=80&w=2070&auto=format&fit=crop',
-        icon: 'fa-mattress',
-        fullDetails: 'Core and glute activation work designed to stabilize the lumbar spine. Lie on your back with arms at your sides, knees bent, and feet flat on the floor. Squeeze your glute roots and lift your hips until your body forms a straight line from your shoulders to knees. Hold for 5 seconds, lower with control. Perform 12 reps.'
-    },
-    { 
-        id: 'squat',
-        title: 'Squat', 
-        hindi: '(उठक-बैठक)', 
-        image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=2069&auto=format&fit=crop',
-        icon: 'fa-person-arrow-down-to-line',
-        fullDetails: 'Functional lower-body strengthening. From a standing position (feet shoulder-width apart), initiate the movement by pushing your hips back as if sitting in a chair. Keep your chest up and knees behind your toes. Descend to a manageable depth, then drive through your heels to stand up. Repeat 10-15 times.'
-    },
-];
+import { getExercises } from '../services/api';
 
 const Exercises = ({ limit, isHomePage = false }) => {
-    const displayedExercises = limit ? exercises.slice(0, limit) : exercises;
+    const [exercises, setExercises] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [selectedExercise, setSelectedExercise] = useState(null);
+
+    useEffect(() => {
+        const fetchExercises = async () => {
+            try {
+                const data = await getExercises();
+                setExercises(data);
+            } catch (err) {
+                console.error("Error fetching exercises:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchExercises();
+    }, []);
+
+    const displayedExercises = limit ? exercises.slice(0, limit) : exercises;
 
     // Prevent scrolling when modal is open
     useEffect(() => {
@@ -83,6 +34,14 @@ const Exercises = ({ limit, isHomePage = false }) => {
             document.body.style.overflow = 'unset';
         };
     }, [selectedExercise]);
+
+    if (loading && !isHomePage) {
+        return (
+            <div className="py-24 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+            </div>
+        );
+    }
 
     return (
         <section id="exercises" className={`py-24 relative overflow-hidden ${isHomePage ? 'bg-white' : 'bg-slate-50'}`}>

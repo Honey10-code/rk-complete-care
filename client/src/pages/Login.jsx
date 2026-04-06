@@ -50,8 +50,11 @@ const Login = () => {
 
                     {/* Logo & Branding */}
                     <div className="text-center mb-8">
-                        <div className="inline-flex p-4 bg-white/10 rounded-3xl mb-4 border border-white/10 shadow-inner">
-                            <img src={logo} alt="RK Healthcare" className="h-12 w-auto drop-shadow-lg" />
+                        <div className="inline-flex items-center justify-center p-3 bg-white/15 rounded-full mb-4 border-2 border-white/20 shadow-2xl relative">
+                            <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-300/20 via-transparent to-green-300/20 pointer-events-none" />
+                            <div className="p-2 bg-white rounded-full shadow-lg">
+                                <img src={logo} alt="RK Healthcare" className="h-20 w-auto drop-shadow-xl object-contain" />
+                            </div>
                         </div>
                         <h1 className="text-white text-4xl font-black tracking-tight mb-2">Welcome back!</h1>
                         <p className="text-blue-400 font-bold text-sm uppercase tracking-[0.25em] mb-4 drop-shadow-sm">RK The Complete Care</p>

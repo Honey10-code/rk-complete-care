@@ -38,7 +38,7 @@ const ClinicPosters = () => {
                             <span className="text-white/70 text-sm font-bold uppercase tracking-widest">Clinic Updates · Announcements</span>
                         </div>
                         <h1 className="text-5xl md:text-6xl font-black text-white mb-5 leading-tight">
-                            Clinic <span className="text-blue-500">Posters</span>
+                            Clinic <span className="text-blue-500">Blogs</span>
                         </h1>
                         <p className="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed">
                             Stay updated with our latest health tips, service announcements, events, and special offers.
@@ -66,8 +66,8 @@ const ClinicPosters = () => {
                 ) : filtered.length === 0 ? (
                     <div className="text-center py-20 text-slate-400">
                         <i className="fa-solid fa-image text-5xl mb-4 block opacity-30"></i>
-                        <p className="font-semibold text-lg">No posters yet</p>
-                        <p className="text-sm mt-1">Clinic posters will appear here once uploaded by the admin.</p>
+                        <p className="font-semibold text-lg">No blogs yet</p>
+                        <p className="text-sm mt-1">Clinic blogs will appear here once uploaded by the admin.</p>
                     </div>
                 ) : (
                     <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">

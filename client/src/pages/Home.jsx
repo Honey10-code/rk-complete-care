@@ -49,14 +49,17 @@ const Home = () => {
                             viewport={{ once: true, margin: "-100px" }}
                             transition={{ duration: 0.8, ease: "easeOut" }}
                         >
-                            {/* Premium Badge */}
+                            {/* Premium Badge with Logo */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: 0.2, duration: 0.5 }}
-                                className="inline-flex items-center gap-2.5 px-4 py-2 bg-white border border-slate-100 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.04)] mb-8"
+                                className="inline-flex items-center gap-3 px-4 py-2 bg-white border border-slate-100 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.07)] mb-8"
                             >
+                                <div className="relative w-9 h-9 rounded-full bg-white border border-blue-100 shadow-sm overflow-hidden shrink-0 flex items-center justify-center">
+                                    <img src="/logo.png" alt="RK" className="w-8 h-8 object-contain" />
+                                </div>
                                 <span className="relative flex h-2 w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
@@ -69,8 +72,11 @@ const Home = () => {
                                 <span className="block text-5xl md:text-6xl lg:text-[4.5rem] bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-blue-800 pb-2">
                                     RK The Complete
                                 </span>
-                                <span className="block text-4xl md:text-5xl lg:text-[3.5rem] text-blue-700 mt-1">
-                                    Care Facility
+                                <span className="block text-4xl md:text-5xl lg:text-[4.5rem] text-blue-700 mt-1">
+                                    Physiotherapy Centre
+                                </span>
+                                <span className="block text-4xl md:text-2xl lg:text-[2.5rem] text-blue-700 mt-1">
+                                    Where Recovery Begins
                                 </span>
                             </h1>
 

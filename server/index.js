@@ -49,6 +49,9 @@ app.use('/api/clinic-posters', require('./routes/clinicPosters'));
 app.use('/api/gallery', require('./routes/gallery'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/contacts', require('./routes/contacts'));
+app.use('/api/services', require('./routes/services'));
+app.use('/api/exercises', require('./routes/exercises'));
+app.use('/api/videos', require('./routes/videos'));
 
 // ✅ Health check
 app.get('/', (req, res) => {

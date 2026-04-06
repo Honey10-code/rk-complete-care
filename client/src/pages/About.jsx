@@ -24,12 +24,17 @@ const About = () => {
                             transition={{ duration: 0.8 }}
                             className="relative"
                         >
-                            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-10 bg-blue-900 aspect-video flex items-center justify-center p-12">
+                            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-10 bg-gradient-to-br from-blue-950 to-blue-800 aspect-video flex items-center justify-center p-12">
                                 <div className="text-center text-white">
-                                    <img src="/logo.png" alt="RK Logo" className="h-24 mx-auto mb-6 brightness-0 invert opacity-40" />
-                                    <h3 className="text-3xl font-black mb-2 uppercase tracking-tighter italic">RK The Complete Care</h3>
-                                    <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
-                                    <p className="mt-4 text-blue-200 font-bold uppercase tracking-widest text-xs">Excellence in Rehabilitation</p>
+                                    <div className="relative mx-auto mb-6 w-36 h-36 flex items-center justify-center">
+                                        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/30 to-green-400/20 blur-xl" />
+                                        <div className="relative p-3 bg-white rounded-full shadow-2xl border-4 border-blue-200/40">
+                                            <img src="/logo.png" alt="RK Logo" className="h-24 w-auto object-contain" />
+                                        </div>
+                                    </div>
+                                    <h3 className="text-2xl font-black mb-2 uppercase tracking-tighter italic">RK The Complete Care</h3>
+                                    <div className="w-20 h-1 bg-blue-400 mx-auto rounded-full"></div>
+                                    <p className="mt-4 text-blue-200 font-bold uppercase tracking-widest text-xs">Where Recovery Begins</p>
                                 </div>
                             </div>
                             {/* Decorative element */}
