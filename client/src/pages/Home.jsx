@@ -115,7 +115,13 @@ const Home = () => {
                                     <div className="flex items-center justify-center sm:justify-start text-amber-400 text-[13px] gap-0.5 mb-0.5">
                                         <i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i>
                                     </div>
-                                    Trusted by <span className="text-slate-800">5000+</span> Patients
+                                    <p className="mb-0.5 flex items-center justify-center sm:justify-start gap-2">
+                                        Trusted by <span className="text-slate-800">5000+</span> Patients
+                                    </p>
+                                    <a href="mailto:rkthecompletecare@gmail.com" className="text-[10px] text-blue-600 font-bold hover:text-blue-700 transition-colors tracking-tight flex items-center justify-center sm:justify-start gap-1.5 px-2 py-0.5 bg-blue-50/50 rounded-full w-fit">
+                                        <i className="fa-solid fa-envelope text-[9px]"></i>
+                                        rkthecompletecare@gmail.com
+                                    </a>
                                 </div>
                             </div>
                         </motion.div>

@@ -92,8 +92,50 @@ const Navbar = () => {
     ];
 
     return (
-        <div className="fixed top-0 left-0 w-full z-[110] transition-all duration-500 bg-white">
+        <div className="fixed top-0 left-0 w-full z-[140] transition-all duration-500 bg-white">
             <style>{shimmerStyle}</style>
+
+            {/* Premium Emerald Top Contact Bar with Socials */}
+            <div className="w-full bg-[#064e3b] py-1.5 md:py-2 border-b border-emerald-400/20 relative shadow-lg overflow-hidden">
+                {/* Dynamic Light Sweep */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/5 to-transparent -translate-x-full animate-shimmer"></div>
+
+                <div className="max-w-[1536px] mx-auto px-4 md:px-6 lg:px-10 flex flex-wrap justify-between items-center gap-y-1">
+                    {/* Contact Details */}
+                    <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-center sm:justify-start">
+                        <a href="mailto:rkthecompletecare@gmail.com" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
+                            <i className="fa-solid fa-envelope text-emerald-300 group-hover:scale-110 transition-transform"></i>
+                            <span className="xs:inline">rkthecompletecare@gmail.com</span>
+
+                        </a>
+                        <a href="tel:+918769556475" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
+                            <i className="fa-solid fa-phone text-emerald-300 group-hover:scale-110 transition-transform"></i>
+                            +91 87695 56475
+                        </a>
+                    </div>
+
+                    {/* Socials & Location */}
+                    <div className="flex items-center gap-3 sm:gap-5 mx-auto sm:mx-0">
+                        {/* Social Icons */}
+                        <div className="flex items-center gap-3 border-r border-emerald-400/20 pr-4 mr-1">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-emerald-100 hover:text-white transition-all text-sm" title="Facebook">
+                                <i className="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.instagram.com/rkthecompletecare/" target="_blank" rel="noopener noreferrer" className="text-emerald-100 hover:text-white transition-all text-sm" title="Instagram">
+                                <i className="fa-brands fa-instagram"></i>
+                            </a>
+                            <a href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17" target="_blank" rel="noopener noreferrer" className="text-emerald-100 hover:text-white transition-all text-sm" title="Location Map">
+                                <i className="fa-solid fa-location-dot"></i>
+                            </a>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+
             <motion.nav
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -306,18 +348,9 @@ const Navbar = () => {
 
                     {/* Block 3: CTA */}
                     <div className="flex-none shrink-0 flex justify-end z-[120]">
-                        <Link 
-                            to="/booking" 
-                            onClick={(e) => {
-                                if (location.pathname === '/' || location.pathname === '/home') {
-                                    const el = document.getElementById('book-appointment');
-                                    if (el) {
-                                        e.preventDefault();
-                                        el.scrollIntoView({ behavior: 'smooth' });
-                                    }
-                                }
-                            }}
-                            className="px-5 xl:px-8 py-2 md:py-3.5 rounded-full font-black text-[11px] 2xl:text-[14px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap flex-shrink-0"
+                        <Link
+                            to="/booking"
+                            className="book-btn px-5 xl:px-8 py-2 md:py-3.5 rounded-full font-black text-[11px] 2xl:text-[14px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap flex-shrink-0"
                         >
                             Book Appointment <i className="fa-solid fa-calendar-check text-[15px]"></i>
                         </Link>
@@ -377,7 +410,7 @@ const Navbar = () => {
                                                                         className="flex items-center justify-between px-5 py-4 rounded-xl text-blue-600 font-black text-[11px] uppercase tracking-[0.2em] bg-blue-50/50 mt-2 shadow-inner"
                                                                     >
                                                                         View All Expert Services
-                                                                         <i className="fa-solid fa-arrow-right-long"></i>
+                                                                        <i className="fa-solid fa-arrow-right-long"></i>
                                                                     </Link>
                                                                 </>
                                                             ) : link.label === "Exercises" ? (

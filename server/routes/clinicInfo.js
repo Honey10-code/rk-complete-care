@@ -11,12 +11,12 @@ router.get('/', async (req, res) => {
             // Return default/empty structure if nothing exists
             return res.json({
                 phones: ['+91 8769556475', '+91 9782468376'],
-                email: 'info@rkcare.com',
-                address: '21, Nirmal Vihar, Dadi ka Phatak, Near Kaushik School, Benad Road, Jhotwara, Jaipur',
+                email: 'rkthecompletecare@gmail.com',
+                address: '21, Nirmal Vihar, Dadi ka Phatak, Near Victor School, Benad Road, Jhotwara, Jaipur',
                 openingHours: {
-                    morning: '09:00 AM - 01:00 PM',
-                    evening: '04:00 PM - 07:00 PM',
-                    sunday: '10:00 AM - 02:00 PM'
+                    morning: '09:00 AM - 1:00 PM',
+                    evening: '04:00 PM - 08:00 PM',
+                    sunday: '09:00 AM - 12:00 PM'
                 },
                 socialLinks: {
                     facebook: '#',
@@ -27,6 +27,21 @@ router.get('/', async (req, res) => {
                 }
             });
         }
+
+        // Auto-migrate: Update existing record to match newest schedule and standardized email
+        if (info.openingHours.morning !== '09:00 AM - 01:00 PM' || 
+            info.openingHours.evening !== '04:00 PM - 08:00 PM' ||
+            info.openingHours.sunday !== '09:00 AM - 12:00 PM' ||
+            info.email !== 'rkthecompletecare@gmail.com') {
+            
+            info.openingHours.morning = '09:00 AM - 01:00 PM';
+            info.openingHours.evening = '04:00 PM - 08:00 PM';
+            info.openingHours.sunday = '09:00 AM - 12:00 PM';
+            info.email = 'rkthecompletecare@gmail.com';
+            
+            await info.save();
+        }
+
         res.json(info);
     } catch (err) {
         res.status(500).json({ message: err.message });
