@@ -106,8 +106,8 @@ RK - The Complete Care Physiotherapy Centre`;
         setLoading(true);
         try {
             // 1. Create Order on Backend
-            const order = await createPaymentOrder({ amount: 500 }); // ₹500 for online
-            
+            const order = await createPaymentOrder({ amount: 1 }); // ₹1 for online
+
             if (!order || !order.id) {
                 throw new Error("Failed to create payment order");
             }
@@ -138,7 +138,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                 razorpayOrderId: response.razorpay_order_id,
                                 razorpayPaymentId: response.razorpay_payment_id,
                                 razorpaySignature: response.razorpay_signature,
-                                amount: 500
+                                amount: 1
                             });
                         } else {
                             alert("Payment verification failed. Please contact support.");
@@ -337,7 +337,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                                             <span className="font-black text-blue-600 text-sm tracking-tight leading-none uppercase">{label}</span>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div className="flex items-center gap-4 flex-shrink-0 ml-auto pl-4">
                                                         <div className="text-right">
                                                             <p className="text-xs font-black text-slate-400 tabular-nums uppercase whitespace-nowrap">{time}</p>
@@ -396,9 +396,8 @@ RK - The Complete Care Physiotherapy Centre`;
                                                                     setFormData({ ...formData, slot });
                                                                     setSlotDropdownOpen(false);
                                                                 }}
-                                                                className={`w-full flex items-center justify-between p-4 transition-all duration-300 ${
-                                                                    isSelected ? "bg-blue-50" : "hover:bg-slate-50"
-                                                                }`}
+                                                                className={`w-full flex items-center justify-between p-4 transition-all duration-300 ${isSelected ? "bg-blue-50" : "hover:bg-slate-50"
+                                                                    }`}
                                                             >
                                                                 <div className="flex items-center gap-3">
                                                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${isMorning ? "bg-amber-50 text-amber-600" : "bg-indigo-50 text-indigo-600"}`}>
@@ -413,7 +412,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                                                         </p>
                                                                     </div>
                                                                 </div>
-                                                                
+
                                                                 <div className="flex flex-col items-end flex-shrink-0 ml-4">
                                                                     <span className="text-xs font-black text-blue-600 tabular-nums uppercase whitespace-nowrap tracking-tight">{timeText}</span>
                                                                     {showCount && (
@@ -546,7 +545,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                 <div className="w-full h-px bg-slate-200 my-3"></div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-slate-800 font-bold">Total Amount</span>
-                                    <span className="font-black text-xl text-blue-600">₹500</span>
+                                    <span className="font-black text-xl text-blue-600">₹1</span>
                                 </div>
                             </div>
 
