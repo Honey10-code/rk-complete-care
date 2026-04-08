@@ -130,14 +130,14 @@ const BannerCarousel = () => {
                                     className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg"
                                 >
                                     <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                                    <span className="text-xs md:text-sm font-medium tracking-wider uppercase text-blue-50">RK The Complete Care</span>
+                                    <span className="text-xs md:text-sm font-black tracking-wider uppercase text-blue-50 italic">RK<span className="text-blue-300">Care</span></span>
                                 </motion.div>
 
                                 <motion.h2
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.8 }}
-                                    className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight drop-shadow-2xl"
+                                    className="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] drop-shadow-2xl"
                                 >
                                     {slides[currentIndex].title}
                                 </motion.h2>

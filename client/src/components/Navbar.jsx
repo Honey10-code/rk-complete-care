@@ -175,8 +175,8 @@ const Navbar = () => {
                                 <img src={logo} alt="RK" className="w-full h-full object-cover scale-[1.35] transform transition-transform duration-400 group-hover:scale-150" />
                             </div>
                             <div className="flex flex-col leading-tight">
-                                <span className="text-[11px] md:text-[13px] lg:text-[15px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK The Complete Care</span>
-                                <span className="text-[7px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em]">Where Recovery Begins</span>
+                                <span className="text-[14px] md:text-[16px] lg:text-[18px] font-black text-slate-800 tracking-tight whitespace-nowrap italic">RK<span className="text-blue-600">Care</span></span>
+                                <span className="text-[7px] md:text-[8px] lg:text-[9px] font-black text-blue-500 uppercase tracking-[0.2em] mt-0.5">THE COMPLETE CARE</span>
                             </div>
                         </Link>
                     </div>
@@ -367,22 +367,23 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* Block 3: CTA */}
-                    <div className="flex-none shrink-0 flex justify-end z-[120]">
+                    <div className="flex-none flex items-center gap-2 md:gap-4 z-[120]">
                         <Link
                             to="/booking"
-                            className="book-btn px-5 xl:px-8 py-2 md:py-3.5 rounded-full font-black text-[11px] 2xl:text-[14px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap flex-shrink-0"
+                            className="book-btn px-4 md:px-8 py-2.5 md:py-3.5 rounded-full font-black text-[11px] 2xl:text-[14px] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap"
                         >
-                            Book Appointment <i className="fa-solid fa-calendar-check text-[15px]"></i>
+                            <span className="hidden sm:inline">Book Appointment</span>
+                            <span className="sm:hidden">Book Now</span>
+                            <i className="fa-solid fa-calendar-check text-[14px] md:text-[16px]"></i>
                         </Link>
-                    </div>
 
-                    {/* Mobile Icon */}
-                    <button className="lg:hidden flex-none z-[130] w-10 h-10 flex flex-col justify-center items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 shadow-sm shrink-0" onClick={() => setIsOpen(!isOpen)}>
-                        <span className={`w-5 h-0.5 rounded-full bg-slate-700 transition-all ${isOpen ? "rotate-45 translate-y-2" : ""}`}></span>
-                        <span className={`w-5 h-0.5 rounded-full bg-slate-700 transition-all ${isOpen ? "opacity-0" : ""}`}></span>
-                        <span className={`w-5 h-0.5 rounded-full bg-slate-700 transition-all ${isOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
-                    </button>
+                        {/* Mobile Icon */}
+                        <button className="lg:hidden flex w-10 h-10 flex-col justify-center items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 shadow-sm shrink-0" onClick={() => setIsOpen(!isOpen)}>
+                            <span className={`w-5 h-0.5 rounded-full bg-slate-700 transition-all ${isOpen ? "rotate-45 translate-y-2" : ""}`}></span>
+                            <span className={`w-5 h-0.5 rounded-full bg-slate-700 transition-all ${isOpen ? "opacity-0" : ""}`}></span>
+                            <span className={`w-5 h-0.5 rounded-full bg-slate-700 transition-all ${isOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
+                        </button>
+                    </div>
                 </div>
             </motion.nav>
 

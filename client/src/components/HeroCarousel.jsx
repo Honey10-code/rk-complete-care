@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const slides = [
     {
         id: 1,
-        title: "RK – The Complete Care",
+        title: "RKCare",
         subtitle: "Physiotherapy Centre",
         highlight: "Where recovery begins...",
         description: "Experience ultra-premium, personalized physiotherapy care. We combine advanced techniques with a compassionate approach to help you regain your strength and mobility.",
@@ -70,11 +70,11 @@ const HeroCarousel = () => {
                     className="w-full"
                 >
                     <h1 className="leading-tight mb-6 font-bold">
-                        <span className={`block text-6xl ${slides[currentIndex].color}`}>
+                        <span className={`block text-4xl md:text-6xl ${slides[currentIndex].color} italic`}>
                             {slides[currentIndex].title}
                         </span>
 
-                        <span className="block text-7xl text-text-dark">
+                        <span className="block text-5xl md:text-7xl text-text-dark tracking-tighter">
                             {slides[currentIndex].subtitle}
                         </span>
 
