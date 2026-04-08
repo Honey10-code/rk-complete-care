@@ -31,12 +31,26 @@ const safeObject = (res) => {
   return res.data || {};
 };
 
-// ✅ API CACHE SYSTEM
+// ✅ API CACHE SYSTEM (Memory + LocalStorage persistence)
 const cache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+const STORAGE_PREFIX = "rkcare_cache_";
 
 const getCached = (key) => {
-  const cached = cache.get(key);
+  // 1. Try memory
+  let cached = cache.get(key);
+  
+  // 2. Try localStorage if memory fails
+  if (!cached) {
+    try {
+      const stored = localStorage.getItem(STORAGE_PREFIX + key);
+      if (stored) {
+        cached = JSON.parse(stored);
+        cache.set(key, cached); // Populate memory cache
+      }
+    } catch (e) { console.error("Cache read error:", e); }
+  }
+
   if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
     console.log(`🚀 API CACHE HIT: ${key}`);
     return cached.data;
@@ -45,17 +59,30 @@ const getCached = (key) => {
 };
 
 const setCache = (key, data) => {
-  cache.set(key, { data, timestamp: Date.now() });
+  const cacheObj = { data, timestamp: Date.now() };
+  cache.set(key, cacheObj);
+  try {
+    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(cacheObj));
+  } catch (e) { console.error("Cache write error:", e); }
 };
 
 // Clean cache on mutations
-const clearCache = () => cache.clear();
+const clearCache = () => {
+    cache.clear();
+    try {
+        Object.keys(localStorage).forEach(k => {
+            if (k.startsWith(STORAGE_PREFIX)) localStorage.removeItem(k);
+        });
+    } catch (e) { }
+};
 
 // ✅ APIs
 export const initWakeup = () => {
-    // Ping the root endpoint to wake up Render backend
-    console.log("⚡ Initiating backend wakeup ping...");
-    return fetch(API_URL.replace('/api', '/')).catch(() => {});
+    // Ping both root and api to ensure full stack is awake
+    const ping = (url) => fetch(url, { mode: 'no-cors' }).catch(() => {});
+    console.log("⚡ Initiating backend wakeup pings...");
+    ping(API_URL.replace('/api', '/'));
+    ping(API_URL + "/initial-data");
 };
 
 export const getInitialData = () => {

@@ -14,6 +14,19 @@ const shimmerStyle = `
   }
 `;
 
+const STATIC_SERVICES = [
+    { id: "spine-clinic", title: "Spine Clinic", titleHi: "रीढ़ की हड्डी", icon: "fa-prostatic-center" },
+    { id: "knee-clinic", title: "Knee Clinic", titleHi: "घुटने का इलाज", icon: "fa-bone" },
+    { id: "shoulder-clinic", title: "Shoulder Clinic", titleHi: "कंधे का इलाज", icon: "fa-child-reaching" },
+    { id: "sports-injury", title: "Sports Injury", titleHi: "खेल की चोट", icon: "fa-person-running" },
+    { id: "back-pain", title: "Back Pain", titleHi: "पीठ दर्द", icon: "fa-bed-pulse" }
+];
+
+const STATIC_EXERCISES = [
+  { id: "back-exercises", title: "Back Exercises", hindi: "पीठ के व्यायाम", icon: "fa-person-running" },
+  { id: "knee-recovery", title: "Knee Recovery", hindi: "घुटने के व्यायाम", icon: "fa-bone" }
+];
+
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -23,25 +36,33 @@ const Navbar = () => {
     const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
     const [mobileExercisesOpen, setMobileExercisesOpen] = useState(false);
     const [mobileGalleryOpen, setMobileGalleryOpen] = useState(false);
-    const [services, setServices] = useState([]);
-    const [exercises, setExercises] = useState([]);
+    const [services, setServices] = useState(STATIC_SERVICES); // Instant fallback
+    const [exercises, setExercises] = useState(STATIC_EXERCISES); // Instant fallback
     const location = useLocation();
     const servicesRef = useRef(null);
     const exercisesRef = useRef(null);
     const galleryRef = useRef(null);
 
     useEffect(() => {
+        let isMounted = true;
         const fetchData = async () => {
             try {
-                const sData = await getServices();
-                setServices(sData || []);
-                const eData = await getExercises();
-                setExercises(eData || []);
+                // Fetch in parallel for speed
+                const [sData, eData] = await Promise.all([
+                    getServices(),
+                    getExercises()
+                ]);
+                
+                if (isMounted) {
+                    if (sData?.length) setServices(sData);
+                    if (eData?.length) setExercises(eData);
+                }
             } catch (err) {
                 console.error("Failed to fetch nav data:", err);
             }
         };
         fetchData();
+        return () => { isMounted = false; };
     }, []);
 
     useEffect(() => {

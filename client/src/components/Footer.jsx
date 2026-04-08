@@ -99,8 +99,7 @@ const Footer = () => {
                                 </div>
                             </div>
                             <div>
-                                <h2 className="text-white font-black text-xl italic tracking-tight leading-none">RK<span className="text-blue-500">Care</span></h2>
-                                <p className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] mt-1">THE COMPLETE CARE</p>
+                                <h2 className="text-white font-black text-xl italic tracking-tight leading-none">RK<span className="text-blue-500">The Complete Care</span></h2>
                             </div>
                         </motion.div>
 
@@ -282,7 +281,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-medium tracking-wide text-slate-500">
                     <div className="flex flex-col items-center md:items-start gap-1">
-                        <p>© {new Date().getFullYear()} <span className="text-white font-black italic">RK<span className="text-blue-500">Care</span></span>. All Rights Reserved.</p>
+                        <p>© {new Date().getFullYear()} <span className="text-white font-black italic">RK<span className="text-blue-500">The Complete Care</span></span>. All Rights Reserved.</p>
                         <div className="flex gap-4 uppercase font-bold tracking-widest text-[9px]">
                             <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
                             <span className="text-slate-700 font-normal">|</span>
