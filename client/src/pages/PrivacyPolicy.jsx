@@ -72,8 +72,8 @@ const PrivacyPolicy = () => {
           <div className="mt-16 pt-12 border-t border-slate-100 text-center">
             <p className="text-slate-500 text-sm mb-6">If you have any questions regarding this policy, please reach out to us.</p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-              <a href="mailto:rkthecompletecare@gmail.com" className="text-blue-600 font-bold hover:text-blue-700 transition-all flex items-center gap-2">
-                <i className="fa-solid fa-envelope"></i> rkthecompletecare@gmail.com
+              <a href="mailto:rk.completecare@gmail.com" className="text-blue-600 font-bold hover:text-blue-700 transition-all flex items-center gap-2">
+                <i className="fa-solid fa-envelope"></i> rk.completecare@gmail.com
               </a>
               <span className="hidden md:block text-slate-300">|</span>
               <Link to="/" className="px-8 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all shadow-lg active:scale-95">

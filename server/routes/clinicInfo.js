@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
             // Return default/empty structure if nothing exists
             return res.json({
                 phones: ['+91 8769556475', '+91 9782468376'],
-                email: 'rkthecompletecare@gmail.com',
+                email: 'rk.completecare@gmail.com',
                 address: '21, Nirmal Vihar, Dadi ka Phatak, Near Victor School, Benad Road, Jhotwara, Jaipur',
                 openingHours: {
                     morning: '09:00 AM - 1:00 PM',
@@ -32,12 +32,12 @@ router.get('/', async (req, res) => {
         if (info.openingHours.morning !== '09:00 AM - 01:00 PM' || 
             info.openingHours.evening !== '04:00 PM - 08:00 PM' ||
             info.openingHours.sunday !== '09:00 AM - 12:00 PM' ||
-            info.email !== 'rkthecompletecare@gmail.com') {
+            info.email !== 'rk.completecare@gmail.com') {
             
             info.openingHours.morning = '09:00 AM - 01:00 PM';
             info.openingHours.evening = '04:00 PM - 08:00 PM';
             info.openingHours.sunday = '09:00 AM - 12:00 PM';
-            info.email = 'rkthecompletecare@gmail.com';
+            info.email = 'rk.completecare@gmail.com';
             
             await info.save();
         }

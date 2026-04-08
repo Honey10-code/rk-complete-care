@@ -130,7 +130,7 @@ const BannerCarousel = () => {
                                     className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg"
                                 >
                                     <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                                    <span className="text-xs md:text-sm font-black tracking-wider uppercase text-blue-50 italic">RK<span className="text-blue-300">Care</span></span>
+                                    <span className="text-xs md:text-sm font-medium tracking-wider uppercase text-blue-50">RK The Complete Care</span>
                                 </motion.div>
 
                                 <motion.h2

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const slides = [
     {
         id: 1,
-        title: "RKCare",
+        title: "RK – The Complete Care",
         subtitle: "Physiotherapy Centre",
         highlight: "Where recovery begins...",
         description: "Experience ultra-premium, personalized physiotherapy care. We combine advanced techniques with a compassionate approach to help you regain your strength and mobility.",

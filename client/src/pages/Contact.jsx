@@ -128,7 +128,7 @@ const Contact = () => {
                             </div>
                             <h3 className="text-xl font-black text-slate-900 mb-2">Email Us</h3>
                             <p className="text-slate-500 mb-4 font-medium">For general inquiries and feedback</p>
-                            <a href="mailto:rkthecompletecare@gmail.com" className="text-blue-600 font-black text-base hover:text-blue-700 break-all">rkthecompletecare@gmail.com</a>
+                            <a href="mailto:rk.completecare@gmail.com" className="text-blue-600 font-black text-base hover:text-blue-700 break-all">rk.completecare@gmail.com</a>
                         </motion.div>
 
                         {/* Location */}

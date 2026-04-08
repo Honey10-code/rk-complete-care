@@ -30,8 +30,8 @@ const contactItems = [
         label: 'Email Us',
         bg: '#6a7a8a',
         content: (
-            <a href="mailto:rkthecompletecare@gmail.com" className="text-sm text-slate-500 hover:text-[#0d9488] transition-colors break-all">
-                rkthecompletecare@gmail.com
+            <a href="mailto:rk.completecare@gmail.com" className="text-sm text-slate-500 hover:text-[#0d9488] transition-colors break-all">
+                rk.completecare@gmail.com
             </a>
         )
     },

@@ -124,9 +124,9 @@ const Navbar = () => {
                 <div className="max-w-[1536px] mx-auto px-4 md:px-6 lg:px-10 flex flex-wrap justify-between items-center gap-y-1">
                     {/* Contact Details */}
                     <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-center sm:justify-start">
-                        <a href="mailto:rkthecompletecare@gmail.com" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
+                        <a href="mailto:rk.completecare@gmail.com" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
                             <i className="fa-solid fa-envelope text-emerald-300 group-hover:scale-110 transition-transform"></i>
-                            <span className="xs:inline">rkthecompletecare@gmail.com</span>
+                            <span className="xs:inline">rk.completecare@gmail.com</span>
 
                         </a>
                         <a href="tel:+918769556475" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
@@ -175,8 +175,8 @@ const Navbar = () => {
                                 <img src={logo} alt="RK" className="w-full h-full object-cover scale-[1.35] transform transition-transform duration-400 group-hover:scale-150" />
                             </div>
                             <div className="flex flex-col leading-tight">
-                                <span className="text-[14px] md:text-[16px] lg:text-[18px] font-black text-slate-800 tracking-tight whitespace-nowrap italic">RK<span className="text-blue-600">Care</span></span>
-                                <span className="text-[7px] md:text-[8px] lg:text-[9px] font-black text-blue-500 uppercase tracking-[0.2em] mt-0.5">THE COMPLETE CARE</span>
+                                <span className="text-[11px] md:text-[13px] lg:text-[15px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK The Complete Care</span>
+                                <span className="text-[7px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em]">Where Recovery Begins</span>
                             </div>
                         </Link>
                     </div>
