@@ -12,18 +12,17 @@ const GlobalScroll = () => {
                 e.preventDefault();
 
                 const scrollToBooking = () => {
-                    const bookingSection = document.getElementById('booking');
+                    const bookingSection = document.getElementById('book-appointment');
                     if (bookingSection) {
                         bookingSection.scrollIntoView({ behavior: 'smooth' });
                     }
                 };
 
-                if (location.pathname === '/booking') {
+                if (location.pathname === '/' || location.pathname === '/home') {
                     scrollToBooking();
                 } else {
-                    navigate('/booking');
-                    // Add a small delay to allow React Router to mount the page
-                    // before attempting to scroll to the newly rendered section.
+                    navigate('/');
+                    // Wait for navigation to complete before scrolling
                     setTimeout(scrollToBooking, 100);
                 }
             }
@@ -32,6 +31,22 @@ const GlobalScroll = () => {
         document.addEventListener('click', handleClick);
         return () => document.removeEventListener('click', handleClick);
     }, [location.pathname, navigate]);
+
+    // Handle universal hash scrolling
+    useEffect(() => {
+        if (location.hash) {
+            const id = location.hash.substring(1);
+            const scrollWithRetry = (retries = 3) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
+                } else if (retries > 0) {
+                    setTimeout(() => scrollWithRetry(retries - 1), 200);
+                }
+            };
+            scrollWithRetry();
+        }
+    }, [location]);
 
     return null;
 };

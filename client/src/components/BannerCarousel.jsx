@@ -99,6 +99,24 @@ const BannerCarousel = () => {
                         className="w-full h-full bg-cover bg-center relative"
                         style={{ backgroundImage: `url(${slides[currentIndex].image})` }}
                     >
+                        {/* ⚡ Performance Trick: Hidden img tag with high priority for the first slide */}
+                        <img 
+                            src={slides[currentIndex].image} 
+                            alt="" 
+                            className="hidden" 
+                            fetchpriority={currentIndex === 0 ? "high" : "auto"}
+                            loading="eager"
+                        />
+                        {/* ⚡ Preload next slide sparingly */}
+                        {slides[(currentIndex + 1) % slides.length] && (
+                            <img 
+                                src={slides[(currentIndex + 1) % slides.length].image} 
+                                alt="" 
+                                className="hidden" 
+                                loading="lazy"
+                            />
+                        )}
+
                         {/* Premium Gradient Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-transparent"></div>
                         <div className="absolute inset-0 bg-blue-900/20 mix-blend-multiply"></div>

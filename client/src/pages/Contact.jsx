@@ -110,8 +110,8 @@ const Contact = () => {
                             </div>
                             <h3 className="text-xl font-black text-slate-900 mb-2">Call Us</h3>
                             <div className="text-slate-500 mb-4 text-sm font-medium">
-                                <p>Mon-Sat: 09:00 AM - 07:00 PM</p>
-                                <p>Sun: 10:00 AM - 02:00 PM</p>
+                                <p>Mon-Sat: 09:00 AM - 01:00 PM (Morning), 04:00 PM - 08:00 PM (Evening)</p>
+                                <p>Sun: 09:00 AM - 12:00 PM</p>
                             </div>
                             <a href="tel:+918769556475" className="text-blue-700 font-black text-lg hover:text-blue-800">+91 8769556475</a>
                         </motion.div>
@@ -241,10 +241,18 @@ const Contact = () => {
                         </div>
 
                         {/* Google Map */}
-                        <div className="relative bg-slate-100 min-h-[400px]">
+                        <div className="relative bg-slate-100 min-h-[400px] group">
+                            <a 
+                                href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="absolute inset-0 z-10 cursor-pointer"
+                            >
+                                <span className="sr-only">Open Clinic Location on Google Maps</span>
+                            </a>
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3555.8464122193122!2d75.74185697629602!3d26.971762676611963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db368ac6c1b05%3A0xa2b27c9a29b20579!2sRK%20%E2%80%93%20The%20Complete%20Care%20Physiotherapy%20Centre!5e0!3m2!1sen!2sin!4v1771333214344!5m2!1sen!2sin"
-                                className="absolute inset-0 w-full h-full grayscale-[0.2]"
+                                className="absolute inset-0 w-full h-full grayscale-[0.2] transition-all group-hover:grayscale-0"
                                 style={{ border: 0 }}
                                 allowFullScreen=""
                                 loading="lazy"

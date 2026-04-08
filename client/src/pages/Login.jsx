@@ -49,10 +49,10 @@ const Login = () => {
                     <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-teal-500/20 rounded-full blur-3xl group-hover:bg-teal-400/30 transition-all duration-700"></div>
 
                     {/* Logo & Branding */}
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-">
                         <div className="inline-flex items-center justify-center p-3 bg-white/15 rounded-full mb-4 border-2 border-white/20 shadow-2xl relative">
                             <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-300/20 via-transparent to-green-300/20 pointer-events-none" />
-                            <div className="p-2 bg-white rounded-full shadow-lg">
+                            <div className="p-2 rounded-full shadow-lg">
                                 <img src={logo} alt="RK Healthcare" className="h-20 w-auto drop-shadow-xl object-contain" />
                             </div>
                         </div>

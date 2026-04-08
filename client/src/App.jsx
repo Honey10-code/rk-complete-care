@@ -14,6 +14,8 @@ import DoctorsPage from './pages/DoctorsPage';
 import ServicesPage from './pages/ServicesPage';
 import ExercisesPage from './pages/ExercisesPage';
 import GalleryPage from './pages/GalleryPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import GlobalScroll from './components/GlobalScroll';
@@ -38,6 +40,8 @@ function App() {
             <Route path="/booking" element={<Booking />} />
             <Route path="/patient-stories" element={<PatientStories />} />
             <Route path="/clinic-posters" element={<ClinicPosters />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
           </Route>
 
           {/* Admin & Login (No Global Padding) */}

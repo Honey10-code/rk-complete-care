@@ -112,6 +112,24 @@ router.post('/', async (req, res) => {
         const appointmentId = `RK-${year}-${String(sequence).padStart(4, '0')}`;
 
         const { patientName, phone, date, slot, age, gender, problem, clinicVisit, videoConsultation, notes } = req.body;
+        
+        // 🛑 Backend Enforcement: ONE APPOINTMENT PER PERSON PER DAY
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const existingAppointment = await Appointment.findOne({
+            phone,
+            patientName: { $regex: new RegExp(`^${patientName.trim()}$`, 'i') },
+            date: { $gte: startOfDay, $lte: endOfDay }
+        });
+
+        if (existingAppointment) {
+            return res.status(400).json({ 
+                message: `An appointment is already booked for ${patientName} using this phone number on ${new Date(date).toLocaleDateString()}. To avoid duplicates, please choose another date or contact the clinic directly.` 
+            });
+        }
 
         // 🛑 Backend Enforcement: Check valid slot for the day
         const activeSlots = await getActiveSlots(date);

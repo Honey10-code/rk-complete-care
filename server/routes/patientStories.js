@@ -64,4 +64,42 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// UPDATE story
+router.put('/:id', upload.single('image'), async (req, res) => {
+    try {
+        let imagePath = req.body.imageUrl || '';
+        if (req.file) imagePath = req.file.path.replace(/\\/g, '/');
+
+        const updateData = {
+            patientName: req.body.patientName,
+            age: req.body.age,
+            location: req.body.location,
+            condition: req.body.condition,
+            conditionHi: req.body.conditionHi,
+            story: req.body.story,
+            outcome: req.body.outcome,
+            rating: req.body.rating || 5,
+            featured: req.body.featured === 'true'
+        };
+
+        // Always update image if either a new file is uploaded or a (possibly empty) imageUrl is provided
+        if (req.file) {
+            updateData.image = req.file.path.replace(/\\/g, '/');
+        } else if (req.body.imageUrl !== undefined) {
+            updateData.image = req.body.imageUrl;
+        }
+
+        const updatedStory = await PatientStory.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedStory) return res.status(404).json({ message: 'Story not found' });
+        res.json(updatedStory);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 module.exports = router;

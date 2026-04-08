@@ -177,7 +177,7 @@ const Services = ({ limit, isHomePage = false }) => {
 
             <div className="container mx-auto px-6 relative z-10">
                 <AnimatePresence mode="wait">
-                    {selectedService && !isHomePage ? (
+                    {selectedService ? (
                         <ConditionDetail 
                             service={selectedService} 
                             onBack={handleBack} 
@@ -237,13 +237,23 @@ const Services = ({ limit, isHomePage = false }) => {
                                             <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-grow font-medium">
                                                 {service.desc}
                                             </p>
-                                            <button 
-                                                onClick={() => handleSelectService(service.id)}
-                                                className="w-full py-4 bg-slate-50 group-hover:bg-cyan-500 text-slate-400 group-hover:text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-cyan-200"
-                                            >
-                                                Learn Procedure
-                                                <i className="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
-                                            </button>
+                                            {isHomePage ? (
+                                                <Link 
+                                                    to={`/services?condition=${service.id}`}
+                                                    className="w-full py-4 bg-slate-50 group-hover:bg-cyan-500 text-slate-400 group-hover:text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-cyan-200"
+                                                >
+                                                    Learn Procedure
+                                                    <i className="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                                                </Link>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => handleSelectService(service.id)}
+                                                    className="w-full py-4 bg-slate-50 group-hover:bg-cyan-500 text-slate-400 group-hover:text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-cyan-200"
+                                                >
+                                                    Learn Procedure
+                                                    <i className="fa-solid fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                                                </button>
+                                            )}
                                         </div>
                                     </motion.div>
                                 ))}

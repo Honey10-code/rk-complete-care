@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Services from '../components/Services';
 import Exercises from '../components/Exercises';
-import Testimonials from '../components/Testimonials';
-import Contact from '../components/Contact';
-import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import BannerCarousel from '../components/BannerCarousel';
-import BookingSection from '../components/BookingSection';
+import { getInitialData } from '../services/api';
+
+// 🚀 Lazy load below-the-fold components
+const Testimonials = React.lazy(() => import('../components/Testimonials'));
+const BookingSection = React.lazy(() => import('../components/BookingSection'));
+const Contact = React.lazy(() => import('../components/Contact'));
+const Footer = React.lazy(() => import('../components/Footer'));
+
+const SectionLoader = () => (
+    <div className="py-20 flex justify-center items-center">
+        <div className="w-8 h-8 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+    </div>
+);
 
 const stats = [
     { value: "5000+", label: "Patients Treated", icon: "fa-users" },
@@ -19,6 +28,11 @@ const stats = [
 ];
 
 const Home = () => {
+    useEffect(() => {
+        // 🔥 Pre-fetch all Home data at once to prime the API cache
+        getInitialData().catch(err => console.error("Home pre-fetch error:", err));
+    }, []);
+
     return (
         <>
             <Helmet>
@@ -33,7 +47,6 @@ const Home = () => {
 
             {/* Comprehensive Clinic Introduction */}
             <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-white">
-                {/* Premium Background Elements */}
                 <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-50/50 via-white to-white">
                     <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-blue-100/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
                     <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-slate-100/50 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
@@ -42,14 +55,12 @@ const Home = () => {
 
                 <div className="container mx-auto px-6 py-20 md:py-28 relative z-10">
                     <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
-                        {/* Elite Left Content */}
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-100px" }}
                             transition={{ duration: 0.8, ease: "easeOut" }}
                         >
-                            {/* Premium Badge with Logo */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
@@ -103,7 +114,6 @@ const Home = () => {
                                 </a>
                             </div>
 
-                            {/* Refined Trust indicator */}
                             <div className="mt-12 flex flex-col sm:flex-row items-center sm:items-center gap-4">
                                 <div className="flex -space-x-3">
                                     <img className="w-10 h-10 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop" alt="Patient" />
@@ -126,7 +136,6 @@ const Home = () => {
                             </div>
                         </motion.div>
 
-                        {/* High-End Right Image Layout */}
                         <motion.div
                             initial={{ opacity: 0, x: 30 }}
                             whileInView={{ opacity: 1, x: 0 }}
@@ -143,11 +152,9 @@ const Home = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                             </div>
 
-                            {/* Decorative elements */}
                             <div className="absolute top-10 -right-6 w-24 h-24 bg-[radial-gradient(circle,_rgba(226,232,240,1)_1px,_transparent_1px)] bg-[length:8px_8px] -z-10"></div>
                             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-blue-100 rounded-full -z-10 blur-xl"></div>
 
-                            {/* Glassmorphic Stats Float */}
                             <motion.div
                                 initial={{ y: 20, opacity: 0 }}
                                 whileInView={{ y: 0, opacity: 1 }}
@@ -176,7 +183,6 @@ const Home = () => {
                             </motion.div>
                         </motion.div>
                     </div>
-                    {/* Stats Row Dropdown */}
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -203,7 +209,6 @@ const Home = () => {
                     </motion.div>
                 </div>
 
-                {/* Scroll indicator */}
                 <motion.div
                     animate={{ y: [0, 10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
@@ -214,14 +219,10 @@ const Home = () => {
                 </motion.div>
             </section>
 
-            {/* Quick Access Teasers */}
             <section className="py-24 bg-slate-50 border-b border-slate-100 relative">
-                {/* Decorative mesh */}
                 <div className="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="grid md:grid-cols-3 gap-8">
-                        {/* Services Teaser */}
                         <motion.div
                             whileHover={{ y: -10 }}
                             className="bg-white p-10 rounded-[2rem] border border-slate-100/80 shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex flex-col items-center text-center group transition-all duration-500 relative overflow-hidden"
@@ -237,7 +238,6 @@ const Home = () => {
                             </Link>
                         </motion.div>
 
-                        {/* Doctors Teaser */}
                         <motion.div
                             whileHover={{ y: -10 }}
                             className="bg-white p-10 rounded-[2rem] border border-slate-100/80 shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex flex-col items-center text-center group transition-all duration-500 relative overflow-hidden"
@@ -253,7 +253,6 @@ const Home = () => {
                             </Link>
                         </motion.div>
 
-                        {/* Exercises Teaser */}
                         <motion.div
                             whileHover={{ y: -10 }}
                             className="bg-white p-10 rounded-[2rem] border border-slate-100/80 shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex flex-col items-center text-center group transition-all duration-500 relative overflow-hidden"
@@ -272,62 +271,44 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Featured Services Section */}
             <section className="py-24 bg-slate-50 relative overflow-hidden">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
-                        <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700">
-                            Professional Treatments · व्यावसायिक उपचार
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight">
-                            Specialized Clinical <span className="text-blue-700">Services</span>
-                        </h2>
-                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
-                            Expert physiotherapy and rehabilitation for orthopaedic and neurological recovery.
-                        </p>
+                        <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700"> Professional Treatments · व्यावसायिक उपचार </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight"> Specialized Clinical <span className="text-blue-700">Services</span> </h2>
+                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium"> Expert physiotherapy and rehabilitation for orthopaedic and neurological recovery. </p>
                     </div>
-
                     <Services limit={6} isHomePage={true} />
-
                     <div className="mt-16 text-center">
                         <Link to="/services" className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-slate-200 group">
-                            Explore All Services
-                            <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            Explore All Services <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </Link>
                     </div>
                 </div>
             </section>
 
-            {/* Featured Exercises Section */}
             <section className="py-24 bg-white relative overflow-hidden">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
-                        <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700">
-                            Home Rehabilitation · घर पर पुनर्वास
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight">
-                            Featured Clinical <span className="text-blue-700">Recovery Guides</span>
-                        </h2>
-                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
-                            Access our most effective home-based protocols designed by our physiotherapists.
-                        </p>
+                        <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700"> Home Rehabilitation · घर पर पुनर्वास </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight"> Featured Clinical <span className="text-blue-700">Recovery Guides</span> </h2>
+                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium"> Access our most effective home-based protocols designed by our physiotherapists. </p>
                     </div>
-
                     <Exercises limit={4} isHomePage={true} />
-
                     <div className="mt-16 text-center">
                         <Link to="/exercises" className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-slate-200 group">
-                            Explore All Exercises
-                            <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            Explore All Exercises <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </Link>
                     </div>
                 </div>
             </section>
 
-            <Testimonials />
-            <BookingSection />
-            <Contact />
-            <Footer />
+            <Suspense fallback={<SectionLoader />}>
+                <Testimonials />
+                <BookingSection />
+                <Contact />
+                <Footer />
+            </Suspense>
         </>
     );
 };

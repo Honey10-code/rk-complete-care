@@ -31,18 +31,102 @@ const safeObject = (res) => {
   return res.data || {};
 };
 
+// ✅ API CACHE SYSTEM
+const cache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const getCached = (key) => {
+  const cached = cache.get(key);
+  if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+    console.log(`🚀 API CACHE HIT: ${key}`);
+    return cached.data;
+  }
+  return null;
+};
+
+const setCache = (key, data) => {
+  cache.set(key, { data, timestamp: Date.now() });
+};
+
+// Clean cache on mutations
+const clearCache = () => cache.clear();
+
 // ✅ APIs
-// ✅ APIs
-export const getDoctors = () => api.get("/doctors").then(safeArray);
-export const getBanners = () => api.get("/banners").then(safeArray);
-export const getTestimonials = () => api.get("/testimonials").then(safeArray);
+export const initWakeup = () => {
+    // Ping the root endpoint to wake up Render backend
+    console.log("⚡ Initiating backend wakeup ping...");
+    return fetch(API_URL.replace('/api', '/')).catch(() => {});
+};
+
+export const getInitialData = () => {
+    const key = "/initial-data";
+    const cached = getCached(key);
+    if (cached) return Promise.resolve(cached);
+    return api.get(key).then(res => {
+        const data = res.data || {};
+        setCache(key, data);
+        return data;
+    });
+};
+
+export const getDoctors = () => {
+    const cached = getCached("/doctors");
+    if (cached) return Promise.resolve(cached);
+    return api.get("/doctors").then(safeArray).then(data => {
+        setCache("/doctors", data);
+        return data;
+    });
+};
+
+export const getBanners = () => {
+    const cached = getCached("/banners");
+    if (cached) return Promise.resolve(cached);
+    return api.get("/banners").then(safeArray).then(data => {
+        setCache("/banners", data);
+        return data;
+    });
+};
+
+export const getTestimonials = () => {
+    const cached = getCached("/testimonials");
+    if (cached) return Promise.resolve(cached);
+    return api.get("/testimonials").then(safeArray).then(data => {
+        setCache("/testimonials", data);
+        return data;
+    });
+};
+
 export const getPatientStories = () => api.get("/patient-stories").then(safeArray);
-export const getClinicInfo = () => api.get("/clinic-info").then(safeObject);
+export const getClinicInfo = () => {
+    const cached = getCached("/clinic-info");
+    if (cached) return Promise.resolve(cached);
+    return api.get("/clinic-info").then(safeObject).then(data => {
+        setCache("/clinic-info", data);
+        return data;
+    });
+};
 export const getClinicPosters = () => api.get("/clinic-posters").then(safeArray);
-export const getServices = () => api.get("/services").then(safeArray);
-export const getExercises = () => api.get("/exercises").then(safeArray);
+export const getServices = () => {
+    const cached = getCached("/services");
+    if (cached) return Promise.resolve(cached);
+    return api.get("/services").then(safeArray).then(data => {
+        setCache("/services", data);
+        return data;
+    });
+};
+export const getExercises = () => {
+    const cached = getCached("/exercises");
+    if (cached) return Promise.resolve(cached);
+    return api.get("/exercises").then(safeArray).then(data => {
+        setCache("/exercises", data);
+        return data;
+    });
+};
 export const getGalleryImages = () => api.get("/gallery").then(safeArray);
-export const bookAppointment = (data) => api.post("/appointments", data).then(safeObject);
+export const bookAppointment = (data) => api.post("/appointments", data).then(res => {
+    clearCache();
+    return safeObject(res);
+});
 export const getBookedSlots = (date) => api.get(`/appointments/booked-slots?date=${date}`).then(safeObject);
 export const createPaymentOrder = (data) => api.post("/payment/create-order", data).then(safeObject);
 export const verifyPayment = (data) => api.post("/payment/verify", data).then(safeObject);
@@ -64,6 +148,7 @@ export const postBanner = (fd) => api.post(`/banners`, fd, { headers: { "Content
 export const deleteBanner = (id) => api.delete(`/banners/${id}`).then(safeObject);
 
 export const postPatientStory = (fd) => api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
+export const updatePatientStory = (id, fd) => api.put(`/patient-stories/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
 export const deletePatientStory = (id) => api.delete(`/patient-stories/${id}`).then(safeObject);
 
 export const postClinicPoster = (fd) => api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);

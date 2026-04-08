@@ -28,6 +28,8 @@ const BookingForm = () => {
         showAvailability: false
     });
     const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [bookingSummary, setBookingSummary] = useState(null);
     const [slotDropdownOpen, setSlotDropdownOpen] = useState(false);
 
     // Fetch booked slots when date changes
@@ -62,8 +64,11 @@ const BookingForm = () => {
         setStatus(null);
 
         try {
-            await bookAppointment(data);
+            const response = await bookAppointment(data);
+            const savedAppointment = response;
 
+            setBookingSummary(savedAppointment);
+            setShowSuccessModal(true);
             setStatus('success');
 
             // Generate WhatsApp Link
@@ -72,6 +77,7 @@ const BookingForm = () => {
                 const message = `
 *New Appointment Request*
 ------------------------
+*ID:* ${savedAppointment.appointmentId}
 *Name:* ${data.patientName}
 *Phone:* ${data.phone}
 *Date:* ${data.date}
@@ -85,13 +91,11 @@ RK - The Complete Care Physiotherapy Centre`;
                 window.open(`https://wa.me/918769556475?text=${encodeURIComponent(message)}`, '_blank');
             }
 
-            setTimeout(() => {
-                setFormData({
-                    patientName: '', age: '', gender: 'Male', phone: '', date: '', slot: 'Morning (9AM–1PM)',
-                    problem: '', clinicVisit: true, videoConsultation: false, notes: '', whatsappNotify: false
-                });
-                setStatus(null);
-            }, 3000);
+            // Reset form but don't clear status/summary yet as we have a modal now
+            setFormData({
+                patientName: '', age: '', gender: 'Male', phone: '', date: '', slot: 'Morning (9AM–1PM)',
+                problem: '', clinicVisit: true, videoConsultation: false, notes: '', whatsappNotify: false
+            });
 
         } catch (err) {
             console.error(err);
@@ -106,7 +110,7 @@ RK - The Complete Care Physiotherapy Centre`;
         setLoading(true);
         try {
             // 1. Create Order on Backend
-            const order = await createPaymentOrder({ amount: 1 }); // ₹1 for online
+            const order = await createPaymentOrder({ amount: 500 }); // ₹500 for online
 
             if (!order || !order.id) {
                 throw new Error("Failed to create payment order");
@@ -138,7 +142,7 @@ RK - The Complete Care Physiotherapy Centre`;
                                 razorpayOrderId: response.razorpay_order_id,
                                 razorpayPaymentId: response.razorpay_payment_id,
                                 razorpaySignature: response.razorpay_signature,
-                                amount: 1
+                                amount: 500
                             });
                         } else {
                             alert("Payment verification failed. Please contact support.");
@@ -190,7 +194,7 @@ RK - The Complete Care Physiotherapy Centre`;
             </div>
 
             <AnimatePresence mode="wait">
-                {status === 'success' && (
+                {status === 'success' && !showSuccessModal && (
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
@@ -507,57 +511,141 @@ RK - The Complete Care Physiotherapy Centre`;
                 </div>
             </form>
 
-            {/* Mock Payment Modal */}
+            {/* Success Details Modal */}
             <AnimatePresence>
-                {showPaymentModal && (
+                {showSuccessModal && bookingSummary && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+                        className="fixed inset-0 z-[200] bg-slate-900/60 backdrop-blur-md flex items-start justify-center p-4 overflow-y-auto pt-10 pb-10"
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative"
+                            initial={{ scale: 0.95, opacity: 0, y: 30 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 30 }}
+                            className="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl relative border border-white/20 my-auto"
+                            onClick={e => e.stopPropagation()}
                         >
-                            <button onClick={() => setShowPaymentModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
-                                <i className="fa-solid fa-xmark text-xl"></i>
-                            </button>
-                            <div className="text-center mb-6">
-                                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-600 text-2xl">
-                                    <i className="fa-solid fa-video"></i>
+                            {/* Success Header with Glassmorphism Overlay */}
+                            <div className="bg-emerald-600 pt-16 pb-12 px-10 text-center text-white relative rounded-t-[2.5rem] overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 opacity-95"></div>
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/20 to-transparent"></div>
+                                <div className="w-24 h-24 bg-white/10 backdrop-blur-2xl rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/20 shadow-2xl relative z-10 rotate-3">
+                                    <i className="fa-solid fa-check-double text-4xl text-white drop-shadow-lg"></i>
                                 </div>
-                                <h3 className="text-2xl font-black text-slate-800">Video Consult</h3>
-                                <p className="text-slate-500 text-sm mt-1">Please pay the consultation fee to confirm your slot.</p>
+                                <h3 className="text-4xl md:text-5xl font-black mb-2 tracking-tight relative z-10 drop-shadow-sm">Confirmed!</h3>
+                                <p className="text-emerald-50/70 font-black tracking-[0.2em] uppercase text-[10px] relative z-10">RK · The Complete Care</p>
                             </div>
 
-                            <div className="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium text-sm">Patient Name</span>
-                                    <span className="font-bold text-slate-800 text-sm">{formData.patientName || "Name"}</span>
+                            <div className="p-8 md:p-12">
+                                <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-100">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Appointment ID</p>
+                                        <p className="text-xl font-black text-blue-600 tabular-nums tracking-tighter">
+                                            {bookingSummary.appointmentId}
+                                        </p>
+                                    </div>
+                                    <div className="text-right space-y-1.5">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">STATUS</p>
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-200/50">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                            Pending
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-slate-600 font-medium text-sm">Date & Time</span>
-                                    <span className="font-bold text-slate-800 text-sm">{formData.date} - {formData.slot.split(" ")[0]}</span>
+
+                                <div className="space-y-10">
+                                    <div className="grid grid-cols-2 gap-y-10 gap-x-12">
+                                        {/* Patient Details */}
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Patient Name</p>
+                                            <div className="font-bold text-slate-800 flex items-center gap-3 text-[15px]">
+                                                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 text-xs">
+                                                    <i className="fa-solid fa-user"></i>
+                                                </div>
+                                                <span className="truncate max-w-[120px]">{bookingSummary.patientName}</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 text-right">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Phone Number</p>
+                                            <div className="font-bold text-slate-800 flex items-center justify-end gap-3 text-[15px]">
+                                                <span>{bookingSummary.phone}</span>
+                                                <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 text-xs">
+                                                    <i className="fa-solid fa-phone"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Age & Gender</p>
+                                            <div className="font-bold text-slate-700 flex items-center gap-2 px-1">
+                                                <span className="px-2.5 py-1 bg-slate-100 rounded-lg text-[11px] font-black">{bookingSummary.age}Y</span>
+                                                <span className="px-2.5 py-1 bg-slate-100 rounded-lg text-[11px] font-black uppercase">{bookingSummary.gender}</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 text-right">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Schedule</p>
+                                            <p className="font-black text-blue-700 flex items-center justify-end gap-2 text-sm italic tracking-tight underline decoration-blue-200 underline-offset-4">
+                                                {new Date(bookingSummary.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                <i className="fa-solid fa-calendar-check text-blue-300 text-xs translate-y-[-1px]"></i>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Slot Detail */}
+                                    <div className="bg-gradient-to-br from-slate-50 to-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between shadow-sm relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -translate-y-12 translate-x-12 group-hover:bg-blue-500/10 transition-colors"></div>
+                                        <div className="flex items-center gap-5 relative z-10">
+                                            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-md text-blue-600 border border-slate-50 rotate-[-4deg] group-hover:rotate-0 transition-transform">
+                                                <i className="fa-solid fa-clock-rotate-left text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Time Slot</p>
+                                                <p className="font-black text-slate-900 uppercase tracking-tight text-xl leading-none">{bookingSummary.slot}</p>
+                                            </div>
+                                        </div>
+                                        <div className="px-5 py-2 bg-blue-600/5 rounded-full border border-blue-600/10 hidden sm:block relative z-10">
+                                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest italic">Selected</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Problem Description - Fixed spacing and quote appearance */}
+                                    <div className="space-y-3">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Chief Complaint</p>
+                                        <div className="p-7 bg-slate-50 border border-slate-100 rounded-[2.5rem] text-slate-600 text-[16px] italic relative group overflow-hidden">
+                                            <div className="absolute top-0 left-0 w-2 h-full bg-blue-100 group-hover:bg-blue-300 transition-colors"></div>
+                                            <p className="relative z-10 leading-relaxed font-semibold pl-4 pr-2">
+                                                <span className="text-blue-300 text-3xl font-serif mr-2 opacity-50">"</span>
+                                                {bookingSummary.problem || "Initial consultation for recovery assessment."}
+                                                <span className="text-blue-300 text-3xl font-serif ml-2 opacity-50">"</span>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="w-full h-px bg-slate-200 my-3"></div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-slate-800 font-bold">Total Amount</span>
-                                    <span className="font-black text-xl text-blue-600">₹1</span>
+
+                                <button
+                                    onClick={() => {
+                                        setShowSuccessModal(false);
+                                        setStatus(null);
+                                        setBookingSummary(null);
+                                    }}
+                                    className="w-full mt-14 py-6 bg-slate-900 text-white rounded-[2rem] font-black shadow-2xl shadow-slate-200 hover:scale-[1.02] active:scale-[0.98] transition-all text-xl flex items-center justify-center gap-5 group overflow-hidden relative"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <span className="relative z-10">Dismiss Details</span>
+                                    <i className="fa-solid fa-circle-xmark text-lg group-hover:rotate-90 transition-transform relative z-10"></i>
+                                </button>
+                                
+                                <div className="flex items-center justify-center gap-3 mt-10 opacity-70">
+                                    <div className="relative">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500 block"></span>
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500 absolute inset-0 animate-ping"></span>
+                                    </div>
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                        Confirmation sent to WhatsApp
+                                    </p>
                                 </div>
                             </div>
-
-                            <button
-                                onClick={() => {
-                                    setShowPaymentModal(false);
-                                    processSubmission();
-                                }}
-                                className="w-full py-4 bg-blue-600 text-white rounded-xl font-black shadow-lg shadow-blue-100 hover:bg-blue-700 hover:-translate-y-0.5 transition-all text-lg flex items-center justify-center gap-2"
-                            >
-                                <i className="fa-solid fa-lock text-sm"></i> Pay Securely
-                            </button>
                         </motion.div>
                     </motion.div>
                 )}

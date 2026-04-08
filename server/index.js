@@ -81,6 +81,7 @@ app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/services', require('./routes/services'));
 app.use('/api/exercises', require('./routes/exercises'));
 app.use('/api/videos', require('./routes/videos'));
+app.use('/api/initial-data', require('./routes/initialData'));
 
 // ✅ Health check
 app.get('/', (req, res) => {

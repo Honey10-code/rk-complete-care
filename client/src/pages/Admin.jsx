@@ -12,7 +12,8 @@ import api, {
     getBanners, postBanner,
     getServices, postService, updateService, deleteService,
     getExercises, postExercise, updateExercise, deleteExercise,
-    getBroadcasts, postBroadcast, retryBroadcast, deleteBroadcast
+    getBroadcasts, postBroadcast, retryBroadcast, deleteBroadcast,
+    updatePatientStory
 } from "../services/api";
 
 // ─── Toast System ────────────────────────────────────────────────────────────
@@ -388,6 +389,8 @@ const Admin = () => {
     // ── Nav items ─────────────────────────────────────────────────────────────
     // Patient Stories state
     const [stories, setStories] = useState([]);
+    const [editingStory, setEditingStory] = useState(null);
+    const [viewingStory, setViewingStory] = useState(null);
     const [newStory, setNewStory] = useState({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
     const [storyUploadType, setStoryUploadType] = useState("url");
     const [storyFile, setStoryFile] = useState(null);
@@ -401,10 +404,37 @@ const Admin = () => {
         if (storyUploadType === "url") fd.append("imageUrl", newStory.imageUrl);
         else if (storyFile) fd.append("image", storyFile);
         try {
-            await api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+            if (editingStory) {
+                await updatePatientStory(editingStory._id, fd);
+                addToast("Story updated!", "success");
+            } else {
+                await api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+                addToast("Story added!", "success");
+            }
             setNewStory({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
-            setStoryFile(null); fetchStories(); addToast("Story added!", "success");
-        } catch { addToast("Error adding story", "error"); }
+            setEditingStory(null);
+            setStoryFile(null); 
+            fetchStories();
+        } catch { addToast("Error saving story", "error"); }
+    };
+    const handleEditStory = (story) => {
+        setEditingStory(story);
+        setNewStory({
+            patientName: story.patientName || "",
+            age: story.age || "",
+            location: story.location || "",
+            condition: story.condition || "",
+            conditionHi: story.conditionHi || "",
+            story: story.story || "",
+            outcome: story.outcome || "",
+            imageUrl: story.image || "",
+            rating: story.rating || 5,
+            featured: story.featured || false
+        });
+        setStoryUploadType("url");
+        // Scroll to form
+        const formElement = document.getElementById("story-form");
+        if (formElement) formElement.scrollIntoView({ behavior: 'smooth' });
     };
     const handleDeleteStory = async (id) => {
         if (!window.confirm("Delete this story?")) return;
@@ -732,7 +762,7 @@ const Admin = () => {
                             <img src={logo} alt="RK" className="w-10 h-10 object-contain" />
                         </div>
                         <div>
-                            <p className="text-xs font-black text-white leading-tight">RK CARE</p>
+                            <p className="text-xs font-black text-white leading-tight">RK The Complete Care</p>
                             <p className="text-[10px] font-black text-blue-500 leading-tight">MANAGEMENT</p>
                         </div>
                     </div>
@@ -1594,7 +1624,7 @@ const Admin = () => {
                                                 const evening = safeAppts.filter(a => a.slot?.includes("Evening")).length;
                                                 return [
                                                     { label: "Morning (9AM–1PM)", count: morning, color: "bg-[#d97706]", light: "bg-[rgba(217, 119, 6,0.12)]" },
-                                                    { label: "Evening (4PM–9PM)", count: evening, color: "bg-blue-600", light: "bg-blue-50" },
+                                                    { label: "Evening (4PM–8PM)", count: evening, color: "bg-blue-600", light: "bg-blue-50" },
                                                 ].map(row => (
                                                     <div key={row.label} className="mb-3">
                                                         <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
@@ -1921,8 +1951,8 @@ const Admin = () => {
                                         title: "Opening Hours", icon: "fa-clock", content: (
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Morning (Mon–Sat)</label><input type="text" placeholder="09:00 AM – 01:00 PM" value={clinicInfo.openingHours?.morning || ""} onChange={e => setClinicInfo({ ...clinicInfo, openingHours: { ...clinicInfo.openingHours, morning: e.target.value } })} className={inp} /></div>
-                                                <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Evening (Mon–Sat)</label><input type="text" placeholder="04:00 PM – 07:00 PM" value={clinicInfo.openingHours?.evening || ""} onChange={e => setClinicInfo({ ...clinicInfo, openingHours: { ...clinicInfo.openingHours, evening: e.target.value } })} className={inp} /></div>
-                                                <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sunday</label><input type="text" placeholder="10:00 AM – 02:00 PM" value={clinicInfo.openingHours?.sunday || ""} onChange={e => setClinicInfo({ ...clinicInfo, openingHours: { ...clinicInfo.openingHours, sunday: e.target.value } })} className={inp} /></div>
+                                                <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Evening (Mon–Sat)</label><input type="text" placeholder="04:00 PM – 08:00 PM" value={clinicInfo.openingHours?.evening || ""} onChange={e => setClinicInfo({ ...clinicInfo, openingHours: { ...clinicInfo.openingHours, evening: e.target.value } })} className={inp} /></div>
+                                                <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sunday</label><input type="text" placeholder="09:00 AM – 12:00 PM" value={clinicInfo.openingHours?.sunday || ""} onChange={e => setClinicInfo({ ...clinicInfo, openingHours: { ...clinicInfo.openingHours, sunday: e.target.value } })} className={inp} /></div>
                                             </div>
                                         )
                                     },
@@ -2099,11 +2129,13 @@ const Admin = () => {
                                     </a>
                                 </div>
 
-                                {/* Add Story Form */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                                {/* Add/Edit Story Form */}
+                                <div id="story-form" className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                                     <h3 className="font-black text-slate-800 mb-5 flex items-center gap-2 text-base">
-                                        <span className="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-sm"><i className="fa-solid fa-plus"></i></span>
-                                        Add New Story
+                                        <span className={`w-8 h-8 rounded-lg ${editingStory ? 'bg-blue-100 text-blue-600' : 'bg-rose-100 text-rose-600'} flex items-center justify-center text-sm`}>
+                                            <i className={`fa-solid ${editingStory ? 'fa-pen-to-square' : 'fa-plus'}`}></i>
+                                        </span>
+                                        {editingStory ? 'Edit Story' : 'Add New Story'}
                                     </h3>
                                     <form onSubmit={handleStorySubmit} className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2144,9 +2176,17 @@ const Admin = () => {
                                         ) : (
                                             <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Upload Image</label><input type="file" accept="image/*" onChange={e => setStoryFile(e.target.files[0])} className={`${inp} file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100`} /></div>
                                         )}
-                                        <div className="flex justify-end">
+                                        <div className="flex justify-end gap-3">
+                                            {editingStory && (
+                                                <button type="button" onClick={() => {
+                                                    setEditingStory(null);
+                                                    setNewStory({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
+                                                }} className="px-6 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl font-bold text-sm transition-all">
+                                                    Cancel
+                                                </button>
+                                            )}
                                             <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black text-sm shadow-md hover:bg-blue-700 hover:-translate-y-0.5 transition-all">
-                                                <i className="fa-solid fa-heart-pulse mr-2"></i>Add Story
+                                                <i className={`fa-solid ${editingStory ? 'fa-save' : 'fa-heart-pulse'} mr-2`}></i>{editingStory ? 'Update Story' : 'Add Story'}
                                             </button>
                                         </div>
                                     </form>
@@ -2169,7 +2209,13 @@ const Admin = () => {
                                                 <p className="text-slate-600 text-xs leading-relaxed line-clamp-3 italic">"{story.story}"</p>
                                                 {story.outcome && <p className="text-[#4a8a68] text-xs font-bold mt-2"><i className="fa-solid fa-circle-check mr-1"></i>{story.outcome}</p>}
                                             </div>
-                                            <div className="px-4 pb-4 flex justify-end">
+                                            <div className="px-4 pb-4 flex justify-end gap-3">
+                                                <button onClick={() => setViewingStory(story)} className="text-xs text-slate-500 hover:text-slate-700 font-bold flex items-center gap-1 transition-colors">
+                                                    <i className="fa-solid fa-eye text-[10px]"></i> View
+                                                </button>
+                                                <button onClick={() => handleEditStory(story)} className="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 transition-colors">
+                                                    <i className="fa-solid fa-pen-to-square text-[10px]"></i> Edit
+                                                </button>
                                                 <button onClick={() => handleDeleteStory(story._id)} className="text-xs text-rose-500 hover:text-rose-700 font-bold flex items-center gap-1 transition-colors">
                                                     <i className="fa-solid fa-trash text-[10px]"></i> Delete
                                                 </button>
@@ -2525,6 +2571,47 @@ const Admin = () => {
                             <div className="p-4 bg-slate-50 flex gap-3">
                                 <button onClick={() => setDeletingPatient(null)} className="flex-1 px-4 py-2.5 bg-white text-slate-600 rounded-xl font-bold text-sm border border-slate-200 hover:bg-slate-100 transition-all">No, Cancel</button>
                                 <button onClick={handlePatientDelete} className="flex-1 px-4 py-2.5 bg-rose-500 text-white rounded-xl font-bold text-sm shadow-md hover:bg-rose-600 transition-all">Yes, Delete All</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            {/* -- Patient Story View Modal -- */}
+            <AnimatePresence>
+                {viewingStory && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/70 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setViewingStory(null)}>
+                        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={e => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                            {viewingStory.image && <img src={viewingStory.image} alt={viewingStory.patientName} className="w-full h-64 object-cover rounded-t-3xl" />}
+                            <div className="p-8">
+                                <div className="flex items-start justify-between mb-4">
+                                    <div>
+                                        <h3 className="text-2xl font-black text-slate-800">{viewingStory.patientName}</h3>
+                                        <p className="text-slate-400 text-sm mt-0.5">{viewingStory.age && `${viewingStory.age} years`}{viewingStory.location && ` · ${viewingStory.location}`}</p>
+                                    </div>
+                                    <button onClick={() => setViewingStory(null)} className="w-9 h-9 rounded-full bg-slate-100 text-slate-400 hover:bg-rose-100 hover:text-rose-500 flex items-center justify-center transition-all flex-shrink-0"><i className="fa-solid fa-xmark"></i></button>
+                                </div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <span className="bg-indigo-100 text-indigo-700 text-sm font-bold px-3 py-1 rounded-full">{viewingStory.condition} {viewingStory.conditionHi && <span className="font-black">({viewingStory.conditionHi})</span>}</span>
+                                    <div className="flex gap-0.5">
+                                        {[1, 2, 3, 4, 5].map(i => (
+                                            <i key={i} className={`fa-star text-sm ${i <= viewingStory.rating ? "fa-solid text-amber-400" : "fa-regular text-slate-300"}`}></i>
+                                        ))}
+                                    </div>
+                                </div>
+                                <p className="text-slate-700 leading-relaxed text-base italic mb-6">"{viewingStory.story}"</p>
+                                {viewingStory.outcome && (
+                                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3">
+                                        <i className="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                        <div>
+                                            <p className="font-black text-emerald-800 text-sm mb-0.5">Outcome</p>
+                                            <p className="text-emerald-700 text-sm">{viewingStory.outcome}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
+                                    <button onClick={() => setViewingStory(null)} className="px-6 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all text-sm">Close</button>
+                                    <button onClick={() => { handleEditStory(viewingStory); setViewingStory(null); }} className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all text-sm shadow-md">Edit Story</button>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

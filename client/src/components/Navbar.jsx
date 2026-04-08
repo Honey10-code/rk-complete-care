@@ -372,7 +372,12 @@ const Navbar = () => {
                         <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xl" onClick={() => setIsOpen(false)} />
                         <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="absolute top-0 right-0 w-[85%] max-w-sm h-full bg-white flex flex-col shadow-2xl">
                             <div className="p-6 border-b flex items-center justify-between">
-                                <div className="flex items-center gap-2"><div className="w-10 h-10 rounded-full border border-blue-100 overflow-hidden"><img src={logo} className="w-full h-full object-cover scale-[1.35]" /></div><span className="font-black text-slate-800 text-sm">RK CARE</span></div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-10 h-10 rounded-full border border-blue-100 overflow-hidden">
+                                        <img src={logo} className="w-full h-full object-cover scale-[1.35]" />
+                                    </div>
+                                    <span className="font-black text-slate-800 text-sm italic">RK<span className="text-blue-600">Care</span></span>
+                                </div>
                                 <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center"><i className="fa-solid fa-xmark text-lg"></i></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-2">

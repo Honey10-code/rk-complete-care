@@ -28,8 +28,8 @@ const About = () => {
                                 <div className="text-center text-white">
                                     <div className="relative mx-auto mb-6 w-36 h-36 flex items-center justify-center">
                                         <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/30 to-green-400/20 blur-xl" />
-                                        <div className="relative p-3 bg-white rounded-full shadow-2xl border-4 border-blue-200/40">
-                                            <img src="/logo.png" alt="RK Logo" className="h-24 w-auto object-contain" />
+                                        <div className="relative bg-white rounded-xl shadow-2x border-4 border-blue-200/40">
+                                            <img src="/logo.png" alt="RK Logo" className="h-24 w-24 object-cover" />
                                         </div>
                                     </div>
                                     <h3 className="text-2xl font-black mb-2 uppercase tracking-tighter italic">RK The Complete Care</h3>

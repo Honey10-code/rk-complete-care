@@ -9,7 +9,7 @@ const contactItems = [
         content: (
             <p className="text-slate-500 leading-relaxed text-sm">
                 21, Nirmal Vihar, Dadi ka Phatak,<br />
-                Near Kaushik School, Benad Road,<br />
+                Near Victor School, Benad Road,<br />
                 Jhotwara, Jaipur – 302012
             </p>
         )
@@ -43,8 +43,8 @@ const contactItems = [
             <div className="text-sm text-slate-500 space-y-1">
                 <p><span className="font-semibold text-slate-700">Mon – Sat:</span></p>
                 <p className="ml-3">Morning: 09:00 AM – 01:00 PM</p>
-                <p className="ml-3">Evening: 04:00 PM – 07:00 PM</p>
-                <p><span className="font-semibold text-slate-700">Sunday:</span> 10:00 AM – 12:00 PM</p>
+                <p className="ml-3">Evening: 04:00 PM – 08:00 PM</p>
+                <p><span className="font-semibold text-slate-700">Sunday:</span> 09:00 AM – 12:00 PM</p>
             </div>
         )
     },
@@ -133,8 +133,16 @@ const Contact = () => {
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.1 }}
                             viewport={{ once: true }}
-                            className="rounded-3xl overflow-hidden shadow-xl border border-slate-200 h-[480px]"
+                            className="rounded-3xl overflow-hidden shadow-xl border border-slate-200 h-[480px] relative group"
                         >
+                            <a
+                                href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="absolute inset-0 z-10 cursor-pointer"
+                            >
+                                <span className="sr-only">Open Clinic Location on Google Maps</span>
+                            </a>
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3555.8464122193122!2d75.74185697629602!3d26.971762676611963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db368ac6c1b05%3A0xa2b27c9a29b20579!2sRK%20%E2%80%93%20The%20Complete%20Care%20Physiotherapy%20Centre!5e0!3m2!1sen!2sin!4v1771333214344!5m2!1sen!2sin"
                                 width="100%"
@@ -144,6 +152,7 @@ const Contact = () => {
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                                 title="Clinic Location"
+                                className="grayscale-[0.2] transition-all group-hover:grayscale-0"
                             ></iframe>
                         </motion.div>
                     </div>
