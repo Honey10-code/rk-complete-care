@@ -83,11 +83,11 @@ const Home = () => {
                                 <span className="block text-5xl md:text-6xl lg:text-[4.5rem] bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-blue-800 pb-2">
                                     RK The Complete
                                 </span>
-                                <span className="block text-4xl md:text-5xl lg:text-[4.5rem] text-blue-700 mt-1">
+                                <span className="block text-3xl md:text-5xl lg:text-[3.5rem] text-blue-700 mt-1">
                                     Physiotherapy Centre
                                 </span>
-                                <span className="block text-2xl md:text-3xl lg:text-[2.5rem] text-blue-600 mt-1 font-bold">
-                                    Where Recovery Begins
+                                <span className="block text-2xl md:text-2xl lg:text-[2.5rem] text-blue-600 mt-1 font-bold">
+                                    Where Recovery Begins...
                                 </span>
                             </h1>
 
