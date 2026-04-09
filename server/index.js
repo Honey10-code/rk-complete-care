@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const { Server } = require('socket.io');
 const { initScheduler } = require('./utils/scheduler');
 require('dotenv').config();
@@ -16,8 +17,18 @@ if (!fs.existsSync(uploadsDir)) {
 }
 const dns = require('dns');
 
-// ✅ DNS Fix (important for Mongo Atlas)
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+// ✅ Node.js DNS Workarounds for MongoDB Atlas
+// 1. Force IPv4 first (fixes SRV issues in some Docker/Cloud environments)
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+}
+
+// 2. Use reliable DNS servers (Cloudflare + Google)
+try {
+    dns.setServers(['1.1.1.1', '8.8.8.8']);
+} catch (e) {
+    console.warn("⚠️ DNS setServers failed, falling back to system default.");
+}
 
 const app = express();
 const server = http.createServer(app);
@@ -122,7 +133,11 @@ server.listen(PORT, () => {
     const url = `${protocol}://${host}/`;
     
     console.log(`⚡ Keep-alive ping to: ${url}`);
-    http.get(url, (res) => {
+    
+    // Select the correct library based on protocol
+    const lib = url.startsWith('https') ? https : http;
+
+    lib.get(url, (res) => {
       console.log(`✅ Keep-alive ping success: ${res.statusCode}`);
     }).on('error', (err) => {
       console.error(`❌ Keep-alive ping failed: ${err.message}`);
