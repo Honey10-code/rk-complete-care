@@ -8,7 +8,7 @@ const Footer = () => {
     const [clinicInfo, setClinicInfo] = useState({
         phones: ["+91 8769556475", "+91 9782468376"],
         email: "rk.completecare@gmail.com",
-        address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor School, Benad Road, Jhotwara, Jaipur",
+        address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public school, Benad Road, Jhotwara, Jaipur",
         openingHours: { morning: "09:00 AM - 01:00 PM", evening: "04:00 PM - 08:00 PM", sunday: "09:00 AM - 12:00 PM" },
         socialLinks: { facebook: "#", instagram: "https://www.instagram.com/rkthecompletecare/", whatsapp: "https://wa.me/918769556475", google: "https://g.page/r/CXkFsimafLKiEAE/review" }
     });
@@ -217,7 +217,7 @@ const Footer = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="grid lg:grid-cols-12 gap-6 pb-12 border-b border-slate-900"
+                    className="grid lg:grid-cols-12 gap-6 pb-12 border-b border-slate-900 items-stretch"
                 >
                     <div className="lg:col-span-8 grid md:grid-cols-2 gap-6">
                         {/* Address Box */}
@@ -225,20 +225,20 @@ const Footer = () => {
                             href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-4 hover:bg-white/[0.04] transition-all group"
+                            className="p-5 md:p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-4 hover:bg-white/[0.04] transition-all group items-start"
                         >
-                            <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-500 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                                <i className="fa-solid fa-location-dot text-xl"></i>
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-500 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                <i className="fa-solid fa-location-dot text-lg md:text-xl"></i>
                             </div>
-                            <div>
+                            <div className="flex-1">
                                 <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Clinical Address</p>
-                                <p className="text-sm text-slate-300 leading-relaxed italic group-hover:text-white transition-colors">{clinicInfo.address}</p>
+                                <p className="text-xs md:text-sm text-slate-300 leading-relaxed italic group-hover:text-white transition-colors">{clinicInfo.address}</p>
                             </div>
                         </a>
                         {/* Contact Box */}
-                        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-4 hover:bg-white/[0.04] transition-all">
-                            <div className="w-12 h-12 rounded-xl bg-emerald-600/10 flex items-center justify-center text-emerald-500 shrink-0">
-                                <i className="fa-solid fa-headset text-xl"></i>
+                        <div className="p-5 md:p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-4 hover:bg-white/[0.04] transition-all items-start">
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-600/10 flex items-center justify-center text-emerald-500 shrink-0">
+                                <i className="fa-solid fa-headset text-lg md:text-xl"></i>
                             </div>
                             <div className="flex-1">
                                 <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Quick Contact</p>
@@ -246,14 +246,13 @@ const Footer = () => {
                                     {(clinicInfo.phones || []).map((p, i) => (
                                         <a key={i} href={`tel:${p.replace(/\s/g, "")}`} className="block text-sm font-semibold text-slate-200 hover:text-emerald-400 transition-colors">{p}</a>
                                     ))}
-                                    <a href={`mailto:${clinicInfo.email}`} className="block text-xs text-slate-500 truncate hover:text-blue-400 transition-colors uppercase tracking-tight">{clinicInfo.email}</a>
+                                    <a href={`mailto:${clinicInfo.email}`} className="block text-[10px] md:text-xs text-slate-500 truncate hover:text-blue-400 transition-colors uppercase tracking-tight">{clinicInfo.email}</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     {/* Small Map Hub - Restored for visibility */}
-                    <div className="lg:col-span-4 relative group rounded-2xl overflow-hidden border border-white/10 shadow-2xl h-[250px] lg:h-full lg:min-h-[300px]">
+                    <div className="lg:col-span-4 relative group rounded-2xl overflow-hidden border border-white/10 shadow-2xl min-h-[160px] lg:min-h-0">
                         <a 
                             href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
                             target="_blank"

@@ -143,7 +143,7 @@ const Contact = () => {
                             </div>
                             <h3 className="text-xl font-black text-slate-900 mb-2">Visit Us</h3>
                             <p className="text-slate-500 mb-2 text-sm font-medium leading-relaxed">
-                                21, Nirmal Vihar, Dadi ka Phatak, Near Victor School, Benad Road, Jhotwara, Jaipur
+                                21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public school, Benad Road, Jhotwara, Jaipur
                             </p>
                         </motion.div>
                     </div>
