@@ -8,9 +8,9 @@ const Footer = () => {
     const [clinicInfo, setClinicInfo] = useState({
         phones: ["+91 8769556475", "+91 9782468376"],
         email: "rk.completecare@gmail.com",
-        address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public school, Benad Road, Jhotwara, Jaipur",
+        address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public School, Benad Road, Jhotwara, Jaipur",
         openingHours: { morning: "09:00 AM - 01:00 PM", evening: "04:00 PM - 08:00 PM", sunday: "09:00 AM - 12:00 PM" },
-        socialLinks: { facebook: "#", instagram: "https://www.instagram.com/rkthecompletecare/", whatsapp: "https://wa.me/918769556475", google: "https://g.page/r/CXkFsimafLKiEAE/review" }
+        socialLinks: { facebook: "https://www.facebook.com/profile.php?id=61581299196924", instagram: "https://www.instagram.com/rkthecompletecare/", whatsapp: "https://wa.me/918769556475", google: "https://g.page/r/CXkFsimafLKiEAE/review" }
     });
     const [servicesList, setServicesList] = useState([]);
 
@@ -50,7 +50,6 @@ const Footer = () => {
     const socialIcons = [
         { icon: "fa-facebook-f", key: "facebook", color: "hover:bg-blue-600", label: "Facebook" },
         { icon: "fa-instagram", key: "instagram", color: "hover:bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600", label: "Instagram" },
-        { icon: "fa-x-twitter", key: "twitter", color: "hover:bg-black", label: "Twitter" },
         { icon: "fa-whatsapp", key: "whatsapp", color: "hover:bg-green-600", label: "WhatsApp" },
         { icon: "fa-google", key: "google", color: "hover:bg-red-500", label: "Google" },
     ];
@@ -99,7 +98,7 @@ const Footer = () => {
                                 </div>
                             </div>
                             <div>
-                                <h2 className="text-white font-black text-xl italic tracking-tight leading-none">RK<span className="text-blue-500">The Complete Care</span></h2>
+                                <h2 className="text-white font-black text-xl italic tracking-tight leading-none">RK <span className="text-blue-500">The Complete Care</span></h2>
                             </div>
                         </motion.div>
 
@@ -221,7 +220,7 @@ const Footer = () => {
                 >
                     <div className="lg:col-span-8 grid md:grid-cols-2 gap-6">
                         {/* Address Box */}
-                        <a 
+                        <a
                             href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -253,7 +252,7 @@ const Footer = () => {
                     </div>
                     {/* Small Map Hub - Restored for visibility */}
                     <div className="lg:col-span-4 relative group rounded-2xl overflow-hidden border border-white/10 shadow-2xl min-h-[160px] lg:min-h-0">
-                        <a 
+                        <a
                             href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
                             target="_blank"
                             rel="noopener noreferrer"
