@@ -3,59 +3,47 @@ import { getBanners } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+const defaultSlides = [
+    {
+        id: 1,
+        image: "/banner-v2.webp",
+        title: "Premium Clinical Excellence",
+        subtitle: "Expert Physiotherapy & Rehabilitation Specialist"
+    },
+    {
+        id: 2,
+        image: "",
+        title: "Personalized Recovery Support",
+        subtitle: "Dedicated Care for Every Step of Your Journey"
+    },
+    {
+        id: 3,
+        image: "",
+        title: "Sports Injury Recovery",
+        subtitle: "Regain Your Peak Performance and Strength"
+    },
+    {
+        id: 4,
+        image: "",
+        title: "Advanced Manual Therapy",
+        subtitle: "Scientifically Proven Treatment Protocols"
+    }
+];
+
 const BannerCarousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [slides, setSlides] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    // Default high-quality slides as fallback (Unsplash)
-    const defaultSlides = [
-        {
-            id: 1,
-            image: "Banner1.webp",
-            title: "Premium Clinical Excellence",
-            subtitle: "Expert Physiotherapy & Rehabilitation Specialist"
-        },
-        {
-            id: 2,
-            image: "",
-            title: "Personalized Recovery Support",
-            subtitle: "Dedicated Care for Every Step of Your Journey"
-        },
-        {
-            id: 3,
-            image: "",
-            title: "Sports Injury Recovery",
-            subtitle: "Regain Your Peak Performance and Strength"
-        },
-        {
-            id: 4,
-            image: "",
-            title: "Advanced Manual Therapy",
-            subtitle: "Scientifically Proven Treatment Protocols"
-        }
-    ];
+    const [slides, setSlides] = useState(defaultSlides);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchBanners = async () => {
-            try {
-                // Initialize with defaults immediately to prevent flicker
-                if (slides.length === 0) setSlides(defaultSlides);
-
-                const data = await getBanners();
+        // ⚡ Start fetching in background to update dynamic content
+        getBanners()
+            .then((data) => {
                 if (data && data.length > 0) {
                     setSlides(data);
                 }
-            } catch (err) {
-                console.error("Error fetching banners:", err);
-                // Fallback already set or remains default
-                if (slides.length === 0) setSlides(defaultSlides);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBanners();
+            })
+            .catch((err) => console.error("Error fetching banners:", err));
     }, []);
 
     useEffect(() => {
@@ -99,28 +87,14 @@ const BannerCarousel = () => {
                     transition={{ duration: 0.8 }}
                     className="absolute inset-0"
                 >
-                    <div
-                        className="w-full h-full bg-cover bg-center relative"
-                        style={{ backgroundImage: `url(${slides[currentIndex].image})` }}
-                    >
-                        {/* ⚡ Performance Trick: Hidden img tag with high priority for the first slide */}
+                    <div className="w-full h-full relative">
                         <img
                             src={slides[currentIndex].image}
-                            alt=""
-                            className="hidden"
+                            alt={slides[currentIndex].title || "Physiotherapy Banner"}
+                            className="w-full h-full object-cover absolute inset-0"
                             fetchpriority={currentIndex === 0 ? "high" : "auto"}
                             loading="eager"
                         />
-                        {/* ⚡ Preload next slide sparingly */}
-                        {slides[(currentIndex + 1) % slides.length] && (
-                            <img
-                                src={slides[(currentIndex + 1) % slides.length].image}
-                                alt=""
-                                className="hidden"
-                                loading="lazy"
-                            />
-                        )}
-
                         {/* Premium Gradient Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-transparent"></div>
                         <div className="absolute inset-0 bg-blue-900/20 mix-blend-multiply"></div>
