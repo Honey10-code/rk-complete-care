@@ -10,7 +10,7 @@ const Footer = () => {
         email: "rk.completecare@gmail.com",
         address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor School, Benad Road, Jhotwara, Jaipur",
         openingHours: { morning: "09:00 AM - 01:00 PM", evening: "04:00 PM - 08:00 PM", sunday: "09:00 AM - 12:00 PM" },
-        socialLinks: { facebook: "#", instagram: "https://www.instagram.com/rkthecompletecare/", twitter: "#", whatsapp: "https://wa.me/918769556475", google: "https://g.page/r/CXkFsimafLKiEAE/review" }
+        socialLinks: { facebook: "#", instagram: "https://www.instagram.com/rkthecompletecare/", whatsapp: "https://wa.me/918769556475", google: "https://g.page/r/CXkFsimafLKiEAE/review" }
     });
     const [servicesList, setServicesList] = useState([]);
 
@@ -252,8 +252,8 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Small Map Hub */}
-                    <div className="lg:col-span-4 relative group rounded-2xl overflow-hidden border border-white/5 shadow-2xl h-full min-h-[140px]">
+                    {/* Small Map Hub - Restored for visibility */}
+                    <div className="lg:col-span-4 relative group rounded-2xl overflow-hidden border border-white/10 shadow-2xl h-[250px] lg:h-full lg:min-h-[300px]">
                         <a 
                             href="https://maps.app.goo.gl/5puqhfAmyGvwu8m17"
                             target="_blank"
@@ -263,15 +263,14 @@ const Footer = () => {
                             <span className="sr-only">Open Clinic Profile on Google Maps</span>
                         </a>
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3557.514467571383!2d75.73356!3d26.91854!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396c0d0000000000%3A0x0!2zMjbCsDU1JzA2LjciTiA3NcKwNDQnMDAuOCJF!5e0!3m2!1sen!2sin!4v1712415000000!5m2!1sen!2sin"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3555.847170220273!2d75.74184381110409!3d26.971738676514477!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db368ac6c1b05%3A0xa2b27c9a29b20579!2sRK%20%E2%80%93%20The%20Complete%20Care%20Physiotherapy%20Centre!5e0!3m2!1sen!2sin!4v1775719822325!5m2!1sen!2sin"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
                             allowFullScreen=""
                             loading="lazy"
-                            className="grayscale hover:grayscale-0 transition-all duration-700 blur-[0.5px] hover:blur-0 scale-105 group-hover:scale-100"
+                            className="transition-all duration-700 scale-105 group-hover:scale-100"
                         />
-                        <div className="absolute inset-0 bg-blue-950/20 group-hover:bg-transparent transition-all pointer-events-none" />
                         <div className="absolute bottom-3 right-3 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest flex items-center gap-1.5 group-hover:bg-white group-hover:text-slate-950 transition-all shadow-xl z-30">
                             Navigate <i className="fa-solid fa-location-arrow"></i>
                         </div>
