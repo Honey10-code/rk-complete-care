@@ -87,7 +87,7 @@ const BannerCarousel = () => {
     }
 
     return (
-        <div className="relative w-full h-[60vh] md:h-[85vh] overflow-hidden group z-10">
+        <div className="relative w-full h-[70vh] lg:h-[85vh] overflow-hidden group z-10">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentIndex}
@@ -105,12 +105,15 @@ const BannerCarousel = () => {
                             fetchpriority={currentIndex === 0 ? "high" : "auto"}
                             loading="eager"
                         />
-                        {/* Premium Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-transparent"></div>
-                        <div className="absolute inset-0 bg-blue-900/20 mix-blend-multiply"></div>
+                        {/* Premium Gradient Overlays */}
+                        {/* Main dark gradient - stronger on left for text */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent md:from-slate-900/90 md:via-slate-900/50"></div>
+                        
+                        {/* Targeted mobile overlay for readability */}
+                        <div className="absolute inset-0 bg-slate-900/20 lg:hidden"></div>
 
                         {(slides[currentIndex].title || slides[currentIndex].subtitle) && (
-                            <div className="absolute inset-0 flex flex-col justify-center items-start px-8 md:px-24 max-w-7xl text-white z-10">
+                            <div className="absolute inset-0 flex flex-col justify-center items-start px-6 md:px-12 lg:px-24 max-w-7xl text-white z-10">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -118,14 +121,14 @@ const BannerCarousel = () => {
                                     className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg"
                                 >
                                     <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                                    <span className="text-xs md:text-sm font-medium tracking-wider uppercase text-blue-50">RK The Complete Care</span>
+                                    <span className="text-[10px] md:text-sm font-medium tracking-wider uppercase text-blue-50">RK The Complete Care</span>
                                 </motion.div>
 
                                 <motion.h2
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.8 }}
-                                    className="text-3xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.1] drop-shadow-2xl"
+                                    className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 lg:mb-6 leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] md:drop-shadow-2xl"
                                 >
                                     {slides[currentIndex].title}
                                 </motion.h2>
@@ -134,7 +137,7 @@ const BannerCarousel = () => {
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.6, duration: 0.8 }}
-                                    className="text-lg md:text-2xl font-light text-slate-200 drop-shadow-md max-w-2xl mb-10 border-l-4 border-blue-500 pl-6"
+                                    className="text-base md:text-xl lg:text-2xl font-light text-slate-200 drop-shadow-md max-w-2xl mb-8 lg:mb-10 border-l-4 border-blue-500 pl-4 lg:pl-6"
                                 >
                                     {slides[currentIndex].subtitle}
                                 </motion.p>
