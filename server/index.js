@@ -113,4 +113,25 @@ process.on("unhandledRejection", (err) => {
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT} with Socket.io 지원 ✨`);
   initScheduler(app); // Initialize background tasks
+
+  // ✅ Keep-Alive Mechanism (Anti-Cold Start)
+  // This will ping the server every 14 minutes to keep the Render instance awake
+  const selfPing = () => {
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const host = process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${PORT}`;
+    const url = `${protocol}://${host}/`;
+    
+    console.log(`⚡ Keep-alive ping to: ${url}`);
+    http.get(url, (res) => {
+      console.log(`✅ Keep-alive ping success: ${res.statusCode}`);
+    }).on('error', (err) => {
+      console.error(`❌ Keep-alive ping failed: ${err.message}`);
+    });
+  };
+
+  // Run ping every 14 minutes (Render's timeout is usually 15+)
+  setInterval(selfPing, 14 * 60 * 1000);
+  
+  // Also run once on startup
+  setTimeout(selfPing, 5000);
 });

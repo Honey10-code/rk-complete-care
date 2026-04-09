@@ -31,16 +31,31 @@ const BookingForm = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [bookingSummary, setBookingSummary] = useState(null);
     const [slotDropdownOpen, setSlotDropdownOpen] = useState(false);
+    const [slotsCache, setSlotsCache] = useState({}); // Local memory cache for slots { "2024-04-10": data }
 
     // Fetch booked slots when date changes
     const today = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
         if (formData.date) {
+            // Check cache first
+            if (slotsCache[formData.date]) {
+                console.log("🎯 Using local cache for slots:", formData.date);
+                const res = slotsCache[formData.date];
+                setBookedSlots(res);
+                if (res.availableSlots?.length > 0 && !res.availableSlots.includes(formData.slot)) {
+                    setFormData(prev => ({ ...prev, slot: res.availableSlots[0] }));
+                }
+                return;
+            }
+
+            // Otherwise fetch from API
             getBookedSlots(formData.date)
                 .then(res => {
                     setBookedSlots(res);
-                    // Automatically select first available slot if current one is invalid for this day
+                    // Add to cache
+                    setSlotsCache(prev => ({ ...prev, [formData.date]: res }));
+                    
                     if (res.availableSlots && res.availableSlots.length > 0) {
                         if (!res.availableSlots.includes(formData.slot)) {
                             setFormData(prev => ({ ...prev, slot: res.availableSlots[0] }));
@@ -49,7 +64,7 @@ const BookingForm = () => {
                 })
                 .catch(err => console.error("Error fetching slots", err));
         }
-    }, [formData.date]);
+    }, [formData.date, slotsCache]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;

@@ -33,10 +33,10 @@ const safeObject = (res) => {
 
 // ✅ API CACHE SYSTEM (Memory + LocalStorage persistence)
 const cache = new Map();
-const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 Hours (Static data doesn't change often)
 const STORAGE_PREFIX = "rkcare_cache_";
 
-const getCached = (key) => {
+const getCached = (key, allowStale = true) => {
   // 1. Try memory
   let cached = cache.get(key);
   
@@ -51,10 +51,20 @@ const getCached = (key) => {
     } catch (e) { console.error("Cache read error:", e); }
   }
 
-  if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+  if (!cached) return null;
+
+  const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
+  
+  if (!isExpired) {
     console.log(`🚀 API CACHE HIT: ${key}`);
     return cached.data;
   }
+
+  if (allowStale) {
+    console.log(`⚠️ API CACHE STALE (SWR): ${key}`);
+    return cached.data; // Return stale data but caller should refresh
+  }
+
   return null;
 };
 

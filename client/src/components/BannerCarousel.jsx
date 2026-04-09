@@ -8,11 +8,11 @@ const BannerCarousel = () => {
     const [slides, setSlides] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Default slides as fallback
+    // Default high-quality slides as fallback (Unsplash)
     const defaultSlides = [
         {
             id: 1,
-            image: "",
+            image: "Banner1.webp",
             title: "Premium Clinical Excellence",
             subtitle: "Expert Physiotherapy & Rehabilitation Specialist"
         },
@@ -39,15 +39,17 @@ const BannerCarousel = () => {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
+                // Initialize with defaults immediately to prevent flicker
+                if (slides.length === 0) setSlides(defaultSlides);
+
                 const data = await getBanners();
                 if (data && data.length > 0) {
                     setSlides(data);
-                } else {
-                    setSlides(defaultSlides);
                 }
             } catch (err) {
                 console.error("Error fetching banners:", err);
-                setSlides(defaultSlides);
+                // Fallback already set or remains default
+                if (slides.length === 0) setSlides(defaultSlides);
             } finally {
                 setLoading(false);
             }
@@ -72,10 +74,12 @@ const BannerCarousel = () => {
         setCurrentIndex((prev) => (prev + 1) % slides.length);
     };
 
-    if (loading) {
+    // ⚡ PRO TIP: Never return a loader for the main banner if you have fallbacks
+    // This ensures LCP (Largest Contentful Paint) is lightning fast
+    if (slides.length === 0 && loading) {
         return (
-            <div className="w-full h-[50vh] min-h-[400px] md:h-[600px] bg-slate-200 animate-pulse mt-20 flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-slate-300 border-t-primary-blue rounded-full animate-spin"></div>
+            <div className="w-full h-[60vh] md:h-[85vh] bg-slate-900 overflow-hidden relative">
+                <div className="absolute inset-0 bg-blue-900/20 animate-pulse"></div>
             </div>
         );
     }
@@ -100,19 +104,19 @@ const BannerCarousel = () => {
                         style={{ backgroundImage: `url(${slides[currentIndex].image})` }}
                     >
                         {/* ⚡ Performance Trick: Hidden img tag with high priority for the first slide */}
-                        <img 
-                            src={slides[currentIndex].image} 
-                            alt="" 
-                            className="hidden" 
+                        <img
+                            src={slides[currentIndex].image}
+                            alt=""
+                            className="hidden"
                             fetchpriority={currentIndex === 0 ? "high" : "auto"}
                             loading="eager"
                         />
                         {/* ⚡ Preload next slide sparingly */}
                         {slides[(currentIndex + 1) % slides.length] && (
-                            <img 
-                                src={slides[(currentIndex + 1) % slides.length].image} 
-                                alt="" 
-                                className="hidden" 
+                            <img
+                                src={slides[(currentIndex + 1) % slides.length].image}
+                                alt=""
+                                className="hidden"
                                 loading="lazy"
                             />
                         )}
@@ -157,7 +161,7 @@ const BannerCarousel = () => {
                                     transition={{ delay: 0.8, duration: 0.8 }}
                                     className="flex flex-wrap gap-4"
                                 >
-                                    <Link 
+                                    <Link
                                         to="/booking"
                                         onClick={(e) => {
                                             if (location.pathname === '/' || location.pathname === '/home') {
@@ -173,7 +177,7 @@ const BannerCarousel = () => {
                                         Book Consultation
                                         <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                                     </Link>
-                                    <Link 
+                                    <Link
                                         to="/services"
                                         className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full font-semibold border border-white/30 transition-all duration-300 transform hover:-translate-y-1"
                                     >
@@ -210,8 +214,8 @@ const BannerCarousel = () => {
                         key={index}
                         onClick={() => setCurrentIndex(index)}
                         className={`transition-all duration-500 rounded-full ${index === currentIndex
-                                ? 'w-12 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]'
-                                : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                            ? 'w-12 h-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]'
+                            : 'w-2 h-2 bg-white/50 hover:bg-white/80'
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
