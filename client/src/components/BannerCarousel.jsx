@@ -38,18 +38,10 @@ const BannerCarousel = () => {
     useEffect(() => {
         let isMounted = true;
 
-        // ⚡ Start fetching in background to update dynamic content
         getBanners()
             .then((data) => {
                 if (isMounted && data && data.length > 0) {
-                    setSlides((prev) => {
-                        // ⚡ Keep first slide static (fast & no flicker)
-                        const updated = [...data];
-                        if (updated.length > 0) {
-                            updated[0] = prev[0];
-                        }
-                        return updated;
-                    });
+                    setSlides(data);
                 }
             })
             .catch((err) => console.error("Error fetching banners:", err));
