@@ -41,7 +41,12 @@ const BannerCarousel = () => {
         getBanners()
             .then((data) => {
                 if (isMounted && data && data.length > 0) {
-                    setSlides(data);
+                    setSlides((prev) => {
+                        // Merge backend banners with manual defaults
+                        // This ensures we always have at least 4 slides
+                        if (data.length >= prev.length) return data;
+                        return [...data, ...prev.slice(data.length)];
+                    });
                 }
             })
             .catch((err) => console.error("Error fetching banners:", err));
