@@ -36,14 +36,27 @@ const BannerCarousel = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        let isMounted = true;
+
         // ⚡ Start fetching in background to update dynamic content
         getBanners()
             .then((data) => {
-                if (data && data.length > 0) {
-                    setSlides(data);
+                if (isMounted && data && data.length > 0) {
+                    setSlides((prev) => {
+                        // ⚡ Keep first slide static (fast & no flicker)
+                        const updated = [...data];
+                        if (updated.length > 0) {
+                            updated[0] = prev[0];
+                        }
+                        return updated;
+                    });
                 }
             })
             .catch((err) => console.error("Error fetching banners:", err));
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     useEffect(() => {
@@ -89,7 +102,7 @@ const BannerCarousel = () => {
                 >
                     <div className="w-full h-full relative">
                         <img
-                            src={slides[currentIndex].image}
+                            src={slides[currentIndex].image || "/banner-v2.webp"}
                             alt={slides[currentIndex].title || "Physiotherapy Banner"}
                             className="w-full h-full object-cover absolute inset-0"
                             fetchpriority={currentIndex === 0 ? "high" : "auto"}
