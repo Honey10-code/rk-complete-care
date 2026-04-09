@@ -12,19 +12,19 @@ const defaultSlides = [
     },
     {
         id: 2,
-        image: "",
+        image: "/Banner2.png",
         title: "Personalized Recovery Support",
         subtitle: "Dedicated Care for Every Step of Your Journey"
     },
     {
         id: 3,
-        image: "",
+        image: "/Banner3.png",
         title: "Sports Injury Recovery",
         subtitle: "Regain Your Peak Performance and Strength"
     },
     {
         id: 4,
-        image: "",
+        image: "/Banner4.png",
         title: "Advanced Manual Therapy",
         subtitle: "Scientifically Proven Treatment Protocols"
     }
