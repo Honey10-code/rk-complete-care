@@ -1,15 +1,168 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { getClinicPosters } from "../services/api";
+import logoImg from "../assets/images/LOGO.png";
 
 const CATEGORIES = ["All", "Awareness", "Services", "Events", "Health Tips", "Offers", "General"];
 
+// ── Blog Detail View (Services Style) ───────────────────────────────────────────
+const BlogDetail = ({ poster, onBack, onSelectPoster, allPosters }) => {
+    return (
+        <motion.div
+            key={poster._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="pb-20"
+        >
+            {/* Gradient Header Banner */}
+            <div className="relative rounded-3xl overflow-hidden mb-12 shadow-2xl"
+                style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
+                <div className="absolute inset-0 opacity-[0.05]"
+                    style={{ backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
+                </div>
+                <div className="relative z-10 px-8 py-16 md:py-24 text-center">
+                    <button
+                        onClick={onBack}
+                        className="absolute left-6 top-8 flex items-center gap-2 text-white/60 hover:text-white text-xs font-black uppercase tracking-widest transition-all hover:-translate-x-1"
+                    >
+                        <i className="fa-solid fa-arrow-left"></i> All Articles
+                    </button>
+                    <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-1.5 mb-6">
+                        <span className="text-blue-400 text-[10px] font-black uppercase tracking-[0.2em]">{poster.category || "General"}</span>
+                    </div>
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-tight max-w-4xl mx-auto drop-shadow-md">
+                        {poster.title}
+                    </h1>
+                </div>
+            </div>
+
+            {/* Content Layout */}
+            <div className="grid lg:grid-cols-[1fr_320px] gap-12">
+                {/* Main Content */}
+                <div className="space-y-12">
+                    {/* Featured Image */}
+                    <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-white">
+                        <img
+                            src={poster.image}
+                            alt={poster.title}
+                            className="w-full h-auto object-cover max-h-[600px]"
+                            onError={e => { e.target.src = 'https://placehold.co/1200x600?text=' + poster.title; }}
+                        />
+                    </div>
+
+                    {/* Article Body */}
+                    <div className="bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full -mr-32 -mt-32 opacity-50"></div>
+                        
+                        {poster.description && (
+                            <div className="relative z-10 text-slate-500 text-lg md:text-xl leading-relaxed font-medium mb-12 italic border-l-4 border-blue-500 pl-6">
+                                "{poster.description}"
+                            </div>
+                        )}
+
+                        {/* Structured Sections */}
+                        {poster.sections && poster.sections.length > 0 && (
+                            <div className="relative z-10 space-y-16">
+                                {poster.sections.map((sec, idx) => (
+                                    <div key={idx} className="group">
+                                        {sec.heading && (
+                                            <h2 className={`text-2xl md:text-4xl font-black tracking-tight mb-6 transition-colors ${
+                                                sec.headingColor === 'blue' ? 'text-blue-600' :
+                                                sec.headingColor === 'emerald' ? 'text-emerald-600' :
+                                                sec.headingColor === 'indigo' ? 'text-indigo-600' :
+                                                sec.headingColor === 'rose' ? 'text-rose-600' :
+                                                sec.headingColor === 'amber' ? 'text-amber-600' :
+                                                sec.headingColor === 'slate' ? 'text-slate-700' : 'text-slate-900'
+                                            }`}>
+                                                {sec.heading}
+                                            </h2>
+                                        )}
+                                        {sec.subHeading && (
+                                            <p className="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">
+                                                {sec.subHeading}
+                                            </p>
+                                        )}
+                                        {sec.details && (
+                                            <p className={`text-slate-600 text-lg leading-relaxed ${sec.detailsWeight === 'bold' ? 'font-black text-slate-800' : 'font-medium'}`}>
+                                                {sec.details}
+                                            </p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Article Footer */}
+                        <div className="relative z-10 mt-20 pt-10 border-t border-slate-100 flex flex-wrap items-center justify-between gap-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-slate-100 overflow-hidden p-1">
+                                    <img src={logoImg} alt="RK Logo" className="w-full h-full object-contain" />
+                                </div>
+                                <div>
+                                    <p className="text-slate-800 font-black text-sm uppercase tracking-wider">RK The Complete Care</p>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Where Recovery Begins...</p>
+                                </div>
+                            </div>
+                            <Link to="/booking" className="px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all shadow-xl hover:-translate-y-1">
+                                Book Consult <i className="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Sidebar Navigation */}
+                <aside className="space-y-8">
+                    <div className="sticky top-24 space-y-8">
+                        {/* More Articles Sidebar */}
+                        <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                                <i className="fa-solid fa-bars-staggered text-blue-500"></i> Other Articles
+                            </h4>
+                            <div className="space-y-3">
+                                {allPosters.slice(0, 8).map(p => (
+                                    <button
+                                        key={p._id}
+                                        onClick={() => onSelectPoster(p._id)}
+                                        className={`w-full text-left p-4 rounded-2xl text-[11px] font-black transition-all group flex gap-3 ${
+                                            p._id === poster._id
+                                                ? 'bg-blue-600 text-white shadow-xl shadow-blue-100'
+                                                : 'bg-slate-50 text-slate-500 hover:bg-blue-50 hover:text-blue-600'
+                                        }`}
+                                    >
+                                        <div className={`w-2 h-2 rounded-full mt-0.5 shrink-0 ${p._id === poster._id ? 'bg-white' : 'bg-blue-300'}`}></div>
+                                        <span className="line-clamp-2">{p.title}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* CTA Sidebar */}
+                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] p-8 text-white shadow-2xl shadow-blue-200 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
+                            <h4 className="text-xl font-black leading-tight mb-4 relative z-10">Ready to start your recovery?</h4>
+                            <p className="text-blue-100 text-xs mb-8 font-medium leading-relaxed relative z-10">Our expert doctors are here to help you get back to what you love.</p>
+                            <Link to="/booking" className="block w-full text-center py-4 bg-white text-blue-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-all relative z-10">
+                                Book Appointment Now <i className="fa-solid fa-arrow-right ml-2 text-xs"></i>                                
+                            </Link>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </motion.div>
+    );
+};
+
+// ── Main Page Component ────────────────────────────────────────────────────────
 const ClinicPosters = () => {
     const [posters, setPosters] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("All");
-    const [lightbox, setLightbox] = useState(null);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
         getClinicPosters()
@@ -18,196 +171,140 @@ const ClinicPosters = () => {
             .finally(() => setLoading(false));
     }, []);
 
+    const articleId = searchParams.get('article');
+    const selectedPoster = posters.find(p => p._id === articleId);
+
+    const handleSelectPoster = (id) => {
+        setSearchParams({ article: id });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleBack = () => {
+        setSearchParams({});
+    };
+
     const filtered = filter === "All" ? posters : posters.filter(p => p.category === filter);
     const availableCategories = ["All", ...new Set(posters.map(p => p.category).filter(Boolean))];
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-white">
+                <Navbar />
+                <div className="flex flex-col items-center justify-center py-64 space-y-4">
+                    <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+                    <p className="text-slate-400 font-black animate-pulse uppercase tracking-[0.3em] text-[10px]">Accessing Medical Archives...</p>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50">
             <Navbar />
 
-            {/* Hero */}
-            <section className="relative pt-16 pb-20 bg-slate-900 overflow-hidden">
-                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)", backgroundSize: "40px 40px" }}></div>
-                <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-                        <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-6">
-                            <i className="fa-solid fa-images text-blue-400 text-sm"></i>
-                            <span className="text-white/70 text-sm font-bold uppercase tracking-widest">Clinic Updates · Announcements</span>
-                        </div>
-                        <h1 className="text-5xl md:text-6xl font-black text-white mb-5 leading-tight">
-                            Clinic <span className="text-blue-500">Blogs</span>
-                        </h1>
-                        <p className="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed">
-                            Stay updated with our latest health tips, service announcements, events, and special offers.
-                        </p>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Filter + Grid */}
-            <section className="max-w-7xl mx-auto px-6 py-12">
-                {/* Category filter */}
-                <div className="flex flex-wrap gap-2 mb-8">
-                    {availableCategories.map(c => (
-                        <button key={c} onClick={() => setFilter(c)}
-                            className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${filter === c ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-white text-slate-500 border border-slate-100 hover:border-blue-200 hover:text-blue-600"}`}>
-                            {c}
-                        </button>
-                    ))}
-                </div>
-
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center py-32 space-y-4">
-                        <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-                        <p className="text-slate-400 font-bold animate-pulse uppercase tracking-[0.2em] text-[10px]">Loading Blogs...</p>
-                    </div>
-                ) : filtered.length === 0 ? (
-                    <div className="text-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm px-10">
-                        <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i className="fa-solid fa-image text-4xl text-slate-200"></i>
-                        </div>
-                        <p className="font-black text-2xl text-slate-800">No blogs published yet</p>
-                        <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">Our clinical team is currently preparing updates. Stay tuned for health tips and clinic news!</p>
-                    </div>
-                ) : (
-                    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-                        {filtered.map((poster, i) => (
-                            <motion.div
-                                key={poster._id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: i * 0.05 }}
-                                onClick={() => setLightbox(poster)}
-                                className="group break-inside-avoid bg-white rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/80 hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-2 transition-all duration-500 cursor-pointer"
-                            >
-                                <div className="relative overflow-hidden aspect-[4/5]">
-                                    <img
-                                        src={poster.image}
-                                        alt={poster.title || "Clinic Poster"}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                                        onError={e => { e.target.src = "https://placehold.co/400x500?text=Poster"; }}
-                                    />
-                                    {/* Overlay on hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-blue-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                                        <div className="text-white">
-                                            <p className="text-[10px] font-black uppercase tracking-widest mb-2 text-blue-200">View Article</p>
-                                            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                                                <i className="fa-solid fa-expand text-sm"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {poster.category && poster.category !== "General" && (
-                                        <div className="absolute top-4 left-4">
-                                            <span className="bg-blue-600/90 backdrop-blur-md text-white text-[9px] font-black px-3 py-1.5 rounded-lg shadow-xl uppercase tracking-wider">{poster.category}</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-6">
-                                    {poster.title && (
-                                        <h3 className="font-black text-slate-800 text-lg leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                                            {poster.title}
-                                        </h3>
-                                    )}
-                                    {poster.description && (
-                                        <p className="text-slate-500 text-sm mt-3 leading-relaxed line-clamp-3 font-medium opacity-80">
-                                            {poster.description}
-                                        </p>
-                                    )}
-                                    <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                            Official Update
-                                        </span>
-                                        <i className="fa-solid fa-arrow-right-long text-blue-200 group-hover:text-blue-600 group-hover:translate-x-1 transition-all"></i>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
-            </section>
-
-            <AnimatePresence>
-                {lightbox && (
-                    <motion.div 
-                        initial={{ opacity: 0 }} 
-                        animate={{ opacity: 1 }} 
-                        exit={{ opacity: 0 }} 
-                        className="fixed inset-0 bg-slate-950/90 z-[200] flex items-start justify-center p-4 md:p-10 backdrop-blur-md overflow-y-auto pt-20 pb-20" 
-                        onClick={() => setLightbox(null)}
-                    >
-                        <motion.div 
-                            initial={{ scale: 0.95, opacity: 0, y: 40 }} 
-                            animate={{ scale: 1, opacity: 1, y: 0 }} 
-                            exit={{ scale: 0.95, opacity: 0, y: 40 }} 
-                            onClick={e => e.stopPropagation()} 
-                            className="relative max-w-2xl w-full my-auto"
+            <div className="max-w-7xl mx-auto px-6 pt-12 pb-24">
+                <AnimatePresence mode="wait">
+                    {selectedPoster ? (
+                        <BlogDetail
+                            poster={selectedPoster}
+                            onBack={handleBack}
+                            onSelectPoster={handleSelectPoster}
+                            allPosters={posters}
+                        />
+                    ) : (
+                        <motion.div
+                            key="grid"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
                         >
-                            {/* Top Right Close Button */}
-                            <button 
-                                onClick={() => setLightbox(null)} 
-                                className="absolute -top-12 -right-2 md:-right-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/30 flex items-center justify-center transition-all z-20 border border-white/10 group shadow-2xl"
-                            >
-                                <i className="fa-solid fa-xmark text-lg group-hover:rotate-90 transition-transform duration-300"></i>
-                            </button>
-
-                            <div className="bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] border border-white/5">
-                                {/* Image Area */}
-                                <div className="relative bg-[#0a0c10] flex items-center justify-center min-h-[350px] overflow-hidden">
-                                    <img 
-                                        src={lightbox.image} 
-                                        alt={lightbox.title} 
-                                        className="w-full h-full object-contain block mx-auto hover:scale-105 transition-transform duration-700" 
-                                    />
-                                    {/* Category Badge on Top Left */}
-                                    <div className="absolute top-6 left-6">
-                                        <span className="px-3 py-1 bg-[#2563eb] text-white text-[9px] font-black uppercase tracking-[0.15em] rounded-lg shadow-xl shadow-blue-900/40 border border-blue-400/20">
-                                            {lightbox.category || "General"}
-                                        </span>
-                                    </div>
+                            {/* Hero */}
+                            <header className="mb-20 text-center">
+                                <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-full px-5 py-2 mb-8 shadow-sm">
+                                    <i className="fa-solid fa-sparkles text-blue-500 text-xs"></i>
+                                    <span className="text-blue-700 text-[10px] font-black uppercase tracking-[0.2em]">Clinical Publication Board</span>
                                 </div>
-                                
-                                {/* Content Area */}
-                                {(lightbox.title || lightbox.description) && (
-                                    <div className="p-10 md:p-14 bg-[#111827]">
-                                        {lightbox.title && (
-                                            <h3 className="text-white text-4xl md:text-5xl font-black tracking-tight leading-tight mb-8 drop-shadow-sm">
-                                                {lightbox.title}
-                                            </h3>
-                                        )}
-                                        {lightbox.description && (
-                                            <p className="text-slate-400 text-lg md:text-xl leading-relaxed font-medium max-w-3xl mb-12 opacity-90">
-                                                {lightbox.description}
-                                            </p>
-                                        )}
-                                        
-                                        {/* Separator Line */}
-                                        <div className="w-full h-px bg-white/5 mb-10"></div>
+                                <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
+                                    Official Clinic <span className="text-blue-600">Archive</span>
+                                </h1>
+                                <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed font-medium">
+                                    Explore expert insights on physiotherapy, wellness, and clinic updates from our recovery specialists.
+                                </p>
+                            </header>
 
-                                        {/* Icon Footer */}
-                                        <div className="flex flex-wrap items-center gap-8">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-blue-600/10 flex items-center justify-center border border-blue-500/20 shadow-lg">
-                                                    <i className="fa-solid fa-bolt text-blue-500 text-xs"></i>
-                                                </div>
-                                                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">Clinic Update</span>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-emerald-600/10 flex items-center justify-center border border-emerald-500/20 shadow-lg">
-                                                    <i className="fa-solid fa-shield-heart text-emerald-500 text-xs"></i>
-                                                </div>
-                                                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">RK THE COMPLETE CARE</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
+                            {/* Category filter */}
+                            <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+                                {availableCategories.map(c => (
+                                    <button
+                                        key={c}
+                                        onClick={() => setFilter(c)}
+                                        className={`px-6 py-3 rounded-2xl text-[11px] font-black tracking-widest uppercase transition-all shadow-sm border ${
+                                            filter === c
+                                                ? "bg-blue-600 text-white border-blue-600 shadow-xl shadow-blue-100 -translate-y-1"
+                                                : "bg-white text-slate-500 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                                        }`}
+                                    >
+                                        {c}
+                                    </button>
+                                ))}
                             </div>
+
+                            {filtered.length === 0 ? (
+                                <div className="text-center py-40 bg-white rounded-[3rem] border border-slate-100 shadow-sm px-10">
+                                    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8 text-blue-300">
+                                        <i className="fa-solid fa-newspaper text-5xl"></i>
+                                    </div>
+                                    <p className="font-black text-3xl text-slate-900 mb-3">No articles found</p>
+                                    <p className="text-slate-400 text-sm max-w-sm mx-auto font-medium">Our clinical team is currently preparing updates for this category.</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {filtered.map((poster, i) => (
+                                        <motion.article
+                                            key={poster._id}
+                                            initial={{ opacity: 0, y: 30 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.5, delay: i * 0.1 }}
+                                            viewport={{ once: true }}
+                                            onClick={() => handleSelectPoster(poster._id)}
+                                            className="group bg-white rounded-[3rem] p-4 transition-all duration-500 border border-slate-100 overflow-hidden hover:shadow-[0_40px_80px_rgba(37,99,235,0.12)] hover:-translate-y-3 cursor-pointer flex flex-col h-full"
+                                        >
+                                            <div className="relative h-64 rounded-[2.5rem] overflow-hidden mb-8">
+                                                <img
+                                                    src={poster.image}
+                                                    alt={poster.title}
+                                                    className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110"
+                                                    onError={e => { e.target.src = "https://placehold.co/400x500?text=Poster"; }}
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                                <div className="absolute top-5 left-5">
+                                                    <span className="bg-white/95 backdrop-blur-md text-blue-600 text-[10px] font-black px-4 py-2 rounded-2xl shadow-xl uppercase tracking-widest">{poster.category || "General"}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="px-4 pb-4 flex flex-col flex-grow">
+                                                <h3 className="font-black text-slate-900 text-xl leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 mb-4">
+                                                    {poster.title}
+                                                </h3>
+                                                <p className="text-slate-500 text-sm leading-relaxed mb-8 flex-grow opacity-80 font-medium line-clamp-3">
+                                                    {poster.description}
+                                                </p>
+                                                <div className="w-full py-5 bg-slate-50 group-hover:bg-blue-600 text-slate-400 group-hover:text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all duration-500 flex items-center justify-center gap-3">
+                                                    Read Publication
+                                                    <i className="fa-solid fa-arrow-right-long transition-transform group-hover:translate-x-3"></i>
+                                                </div>
+                                            </div>
+                                        </motion.article>
+                                    ))}
+                                </div>
+                            )}
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            <Footer />
         </div>
     );
 };

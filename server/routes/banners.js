@@ -50,6 +50,8 @@ router.post('/', upload.single('image'), async (req, res) => {
         image: imagePath,
         title: req.body.title,
         subtitle: req.body.subtitle,
+        titleColor: req.body.titleColor || 'white',
+        subtitleColor: req.body.subtitleColor || 'white',
         order: order
     });
 
@@ -72,6 +74,30 @@ router.patch('/reorder', async (req, res) => {
         res.json({ message: 'Banners reordered successfully' });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+// UPDATE banner
+router.put('/:id', upload.single('image'), async (req, res) => {
+    try {
+        const banner = await Banner.findById(req.params.id);
+        if (!banner) return res.status(404).json({ message: 'Banner not found' });
+
+        let imagePath = req.body.imageUrl || banner.image;
+        if (req.file) {
+            imagePath = `uploads/${req.file.filename}`;
+        }
+
+        banner.title = req.body.title !== undefined ? req.body.title : banner.title;
+        banner.subtitle = req.body.subtitle !== undefined ? req.body.subtitle : banner.subtitle;
+        banner.titleColor = req.body.titleColor || banner.titleColor;
+        banner.subtitleColor = req.body.subtitleColor || banner.subtitleColor;
+        banner.image = imagePath;
+
+        const updatedBanner = await banner.save();
+        res.json(updatedBanner);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
 });
 

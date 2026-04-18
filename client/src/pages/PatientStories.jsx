@@ -193,7 +193,39 @@ const PatientStories = () => {
                                     <span className="bg-indigo-100 text-indigo-700 text-sm font-bold px-3 py-1 rounded-full">{selected.condition} {selected.conditionHi && <span className="font-black">({selected.conditionHi})</span>}</span>
                                     <StarRating rating={selected.rating} />
                                 </div>
-                                <p className="text-slate-700 leading-relaxed text-base italic mb-6">"{selected.story}"</p>
+                                <p className="text-slate-700 leading-relaxed text-base italic mb-8">"{selected.story}"</p>
+
+                                {/* Structured Content Sections */}
+                                {selected.sections && selected.sections.length > 0 && (
+                                    <div className="space-y-10 mb-8">
+                                        {selected.sections.map((sec, idx) => (
+                                            <div key={idx} className="space-y-3">
+                                                {sec.heading && (
+                                                    <h4 className={`text-xl md:text-2xl font-black tracking-tight ${
+                                                        sec.headingColor === 'blue' ? 'text-blue-600' :
+                                                        sec.headingColor === 'emerald' ? 'text-emerald-600' :
+                                                        sec.headingColor === 'indigo' ? 'text-indigo-600' :
+                                                        sec.headingColor === 'rose' ? 'text-rose-600' :
+                                                        sec.headingColor === 'amber' ? 'text-amber-600' :
+                                                        sec.headingColor === 'slate' ? 'text-slate-600' : 'text-blue-600'
+                                                    }`}>
+                                                        {sec.heading}
+                                                    </h4>
+                                                )}
+                                                {sec.subHeading && (
+                                                    <p className="text-slate-400 text-xs font-black uppercase tracking-widest">
+                                                        {sec.subHeading}
+                                                    </p>
+                                                )}
+                                                {sec.details && (
+                                                    <p className={`text-slate-600 text-sm md:text-base leading-relaxed ${sec.detailsWeight === 'bold' ? 'font-black text-slate-800' : 'font-medium'}`}>
+                                                        {sec.details}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                                 {selected.outcome && (
                                     <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3">
                                         <i className="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>

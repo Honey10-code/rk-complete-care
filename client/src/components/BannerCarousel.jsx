@@ -3,58 +3,25 @@ import { getBanners } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const defaultSlides = [
-    {
-        id: 1,
-        image: "/banner-v2.webp",
-        title: "Premium Clinical Excellence",
-        subtitle: "Expert Physiotherapy & Rehabilitation Specialist"
-    },
-    {
-        id: 2,
-        image: "/Banner2.png",
-        title: "Personalized Recovery Support",
-        subtitle: "Dedicated Care for Every Step of Your Journey"
-    },
-    {
-        id: 3,
-        image: "/Banner3.png",
-        title: "Sports Injury Recovery",
-        subtitle: "Regain Your Peak Performance and Strength"
-    },
-    {
-        id: 4,
-        image: "/Banner4.png",
-        title: "Advanced Manual Therapy",
-        subtitle: "Scientifically Proven Treatment Protocols"
-    }
-];
-
 const BannerCarousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [slides, setSlides] = useState(defaultSlides);
-    const [loading, setLoading] = useState(false);
+    const [slides, setSlides] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let isMounted = true;
 
         getBanners()
             .then((data) => {
-                if (isMounted && data && data.length > 0) {
-                    setSlides((prev) => {
-                        // Backend data is already sorted by order in the API
-                        // If we have fewer than 4 backend slides, we append the defaults to fill up
-                        if (data.length >= 4) return data;
-                        
-                        // Pick unique defaults that aren't already represented by backend data (by image)
-                        const backendImages = new Set(data.map(b => b.image));
-                        const uniqueDefaults = defaultSlides.filter(d => !backendImages.has(d.image));
-                        
-                        return [...data, ...uniqueDefaults.slice(0, 4 - data.length)];
-                    });
+                if (isMounted) {
+                    setSlides(data || []);
                 }
+                setLoading(false);
             })
-            .catch((err) => console.error("Error fetching banners:", err));
+            .catch((err) => {
+                console.error("Error fetching banners:", err);
+                setLoading(false);
+            });
 
         return () => {
             isMounted = false;
@@ -134,6 +101,7 @@ const BannerCarousel = () => {
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.8 }}
                                     className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 lg:mb-6 leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] md:drop-shadow-2xl"
+                                    style={{ color: slides[currentIndex].titleColor || 'white' }}
                                 >
                                     {slides[currentIndex].title}
                                 </motion.h2>
@@ -142,7 +110,8 @@ const BannerCarousel = () => {
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.6, duration: 0.8 }}
-                                    className="text-base md:text-xl lg:text-2xl font-light text-slate-200 drop-shadow-md max-w-2xl mb-8 lg:mb-10 border-l-4 border-blue-500 pl-4 lg:pl-6"
+                                    className="text-base md:text-xl lg:text-2xl font-light drop-shadow-md max-w-2xl mb-8 lg:mb-10 border-l-4 border-blue-500 pl-4 lg:pl-6"
+                                    style={{ color: slides[currentIndex].subtitleColor || '#e2e8f0' }}
                                 >
                                     {slides[currentIndex].subtitle}
                                 </motion.p>

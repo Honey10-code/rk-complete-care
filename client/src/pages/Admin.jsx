@@ -63,6 +63,99 @@ const StatCard = ({ title, value, icon, color, sub, onClick, isActive }) => (
 // ─── Input Style ─────────────────────────────────────────────────────────────
 const inp = "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[rgba(13, 148, 136,0.30)] focus:border-blue-100/50 transition-all text-slate-700 text-sm";
 
+// ─── Section Editor Component ───────────────────────────────────────────────
+const SectionEditor = ({ sections, onChange }) => {
+    const addSection = () => {
+        onChange([...sections, { heading: "", headingColor: "blue", subHeading: "", details: "", detailsWeight: "normal" }]);
+    };
+
+    const removeSection = (index) => {
+        onChange(sections.filter((_, i) => i !== index));
+    };
+
+    const updateSection = (index, field, value) => {
+        const updated = sections.map((s, i) => i === index ? { ...s, [field]: value } : s);
+        onChange(updated);
+    };
+
+    const colors = [
+        { name: "Blue", value: "blue", bg: "bg-blue-600" },
+        { name: "Emerald", value: "emerald", bg: "bg-emerald-600" },
+        { name: "Indigo", value: "indigo", bg: "bg-indigo-600" },
+        { name: "Rose", value: "rose", bg: "bg-rose-600" },
+        { name: "Amber", value: "amber", bg: "bg-amber-600" },
+        { name: "Slate", value: "slate", bg: "bg-slate-800" },
+    ];
+
+    return (
+        <div className="space-y-4">
+            <div className="flex items-center justify-between">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Content Sections (Optional)</h4>
+                <button type="button" onClick={addSection} className="text-[10px] font-black bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all uppercase tracking-wider">
+                    <i className="fa-solid fa-plus mr-1"></i> Add Section
+                </button>
+            </div>
+
+            {sections.length === 0 && (
+                <div className="py-8 text-center border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No extra sections added</p>
+                </div>
+            )}
+
+            <div className="space-y-4">
+                {sections.map((sec, idx) => (
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={idx} className="bg-slate-50/50 border border-slate-100 rounded-2xl p-4 relative group">
+                        <button type="button" onClick={() => removeSection(idx)} className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-slate-200 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-50 transition-all shadow-sm opacity-0 group-hover:opacity-100">
+                            <i className="fa-solid fa-xmark text-[10px]"></i>
+                        </button>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Section Heading</label>
+                                <input type="text" placeholder="e.g. Symptoms" value={sec.heading} onChange={e => updateSection(idx, "heading", e.target.value)} className={inp} />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Heading Color</label>
+                                <div className="flex flex-wrap gap-2 pt-1.5">
+                                    {colors.map(c => (
+                                        <button 
+                                            key={c.value} 
+                                            type="button" 
+                                            onClick={() => updateSection(idx, "headingColor", c.value)}
+                                            className={`w-6 h-6 rounded-full transition-all ${c.bg} ${sec.headingColor === c.value ? "ring-2 ring-offset-2 ring-slate-300 scale-110" : "opacity-60 hover:opacity-100"}`}
+                                            title={c.name}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="space-y-1 md:col-span-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Sub-heading</label>
+                                <input type="text" placeholder="e.g. Common signs to look for" value={sec.subHeading} onChange={e => updateSection(idx, "subHeading", e.target.value)} className={inp} />
+                            </div>
+                            <div className="space-y-1 md:col-span-2">
+                                <div className="flex items-center justify-between mb-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Details / Body Text</label>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Weight:</span>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => updateSection(idx, "detailsWeight", sec.detailsWeight === "bold" ? "normal" : "bold")}
+                                            className={`text-[9px] font-black px-2 py-0.5 rounded border transition-all ${sec.detailsWeight === "bold" ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-400 border-slate-200"}`}
+                                        >
+                                            BOLD
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea rows={2} placeholder="Enter description..." value={sec.details} onChange={e => updateSection(idx, "details", e.target.value)} className={`${inp} resize-none`} />
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 // ─── Main Admin Component ─────────────────────────────────────────────────────
 const Admin = () => {
     const navigate = useNavigate();
@@ -355,28 +448,38 @@ const Admin = () => {
 
     // ── Banners ───────────────────────────────────────────────────────────────
     const [banners, setBanners] = useState([]);
-    const [newBanner, setNewBanner] = useState({ image: "", title: "", subtitle: "" });
+    const [editingBanner, setEditingBanner] = useState(null);
+    const [newBanner, setNewBanner] = useState({ image: "", title: "", subtitle: "", titleColor: "white", subtitleColor: "white" });
     const [uploadType, setUploadType] = useState("url");
     const [file, setFile] = useState(null);
     const fetchBanners = async () => { try { const r = await api.get(`/banners`); setBanners(Array.isArray(r.data) ? r.data : []); } catch { setBanners([]); } };
     useEffect(() => { if (activeTab === "banners") fetchBanners(); }, [activeTab]);
+    
     const handleBannerSubmit = async (e) => {
         e.preventDefault();
         const fd = new FormData();
         fd.append("title", newBanner.title);
         fd.append("subtitle", newBanner.subtitle);
+        fd.append("titleColor", newBanner.titleColor || "white");
+        fd.append("subtitleColor", newBanner.subtitleColor || "white");
         if (uploadType === "url") fd.append("imageUrl", newBanner.image);
         else if (file) fd.append("image", file);
+        
         try {
-            const res = await api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } });
-            if (res.status === 201 || res.status === 200) {
-                setNewBanner({ image: "", title: "", subtitle: "" }); setFile(null);
-                fetchBanners(); addToast("Banner added successfully!", "success");
+            if (editingBanner) {
+                await api.put(`/banners/${editingBanner._id}`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+                addToast("Banner updated successfully!", "success");
+            } else {
+                await api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+                addToast("Banner added successfully!", "success");
             }
+            setNewBanner({ image: "", title: "", subtitle: "", titleColor: "white", subtitleColor: "white" });
+            setFile(null);
+            setEditingBanner(null);
+            fetchBanners();
         } catch (err) {
             const errorMsg = err.response?.data?.message || err.message || "Unknown Error";
-            addToast(`Error adding banner: ${errorMsg}`, "error");
-            console.error("Banner upload error:", err);
+            addToast(`Error saving banner: ${errorMsg}`, "error");
         }
     };
     const handleDeleteBanner = async (id) => {
@@ -393,6 +496,7 @@ const Admin = () => {
     const [newStory, setNewStory] = useState({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
     const [storyUploadType, setStoryUploadType] = useState("url");
     const [storyFile, setStoryFile] = useState(null);
+    const [storySections, setStorySections] = useState([]);
     const fetchStories = async () => { try { const r = await api.get(`/patient-stories`); setStories(Array.isArray(r.data) ? r.data : []); } catch { setStories([]); } };
     useEffect(() => { if (activeTab === "stories") fetchStories(); }, [activeTab]);
     const handleStorySubmit = async (e) => {
@@ -400,6 +504,7 @@ const Admin = () => {
         const fd = new FormData();
         ["patientName", "age", "location", "condition", "conditionHi", "story", "outcome", "rating"].forEach(k => fd.append(k, newStory[k]));
         fd.append("featured", String(newStory.featured));
+        fd.append("sections", JSON.stringify(storySections || []));
         if (storyUploadType === "url") fd.append("imageUrl", newStory.imageUrl);
         else if (storyFile) fd.append("image", storyFile);
         try {
@@ -411,6 +516,7 @@ const Admin = () => {
                 addToast("Story added!", "success");
             }
             setNewStory({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
+            setStorySections([]);
             setEditingStory(null);
             setStoryFile(null);
             fetchStories();
@@ -430,6 +536,7 @@ const Admin = () => {
             rating: story.rating || 5,
             featured: story.featured || false
         });
+        setStorySections(story.sections || []);
         setStoryUploadType("url");
         // Scroll to form
         const formElement = document.getElementById("story-form");
@@ -443,7 +550,9 @@ const Admin = () => {
 
     // Clinic Posters state
     const [posters, setPosters] = useState([]);
+    const [editingPoster, setEditingPoster] = useState(null);
     const [newPoster, setNewPoster] = useState({ title: "", description: "", category: "General", imageUrl: "" });
+    const [posterSections, setPosterSections] = useState([]);
     const [posterUploadType, setPosterUploadType] = useState("file");
     const [posterFile, setPosterFile] = useState(null);
     const POSTER_CATS = ["General", "Awareness", "Services", "Events", "Health Tips", "Offers"];
@@ -451,26 +560,38 @@ const Admin = () => {
     useEffect(() => { if (activeTab === "posters") fetchPosters(); }, [activeTab]);
     const handlePosterSubmit = async (e) => {
         e.preventDefault();
-
-        // Validation
-        if (posterUploadType === "file" && !posterFile) {
-            addToast("Please select a file to upload", "error");
-            return;
-        }
-        if (posterUploadType === "url" && !newPoster.imageUrl) {
-            addToast("Please enter an image URL", "error");
-            return;
-        }
-
         const fd = new FormData();
         ["title", "description", "category"].forEach(k => fd.append(k, newPoster[k]));
+        fd.append("sections", JSON.stringify(posterSections || []));
         if (posterUploadType === "url") fd.append("imageUrl", newPoster.imageUrl);
         else if (posterFile) fd.append("image", posterFile);
         try {
-            await api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+            if (editingPoster) {
+                await api.put(`/clinic-posters/${editingPoster._id}`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+                addToast("Blog updated!", "success");
+            } else {
+                await api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+                addToast("Blog added!", "success");
+            }
             setNewPoster({ title: "", description: "", category: "General", imageUrl: "" });
-            setPosterFile(null); fetchPosters(); addToast("Poster uploaded!", "success");
-        } catch { addToast("Error uploading poster", "error"); }
+            setPosterSections([]);
+            setPosterFile(null);
+            setEditingPoster(null);
+            fetchPosters();
+        } catch { addToast("Error saving blog", "error"); }
+    };
+    const handleEditPoster = (poster) => {
+        setEditingPoster(poster);
+        setNewPoster({
+            title: poster.title || "",
+            description: poster.description || "",
+            category: poster.category || "General",
+            imageUrl: poster.image || ""
+        });
+        setPosterSections(poster.sections || []);
+        setPosterUploadType("url");
+        const el = document.getElementById("poster-form");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
     };
     const handleDeletePoster = async (id) => {
         if (!window.confirm("Delete this poster?")) return;
@@ -1226,115 +1347,142 @@ const Admin = () => {
                     {
                         activeTab === "exercises" && (
                             <div className="space-y-6">
-                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                                    <h2 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
-                                        <i className="fa-solid fa-plus-circle text-emerald-600"></i>
-                                        {editingExercise ? "Edit Exercise" : "Add New Exercise"}
-                                    </h2>
-                                    <form onSubmit={handleExerciseSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Title</label>
-                                            <input type="text" placeholder="Neck Stretch" value={editingExercise ? editingExercise.title : newExercise.title} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, title: e.target.value }) : setNewExercise({ ...newExercise, title: e.target.value })} className={inp} required />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hindi Label</label>
-                                            <input type="text" placeholder="(गर्दन का व्यायाम)" value={editingExercise ? editingExercise.hindi : newExercise.hindi} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, hindi: e.target.value }) : setNewExercise({ ...newExercise, hindi: e.target.value })} className={inp} required />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Slug/ID</label>
-                                            <input type="text" placeholder="neck-stretch" value={editingExercise ? editingExercise.id : newExercise.id} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, id: e.target.value }) : setNewExercise({ ...newExercise, id: e.target.value })} className={inp} required />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">FontAwesome Icon</label>
-                                            <input type="text" placeholder="fa-person-running" value={editingExercise ? editingExercise.icon : newExercise.icon} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, icon: e.target.value }) : setNewExercise({ ...newExercise, icon: e.target.value })} className={inp} required />
+                                <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                                    <div className="flex items-center justify-between mb-8">
+                                        <h2 className="text-xl font-black text-slate-800 flex items-center gap-3">
+                                            <span className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-inner"><i className="fa-solid fa-person-running"></i></span>
+                                            {editingExercise ? "Management: Edit Protocol" : "Create New Exercise Protocol"}
+                                        </h2>
+                                        {editingExercise && <button onClick={() => setEditingExercise(null)} className="px-4 py-2 bg-slate-50 text-slate-400 hover:text-rose-500 rounded-xl font-bold text-xs transition-all flex items-center gap-2"><i className="fa-solid fa-xmark"></i> Cancel Edit</button>}
+                                    </div>
+
+                                    <form onSubmit={handleExerciseSubmit} className="space-y-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Exercise Title</label>
+                                                <input required type="text" placeholder="e.g. Lumbar Stretch" value={editingExercise ? editingExercise.title : newExercise.title} onChange={e => editingExercise ? setEditingExercise({...editingExercise, title: e.target.value}) : setNewExercise({...newExercise, title: e.target.value})} className={inp} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Hindi Label</label>
+                                                <input required type="text" placeholder="(कमर का व्यायाम)" value={editingExercise ? editingExercise.hindi : newExercise.hindi} onChange={e => editingExercise ? setEditingExercise({...editingExercise, hindi: e.target.value}) : setNewExercise({...newExercise, hindi: e.target.value})} className={inp} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Unique Slug / ID</label>
+                                                <input required type="text" placeholder="lumbar-stretch" value={editingExercise ? editingExercise.id : newExercise.id} onChange={e => editingExercise ? setEditingExercise({...editingExercise, id: e.target.value}) : setNewExercise({...newExercise, id: e.target.value})} className={inp} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">FontAwesome Icon</label>
+                                                <input required type="text" placeholder="fa-person-running" value={editingExercise ? editingExercise.icon : newExercise.icon} onChange={e => editingExercise ? setEditingExercise({...editingExercise, icon: e.target.value}) : setNewExercise({...newExercise, icon: e.target.value})} className={inp} />
+                                            </div>
                                         </div>
 
-                                        <div className="md:col-span-2 lg:col-span-3 space-y-6 pt-6 border-t border-slate-100">
-                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div className="space-y-8 pt-8 border-t border-slate-100">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                                 <div>
-                                                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Exercise Protocol Steps</label>
-                                                    <p className="text-[10px] text-slate-400 ml-1 mt-0.5 font-medium">Add and arrange images to create a step-by-step guide for patients.</p>
+                                                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                                                        <span className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm"><i className="fa-solid fa-clipboard-list"></i></span>
+                                                        Exercise Protocol Steps
+                                                    </h3>
+                                                    <p className="text-[10px] text-slate-400 ml-10 mt-1 font-medium leading-relaxed">Design a professional step-by-step visual therapy guide for your patients.</p>
                                                 </div>
-                                                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-xl border border-emerald-100 shadow-sm">
-                                                    <i className="fa-solid fa-layer-group text-emerald-600 text-[10px]"></i>
-                                                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">
-                                                        {(editingExercise?.steps?.length || newExercise?.steps?.length || 0)} Total Steps
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 backdrop-blur-sm self-start md:self-center">
+                                                    <div className="flex -space-x-2">
+                                                        {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-[8px] font-black text-emerald-600 shadow-sm">{i}</div>)}
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.1em] ml-1">
+                                                        {(editingExercise?.steps?.length || newExercise?.steps?.length || 0)} Protocol Steps
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                                                 <AnimatePresence mode="popLayout">
                                                     {(editingExercise ? editingExercise.steps : newExercise.steps || []).map((s, idx) => (
                                                         <motion.div 
                                                             key={`${idx}-${s instanceof File ? s.name : s}`}
                                                             layout
-                                                            initial={{ opacity: 0, scale: 0.8 }}
-                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                                            animate={{ opacity: 1, scale: 1, y: 0 }}
                                                             exit={{ opacity: 0, scale: 0.8 }}
-                                                            className="group relative aspect-square bg-white rounded-[1.5rem] border-2 border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-emerald-200 transition-all duration-300"
+                                                            className="group relative aspect-square bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
                                                         >
+                                                            <div className="absolute inset-0 pointer-events-none border-4 border-transparent group-hover:border-emerald-500/20 rounded-[2rem] transition-colors z-10"></div>
                                                             <img 
                                                               src={s instanceof File ? URL.createObjectURL(s) : (s.startsWith('http') || s.startsWith('//') ? s : (s.startsWith('uploads') ? `/${s}` : s))} 
-                                                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                                               alt={`Step ${idx + 1}`} 
                                                             />
-                                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 gap-2">
-                                                                {idx > 0 && (
-                                                                    <button type="button" onClick={() => {
-                                                                        const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
-                                                                        [steps[idx], steps[idx-1]] = [steps[idx-1], steps[idx]];
-                                                                        editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                    }} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
-                                                                        <i className="fa-solid fa-chevron-left text-xs"></i>
-                                                                    </button>
-                                                                )}
-                                                                {idx < (editingExercise ? (editingExercise.steps?.length || 0) : (newExercise.steps?.length || 0)) - 1 && (
-                                                                    <button type="button" onClick={() => {
-                                                                        const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
-                                                                        [steps[idx], steps[idx+1]] = [steps[idx+1], steps[idx]];
-                                                                        editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                    }} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
-                                                                        <i className="fa-solid fa-chevron-right text-xs"></i>
-                                                                    </button>
-                                                                )}
+                                                            
+                                                            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-400 flex flex-col items-center justify-center gap-3 z-20">
+                                                                <div className="flex gap-2">
+                                                                    {idx > 0 && (
+                                                                        <button type="button" onClick={() => {
+                                                                            const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
+                                                                            [steps[idx], steps[idx-1]] = [steps[idx-1], steps[idx]];
+                                                                            editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                        }} className="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white text-white hover:text-emerald-600 transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-xl">
+                                                                            <i className="fa-solid fa-arrow-left text-sm"></i>
+                                                                        </button>
+                                                                    )}
+                                                                    {idx < (editingExercise ? (editingExercise.steps?.length || 0) : (newExercise.steps?.length || 0)) - 1 && (
+                                                                        <button type="button" onClick={() => {
+                                                                            const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
+                                                                            [steps[idx], steps[idx+1]] = [steps[idx+1], steps[idx]];
+                                                                            editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                        }} className="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white text-white hover:text-emerald-600 transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-xl">
+                                                                            <i className="fa-solid fa-arrow-right text-sm"></i>
+                                                                        </button>
+                                                                    )}
+                                                                </div>
                                                                 <button type="button" onClick={() => {
                                                                     const steps = (editingExercise ? editingExercise.steps : newExercise.steps).filter((_, i) => i !== idx);
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                }} className="w-8 h-8 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
-                                                                    <i className="fa-solid fa-trash-can text-xs"></i>
+                                                                }} className="w-11 h-11 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white transition-all flex items-center justify-center shadow-lg transform active:scale-95">
+                                                                    <i className="fa-solid fa-trash-can text-base"></i>
                                                                 </button>
                                                             </div>
-                                                            <div className="absolute top-2.5 left-2.5 bg-slate-900/40 backdrop-blur-md text-[9px] font-black text-white px-2.5 py-1 rounded-lg border border-white/20 tracking-tighter">
-                                                                STEP {idx + 1}
+
+                                                            <div className="absolute top-4 left-4 z-10">
+                                                                <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white shadow-lg">
+                                                                    <p className="text-[10px] font-black text-emerald-700 tracking-tighter uppercase">Step {idx + 1}</p>
+                                                                </div>
                                                             </div>
                                                         </motion.div>
                                                     ))}
                                                 </AnimatePresence>
-
-                                                {/* Premium Integrated Uploader Card */}
-                                                <div className="aspect-square rounded-[1.5rem] border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col p-4 transition-all hover:border-emerald-400 hover:bg-white overflow-hidden group/add shadow-inner">
-                                                    <div className="flex bg-slate-200/60 p-1 rounded-xl mb-4 self-stretch">
+ 
+                                                <div className="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 p-5 flex flex-col transition-all duration-500 hover:border-emerald-400 hover:bg-white hover:shadow-2xl hover:shadow-emerald-100 group/add relative overflow-hidden">
+                                                    <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-50 rounded-full opacity-0 group-hover/add:opacity-100 transition-opacity blur-2xl"></div>
+                                                    
+                                                    <div className="flex bg-slate-200/50 backdrop-blur-sm p-1.5 rounded-[1.2rem] mb-5 relative z-10 border border-white/50">
                                                         {["url", "file"].map(type => (
                                                             <button 
                                                                 key={type}
                                                                 type="button"
                                                                 onClick={() => setExerciseUploadType(type)}
-                                                                className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${exerciseUploadType === type ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                                                className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 relative ${exerciseUploadType === type ? 'text-emerald-700' : 'text-slate-500 hover:text-slate-700'}`}
                                                             >
-                                                                {type}
+                                                                {exerciseUploadType === type && (
+                                                                    <motion.div layoutId="activeStepTab" className="absolute inset-0 bg-white rounded-xl shadow-sm border border-slate-100/50" />
+                                                                )}
+                                                                <span className="relative z-10">{type}</span>
                                                             </button>
                                                         ))}
                                                     </div>
-
-                                                    <div className="flex-grow flex flex-col justify-center items-center w-full">
+ 
+                                                    <div className="flex-grow flex flex-col justify-center items-center w-full relative z-10">
                                                         {exerciseUploadType === "url" ? (
-                                                            <div className="w-full space-y-3 animate-in fade-in slide-in-from-bottom-2">
-                                                                <div className="relative group/input">
-                                                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
-                                                                        <i className="fa-solid fa-link text-[8px]"></i>
+                                                            <div className="w-full space-y-4 animate-in fade-in zoom-in-95">
+                                                                <div className="relative">
+                                                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                                                        <i className="fa-solid fa-link text-xs"></i>
                                                                     </div>
-                                                                    <input type="text" id="new-step-url" placeholder="Paste URL..." className="w-full text-[10px] pl-10 pr-3 py-2.5 bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-200 transition-all font-medium" />
+                                                                    <input 
+                                                                        type="text" 
+                                                                        id="new-step-url" 
+                                                                        placeholder="https://..." 
+                                                                        className="w-full text-xs pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-300 transition-all font-semibold placeholder:text-slate-300" 
+                                                                    />
                                                                 </div>
                                                                 <button type="button" onClick={() => {
                                                                     const url = document.getElementById('new-step-url').value;
@@ -1342,24 +1490,26 @@ const Admin = () => {
                                                                     const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), url];
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
                                                                     document.getElementById('new-step-url').value = '';
-                                                                }} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black rounded-xl transition-all shadow-lg shadow-emerald-200 active:scale-[0.97] flex items-center justify-center gap-2">
-                                                                    <i className="fa-solid fa-plus-circle text-xs"></i>
-                                                                    ADD STEP
+                                                                }} className="w-full py-3.5 bg-slate-900 group-hover/add:bg-emerald-600 text-white text-[10px] font-black rounded-2xl transition-all shadow-xl hover:shadow-emerald-200 active:scale-95 flex items-center justify-center gap-2">
+                                                                    <i className="fa-solid fa-plus-circle"></i>
+                                                                    ADD NEW STEP
                                                                 </button>
                                                             </div>
                                                         ) : (
-                                                            <div className="relative w-full h-full flex flex-col items-center justify-center border border-slate-100 bg-white rounded-xl shadow-sm border-dashed hover:bg-emerald-50/50 transition-all duration-300 cursor-pointer group-hover/add:border-emerald-300 animate-in fade-in slide-in-from-bottom-2">
-                                                                <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center mb-3 group-hover/add:scale-110 group-hover/add:bg-emerald-100 transition-all shadow-sm">
-                                                                    <i className="fa-solid fa-cloud-arrow-up text-emerald-600 text-sm"></i>
+                                                            <div className="relative w-full h-full flex flex-col items-center justify-center border-2 border-slate-100 border-dashed bg-white/50 rounded-3xl group-hover/add:border-emerald-200 group-hover/add:bg-emerald-50/30 transition-all duration-500 cursor-pointer overflow-hidden group/file">
+                                                                <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mb-4 group-hover/add:scale-110 group-hover/add:bg-emerald-100 transition-all duration-500 shadow-sm relative">
+                                                                    <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping opacity-0 group-hover/add:opacity-100"></div>
+                                                                    <i className="fa-solid fa-cloud-arrow-up text-emerald-600 text-xl relative z-10"></i>
                                                                 </div>
-                                                                <span className="text-[10px] font-black text-slate-500 underline decoration-slate-200 decoration-2 underline-offset-4 uppercase tracking-widest group-hover/add:text-emerald-700">Drop Image</span>
-                                                                <p className="text-[8px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">or click to browse</p>
-                                                                <input type="file" onChange={e => {
-                                                                    if (!e.target.files[0]) return;
-                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), e.target.files[0]];
+                                                                <span className="text-[11px] font-black text-slate-700 uppercase tracking-[0.2em] group-hover/add:text-emerald-700 transition-colors">Select Device</span>
+                                                                <p className="text-[9px] text-slate-400 mt-2 font-bold opacity-60 uppercase">Files or Folders</p>
+                                                                <input type="file" multiple onChange={e => {
+                                                                    if (!e.target.files.length) return;
+                                                                    const filesArray = Array.from(e.target.files);
+                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), ...filesArray];
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
                                                                     e.target.value = null;
-                                                                }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                                }} className="absolute inset-0 opacity-0 cursor-pointer z-20" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -1367,40 +1517,42 @@ const Admin = () => {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-6 pt-6 border-t border-slate-50">
-                                            {editingExercise && (
-                                                <button type="button" onClick={() => { setEditingExercise(null); setExerciseFile(null); }} className="px-6 py-3 rounded-2xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">Cancel</button>
-                                            )}
-                                            <button type="submit" className="px-10 py-3 bg-emerald-600 text-white rounded-2xl font-black text-sm shadow-[0_8px_25px_-5px_rgba(16,185,129,0.4)] hover:bg-emerald-700 hover:shadow-[0_12px_30px_-5px_rgba(16,185,129,0.5)] transition-all active:scale-[0.98]">
-                                                {editingExercise ? "Save All Changes" : "Create Exercise"}
+                                        <div className="flex justify-end gap-4 pt-8 border-t border-slate-100 mt-8">
+                                            {editingExercise && <button type="button" onClick={() => setEditingExercise(null)} className="px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">Discard Changes</button>}
+                                            <button type="submit" className="px-12 py-3.5 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-emerald-200 hover:bg-emerald-700 hover:-translate-y-1 transition-all active:scale-95">
+                                                {editingExercise ? "Synchronize & Save" : "Finalize & Launch Protocol"}
                                             </button>
                                         </div>
                                     </form>
                                 </div>
 
-                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                                    <div className="p-5 border-b border-slate-100">
-                                        <h2 className="font-black text-slate-800">Current Exercises <span className="ml-2 text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{exercises.length}</span></h2>
+                                <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden mt-12">
+                                    <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                        <h2 className="font-black text-slate-800 flex items-center gap-3 italic">
+                                            Current Active Exercises 
+                                            <span className="ml-2 text-xs font-black text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full not-italic tracking-widest">{exercises.length}</span>
+                                        </h2>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 p-8">
                                         {exercises.map(ex => (
-                                            <div key={ex._id} className="group relative bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
-                                                <div className="h-32 relative">
+                                            <div key={ex._id} className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl transition-all duration-500">
+                                                <div className="h-44 relative overflow-hidden">
                                                     <img 
                                                         src={ex.image?.startsWith('http') || ex.image?.startsWith('//') ? ex.image : (ex.image?.startsWith('uploads') ? `/${ex.image}` : ex.image)} 
                                                         alt={ex.title} 
-                                                        className="w-full h-full object-cover" 
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                                     />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-                                                    <div className="absolute bottom-2 left-3">
-                                                        <p className="text-white font-black text-sm">{ex.title} ({ex.hindi})</p>
-                                                        <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest">{ex.id}</p>
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
+                                                    <div className="absolute bottom-4 left-4">
+                                                        <p className="text-white font-black text-sm uppercase tracking-wider">{ex.title}</p>
+                                                        <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-[0.2em]">{ex.id}</p>
                                                     </div>
                                                 </div>
-                                                <div className="p-3">
-                                                    <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
-                                                        <button onClick={() => { setEditingExercise({ ...ex }); setExerciseUploadType("url"); }} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-emerald-600 flex items-center justify-center transition-all"><i className="fa-solid fa-pen text-xs"></i></button>
-                                                        <button onClick={() => handleDeleteExercise(ex._id)} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-rose-600 flex items-center justify-center transition-all"><i className="fa-solid fa-trash text-xs"></i></button>
+                                                <div className="p-4 flex justify-between items-center">
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full"><i className={`${ex.icon} mr-1.5`}></i> {ex.hindi}</span>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => { setEditingExercise({ ...ex }); setExerciseUploadType("url"); }} className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm"><i className="fa-solid fa-pen-to-square text-xs"></i></button>
+                                                        <button onClick={() => handleDeleteExercise(ex._id)} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm"><i className="fa-solid fa-trash-can text-xs"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1520,84 +1672,255 @@ const Admin = () => {
                     {/* ── Banners Tab ── */}
                     {
                         activeTab === "banners" && (
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                                    <h3 className="font-black text-slate-800 mb-4">Add New Banner</h3>
-                                    <div className="flex gap-3 mb-4">
-                                        {["url", "file"].map(t => (
-                                            <button key={t} type="button" onClick={() => setUploadType(t)}
-                                                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${uploadType === t ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}>
-                                                <i className={`fa-solid ${t === "url" ? "fa-link" : "fa-upload"} mr-2`}></i>{t === "url" ? "Image URL" : "Upload File"}
-                                            </button>
-                                        ))}
+                            <div className="space-y-8">
+                                {/* Premium Header Section */}
+                                <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                                    <div className="flex flex-col xl:flex-row gap-10">
+                                        
+                                        {/* 1. Live Preview Section (Left/Top) */}
+                                        <div className="xl:w-1/2 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                    <span className="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm"><i className="fa-solid fa-eye"></i></span>
+                                                    Banner Live Preview
+                                                </h3>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Real-time Rendering</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Actual Banner Mockup */}
+                                            <div className="relative w-full aspect-[16/10] sm:aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-900 group/preview border border-slate-100">
+                                                <AnimatePresence mode="wait">
+                                                    <motion.div 
+                                                        key={`${newBanner.image}-${file?.name}`}
+                                                        initial={{ opacity: 0 }} 
+                                                        animate={{ opacity: 1 }} 
+                                                        transition={{ duration: 0.5 }}
+                                                        className="absolute inset-0"
+                                                    >
+                                                        { (newBanner.image || file) ? (
+                                                            <img 
+                                                                src={file ? URL.createObjectURL(file) : (newBanner.image.startsWith('http') ? newBanner.image : (newBanner.image.startsWith('uploads') ? `/${newBanner.image}` : newBanner.image))} 
+                                                                className="w-full h-full object-cover" 
+                                                                alt="Preview" 
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full bg-slate-800 flex flex-col items-center justify-center gap-4 border-4 border-dashed border-slate-700 m-2 rounded-[2rem]">
+                                                                <i className="fa-solid fa-image text-slate-600 text-5xl"></i>
+                                                                <p className="text-slate-500 font-bold text-xs uppercase tracking-widest">Awaiting Visual Assets</p>
+                                                            </div>
+                                                        )}
+                                                    </motion.div>
+                                                </AnimatePresence>
+
+                                                {/* Premium Overlays shared with BannerCarousel.jsx */}
+                                                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/40 to-transparent"></div>
+                                                
+                                                <div className="absolute inset-0 flex flex-col justify-center items-start px-8 md:px-12 text-white z-10 pointer-events-none">
+                                                    <motion.div layout className="mb-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                                                        <span className="text-[8px] font-medium tracking-wider uppercase">RK Premium Care</span>
+                                                    </motion.div>
+
+                                                    <motion.h2 layout className="text-2xl md:text-4xl font-black mb-3 leading-tight drop-shadow-xl max-w-[90%]" style={{ color: newBanner.titleColor }}>
+                                                        {newBanner.title || "Your Engaging Title Here"}
+                                                    </motion.h2>
+
+                                                    <motion.p layout className="text-xs md:text-sm font-medium opacity-90 max-w-[80%] border-l-2 border-blue-500 pl-4" style={{ color: newBanner.subtitleColor }}>
+                                                        {newBanner.subtitle || "The professional subtitle that highlights your primary clinic offering or patient success story."}
+                                                    </motion.p>
+
+                                                    <div className="mt-6 flex gap-3">
+                                                        <div className="px-5 py-2.5 bg-blue-600 rounded-full text-[10px] font-bold shadow-lg shadow-blue-500/30">Book Now</div>
+                                                        <div className="px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold border border-white/20">Learn More</div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Edit Badge */}
+                                                {editingBanner && (
+                                                    <div className="absolute top-6 right-6 z-20">
+                                                        <div className="bg-amber-500 text-white px-4 py-2 rounded-2xl font-black text-[10px] uppercase shadow-xl flex items-center gap-2">
+                                                            <i className="fa-solid fa-pen-nib"></i> Edit Mode
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* 2. Form Section (Right/Bottom) */}
+                                        <div className="xl:w-1/2 flex flex-col justify-center">
+                                            <div className="mb-6">
+                                                <h3 className="text-xl font-black text-slate-800 flex items-center gap-3">
+                                                    {editingBanner ? "Update Branding" : "Launch New Campaign"}
+                                                </h3>
+                                                <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-tight">Configure your homepage visual narrative with precision.</p>
+                                            </div>
+
+                                            <form onSubmit={handleBannerSubmit} className="space-y-6">
+                                                {/* Segmented Source Type */}
+                                                <div className="flex bg-slate-100 p-1.5 rounded-2xl w-fit border border-slate-200 shadow-inner">
+                                                    {["url", "file"].map(t => (
+                                                        <button key={t} type="button" onClick={() => setUploadType(t)}
+                                                            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${uploadType === t ? "bg-white text-blue-600 shadow-md transform scale-105" : "text-slate-400 hover:text-slate-600"}`}>
+                                                            {t === "url" ? <><i className="fa-solid fa-link mr-2"></i>Link</> : <><i className="fa-solid fa-file-arrow-up mr-2"></i>Cloud</>}
+                                                        </button>
+                                                    ))}
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                                    <div className="md:col-span-2 space-y-2">
+                                                        <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Hero Asset Source</label>
+                                                        {uploadType === "url" ? (
+                                                            <div className="relative group">
+                                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"><i className="fa-solid fa-cloud"></i></div>
+                                                                <input type="text" placeholder="https://source.unsplash.com/..." value={newBanner.image} onChange={e => setNewBanner({ ...newBanner, image: e.target.value })} required className={`${inp} pl-12 h-14 bg-slate-50/50 hover:bg-white focus:bg-white`} />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="relative group h-14 bg-slate-50/50 rounded-2xl border border-slate-200 border-dashed hover:border-blue-400 hover:bg-blue-50/20 transition-all flex items-center px-4 cursor-pointer">
+                                                                <i className="fa-solid fa-camera text-slate-300 mr-4 group-hover:text-blue-500"></i>
+                                                                <span className="text-xs font-bold text-slate-400 group-hover:text-blue-600">{file ? file.name : "Select High-Res Image File"}</span>
+                                                                <input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} required={!editingBanner} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Campaign Headline</label>
+                                                        <input type="text" placeholder="e.g. Expert Clinical Care" value={newBanner.title} onChange={e => setNewBanner({ ...newBanner, title: e.target.value })} className={`${inp} h-12 bg-slate-50/50`} />
+                                                    </div>
+                                                    
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Campaign Narrative</label>
+                                                        <input type="text" placeholder="e.g. Personalized recovery support" value={newBanner.subtitle} onChange={e => setNewBanner({ ...newBanner, subtitle: e.target.value })} className={`${inp} h-12 bg-slate-50/50`} />
+                                                    </div>
+                                                </div>
+
+                                                {/* Color Configuration Section */}
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-6 border-t border-slate-100">
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center justify-between px-1">
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Headline Palette</label>
+                                                            <div className="w-4 h-4 rounded-full shadow-inner border border-white" style={{ backgroundColor: newBanner.titleColor }}></div>
+                                                        </div>
+                                                        <div className="flex flex-wrap gap-2 p-2.5 bg-slate-50 rounded-2xl shadow-inner border border-slate-100">
+                                                            {['white', '#3b82f6', '#10b981', '#f59e0b', '#f43f5e', '#6366f1', '#06b6d4', '#8b5cf6', '#0f172a'].map(c => (
+                                                                <button key={`t-${c}`} type="button" onClick={() => setNewBanner({ ...newBanner, titleColor: c })}
+                                                                    className={`w-6 h-6 rounded-full border-2 transition-all ${newBanner.titleColor === c ? 'scale-110 shadow-lg ring-2 ring-blue-100 border-white' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                                                                    style={{ backgroundColor: c }} />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center justify-between px-1">
+                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Narrative Palette</label>
+                                                            <div className="w-4 h-4 rounded-full shadow-inner border border-white" style={{ backgroundColor: newBanner.subtitleColor }}></div>
+                                                        </div>
+                                                        <div className="flex flex-wrap gap-2 p-2.5 bg-slate-50 rounded-2xl shadow-inner border border-slate-100">
+                                                            {['white', '#3b82f6', '#10b981', '#f59e0b', '#f43f5e', '#6366f1', '#06b6d4', '#8b5cf6', '#0f172a'].map(c => (
+                                                                <button key={`s-${c}`} type="button" onClick={() => setNewBanner({ ...newBanner, subtitleColor: c })}
+                                                                    className={`w-6 h-6 rounded-full border-2 transition-all ${newBanner.subtitleColor === c ? 'scale-110 shadow-lg ring-2 ring-blue-100 border-white' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                                                                    style={{ backgroundColor: c }} />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex gap-3 pt-4">
+                                                    {editingBanner && (
+                                                        <button type="button" onClick={() => { setEditingBanner(null); setNewBanner({ image: "", title: "", subtitle: "", titleColor: "white", subtitleColor: "white" }); }}
+                                                            className="flex-1 py-4 bg-slate-100 text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-3xl hover:bg-slate-200 transition-all">Cancel Edit</button>
+                                                    )}
+                                                    <button type="submit" className="flex-[2] py-4 bg-blue-600 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-3xl shadow-2xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all active:scale-95">
+                                                        <i className="fa-solid fa-paper-plane mr-2"></i>
+                                                        {editingBanner ? "Push Live Updates" : "Deploy Campaign Slide"}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <form onSubmit={handleBannerSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                                        <div className="md:col-span-2 space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{uploadType === "url" ? "Image URL" : "Select File"}</label>
-                                            {uploadType === "url" ? (
-                                                <input type="text" placeholder="https://..." value={newBanner.image} onChange={e => setNewBanner({ ...newBanner, image: e.target.value })} required className={inp} />
-                                            ) : (
-                                                <input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} required className={`${inp} file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600`} />
-                                            )}
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title</label>
-                                            <input type="text" placeholder="Banner title" value={newBanner.title} onChange={e => setNewBanner({ ...newBanner, title: e.target.value })} className={inp} />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Subtitle</label>
-                                            <input type="text" placeholder="Subtitle" value={newBanner.subtitle} onChange={e => setNewBanner({ ...newBanner, subtitle: e.target.value })} className={inp} />
-                                        </div>
-                                        <button type="submit" className="md:col-start-4 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all">
-                                            <i className="fa-solid fa-plus mr-2"></i>Add Banner
-                                        </button>
-                                    </form>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                                    {(Array.isArray(banners) ? banners : []).map((b, idx) => (
-                                        <div key={b._id} className="group relative rounded-2xl overflow-hidden shadow-md h-52 border border-slate-200 bg-slate-100">
-                                            <img src={b.image} alt={b.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-4 text-white">
-                                                <h4 className="font-bold text-base leading-tight">{b.title}</h4>
-                                                <p className="text-sm opacity-80">{b.subtitle}</p>
-                                            </div>
 
-                                            {/* Reorder Controls */}
-                                            <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                {idx > 0 && (
-                                                    <button onClick={async () => {
-                                                        const newBanners = [...banners];
-                                                        [newBanners[idx], newBanners[idx - 1]] = [newBanners[idx - 1], newBanners[idx]];
-                                                        try {
-                                                            await reorderBanners(newBanners.map(x => x._id));
-                                                            setBanners(newBanners);
-                                                            addToast("Slide moved left!", "success");
-                                                        } catch { addToast("Error moving slide", "error"); }
-                                                    }} className="w-8 h-8 bg-white/20 backdrop-blur-md text-white rounded-lg flex items-center justify-center hover:bg-emerald-500 transition-all border border-white/20">
-                                                        <i className="fa-solid fa-arrow-left text-xs"></i>
-                                                    </button>
-                                                )}
-                                                {idx < banners.length - 1 && (
-                                                    <button onClick={async () => {
-                                                        const newBanners = [...banners];
-                                                        [newBanners[idx], newBanners[idx + 1]] = [newBanners[idx + 1], newBanners[idx]];
-                                                        try {
-                                                            await reorderBanners(newBanners.map(x => x._id));
-                                                            setBanners(newBanners);
-                                                            addToast("Slide moved right!", "success");
-                                                        } catch { addToast("Error moving slide", "error"); }
-                                                    }} className="w-8 h-8 bg-white/20 backdrop-blur-md text-white rounded-lg flex items-center justify-center hover:bg-emerald-500 transition-all border border-white/20">
-                                                        <i className="fa-solid fa-arrow-right text-xs"></i>
-                                                    </button>
-                                                )}
-                                            </div>
+                                {/* Management Grid */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between px-4">
+                                        <h3 className="font-black text-slate-800 flex items-center gap-3">
+                                            Active Campaign Sequence
+                                            <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-3 py-1 rounded-full">{banners.length} SLIDES</span>
+                                        </h3>
+                                    </div>
 
-                                            <button onClick={() => handleDeleteBanner(b._id)} className="absolute top-3 right-3 w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-600 shadow-lg">
-                                                <i className="fa-solid fa-trash text-xs"></i>
-                                            </button>
-                                        </div>
-                                    ))}
-                                    {banners.length === 0 && <div className="col-span-3 py-16 text-center text-slate-400"><i className="fa-solid fa-images text-4xl mb-3 block opacity-30"></i><p className="font-semibold">No banners yet</p></div>}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                                        <AnimatePresence mode="popLayout">
+                                            {banners.map((b, idx) => (
+                                                <motion.div 
+                                                    key={b._id} 
+                                                    layout
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.9 }}
+                                                    className="group relative h-64 rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-100 bg-white"
+                                                >
+                                                    <img src={b.image} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent p-6 flex flex-col justify-end">
+                                                        <h4 className="font-black text-lg leading-tight" style={{ color: b.titleColor || 'white' }}>{b.title}</h4>
+                                                        <p className="text-[11px] font-bold mt-1 opacity-80" style={{ color: b.subtitleColor || 'white' }}>{b.subtitle}</p>
+                                                    </div>
+
+                                                    {/* Management Controls Overlay */}
+                                                    <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-400 flex flex-col items-center justify-center gap-4 z-20">
+                                                        <div className="flex gap-2">
+                                                            {idx > 0 && (
+                                                                <button onClick={async () => {
+                                                                    const newBanners = [...banners];
+                                                                    [newBanners[idx], newBanners[idx - 1]] = [newBanners[idx - 1], newBanners[idx]];
+                                                                    try { await reorderBanners(newBanners.map(x => x._id)); setBanners(newBanners); addToast("Sequence adjusted", "success"); } catch { addToast("Error", "error"); }
+                                                                }} className="w-10 h-10 rounded-2xl bg-white shadow-xl flex items-center justify-center text-slate-600 hover:text-blue-600 transition-all active:scale-90 border border-slate-100">
+                                                                    <i className="fa-solid fa-arrow-left"></i>
+                                                                </button>
+                                                            )}
+                                                            {idx < banners.length - 1 && (
+                                                                <button onClick={async () => {
+                                                                    const newBanners = [...banners];
+                                                                    [newBanners[idx], newBanners[idx + 1]] = [newBanners[idx + 1], newBanners[idx]];
+                                                                    try { await reorderBanners(newBanners.map(x => x._id)); setBanners(newBanners); addToast("Sequence adjusted", "success"); } catch { addToast("Error", "error"); }
+                                                                }} className="w-10 h-10 rounded-2xl bg-white shadow-xl flex items-center justify-center text-slate-600 hover:text-blue-600 transition-all active:scale-90 border border-slate-100">
+                                                                    <i className="fa-solid fa-arrow-right"></i>
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex gap-3">
+                                                            <button onClick={() => {
+                                                                setEditingBanner(b);
+                                                                setNewBanner({ image: b.image, title: b.title, subtitle: b.subtitle, titleColor: b.titleColor || 'white', subtitleColor: b.subtitleColor || 'white' });
+                                                                setUploadType("url");
+                                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                            }} className="px-6 py-2.5 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:bg-blue-700 transform active:scale-95 transition-all">
+                                                                <i className="fa-solid fa-pen-to-square mr-2"></i>Edit Slide
+                                                            </button>
+                                                            <button onClick={() => handleDeleteBanner(b._id)} className="w-10 h-10 rounded-2xl bg-rose-500 text-white shadow-xl flex items-center justify-center hover:bg-rose-600 transform active:scale-95 transition-all">
+                                                                <i className="fa-solid fa-trash-can"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Badge */}
+                                                    <div className="absolute top-6 left-6 z-10">
+                                                        <div className="bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
+                                                            <p className="text-[9px] font-black text-white tracking-widest uppercase">Slide {idx + 1}</p>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </AnimatePresence>
+                                        {banners.length === 0 && (
+                                            <div className="col-span-full py-24 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                                                <i className="fa-solid fa-images text-5xl mb-4 opacity-20"></i>
+                                                <p className="font-black text-xs uppercase tracking-widest">No Active Campaign Slides</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )
@@ -2076,16 +2399,15 @@ const Admin = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {storyUploadType === "url" ? (
-                                            <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Image URL</label><input type="url" placeholder="https://..." value={newStory.imageUrl} onChange={e => setNewStory({ ...newStory, imageUrl: e.target.value })} className={inp} /></div>
-                                        ) : (
-                                            <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Upload Image</label><input type="file" accept="image/*" onChange={e => setStoryFile(e.target.files[0])} className={`${inp} file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100`} /></div>
-                                        )}
-                                        <div className="flex justify-end gap-3">
+                                        <div className="pt-4 border-t border-slate-100">
+                                            <SectionEditor sections={storySections} onChange={setStorySections} />
+                                        </div>
+                                        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
                                             {editingStory && (
                                                 <button type="button" onClick={() => {
                                                     setEditingStory(null);
                                                     setNewStory({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
+                                                    setStorySections([]);
                                                 }} className="px-6 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl font-bold text-sm transition-all">
                                                     Cancel
                                                 </button>
@@ -2148,10 +2470,12 @@ const Admin = () => {
                                 </div>
 
                                 {/* Upload Poster Form */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                                <div id="poster-form" className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                                     <h3 className="font-black text-slate-800 mb-5 flex items-center gap-2 text-base">
-                                        <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i className="fa-solid fa-upload"></i></span>
-                                        Upload New Blog
+                                        <span className={`w-8 h-8 rounded-lg ${editingPoster ? 'bg-blue-100 text-blue-600' : 'bg-blue-50 text-blue-600'} flex items-center justify-center text-sm`}>
+                                            <i className={`fa-solid ${editingPoster ? 'fa-pen-to-square' : 'fa-upload'}`}></i>
+                                        </span>
+                                        {editingPoster ? 'Edit Blog' : 'Upload New Blog'}
                                     </h3>
                                     <form onSubmit={handlePosterSubmit} className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2194,9 +2518,21 @@ const Admin = () => {
                                         ) : (
                                             <div className="space-y-1"><label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Image URL *</label><input required type="url" placeholder="https://..." value={newPoster.imageUrl} onChange={e => setNewPoster({ ...newPoster, imageUrl: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(13, 148, 136,0.25)] focus:border-[#0d9488]" /></div>
                                         )}
-                                        <div className="flex justify-end">
+                                        <div className="pt-4 border-t border-slate-100">
+                                            <SectionEditor sections={posterSections} onChange={setPosterSections} />
+                                        </div>
+                                        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
+                                            {editingPoster && (
+                                                <button type="button" onClick={() => {
+                                                    setEditingPoster(null);
+                                                    setNewPoster({ title: "", description: "", category: "General", imageUrl: "" });
+                                                    setPosterSections([]);
+                                                }} className="px-6 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl font-bold text-sm transition-all">
+                                                    Cancel
+                                                </button>
+                                            )}
                                             <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black text-sm shadow-md hover:bg-blue-700 hover:-translate-y-0.5 transition-all">
-                                                <i className="fa-solid fa-upload mr-2"></i>Upload Poster
+                                                <i className={`fa-solid ${editingPoster ? 'fa-save' : 'fa-upload'} mr-2`}></i>{editingPoster ? 'Update Blog' : 'Upload Poster'}
                                             </button>
                                         </div>
                                     </form>
@@ -2210,9 +2546,14 @@ const Admin = () => {
                                             {poster.category && poster.category !== "General" && (
                                                 <div className="absolute top-2 left-2"><span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">{poster.category}</span></div>
                                             )}
-                                            <button onClick={() => handleDeletePoster(poster._id)} className="absolute top-2 right-2 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-600 shadow-lg">
-                                                <i className="fa-solid fa-trash text-xs"></i>
-                                            </button>
+                                            <div className="absolute top-2 right-2 flex gap-1 group-hover:opacity-100 opacity-0 transition-opacity">
+                                                <button onClick={() => handleEditPoster(poster)} className="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 shadow-lg">
+                                                    <i className="fa-solid fa-pen-to-square text-[10px]"></i>
+                                                </button>
+                                                <button onClick={() => handleDeletePoster(poster._id)} className="w-7 h-7 bg-rose-600 text-white rounded-full flex items-center justify-center hover:bg-rose-700 shadow-lg">
+                                                    <i className="fa-solid fa-trash text-[10px]"></i>
+                                                </button>
+                                            </div>
                                             {(poster.title || poster.description) && (
                                                 <div className="p-3">
                                                     {poster.title && <p className="font-black text-slate-800 text-xs">{poster.title}</p>}

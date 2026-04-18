@@ -10,6 +10,13 @@ const PatientStorySchema = new mongoose.Schema({
     outcome: { type: String },
     image: { type: String },
     rating: { type: Number, default: 5 },
+    sections: [{
+        heading: String,
+        headingColor: String,
+        subHeading: String,
+        details: String,
+        detailsWeight: { type: String, enum: ['bold', 'normal'], default: 'normal' }
+    }],
     featured: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 });

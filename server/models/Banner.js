@@ -17,6 +17,14 @@ const bannerSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    titleColor: {
+        type: String,
+        default: 'white'
+    },
+    subtitleColor: {
+        type: String,
+        default: 'white'
+    },
     createdAt: {
         type: Date,
         default: Date.now

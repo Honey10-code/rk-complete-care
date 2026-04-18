@@ -20,6 +20,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// ✅ AUTO-CLEAR CACHE ON MUTATION
+api.interceptors.response.use((response) => {
+  const method = response.config.method.toUpperCase();
+  if (["POST", "PUT", "DELETE", "PATCH"].includes(method)) {
+    console.log(`♻️ Clearing API cache after ${method} mutation...`);
+    clearCache();
+  }
+  return response;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 // ✅ SAFE RESPONSE HANDLERS
 const safeArray = (res) => {
   console.log("API DATA (Array):", res.data);

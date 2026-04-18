@@ -32,6 +32,15 @@ router.post('/', upload.single('image'), async (req, res) => {
     let imagePath = req.body.imageUrl || '';
     if (req.file) imagePath = req.file.path.replace(/\\/g, '/');
 
+    let sections = [];
+    try {
+        if (req.body.sections) {
+            sections = JSON.parse(req.body.sections);
+        }
+    } catch (err) {
+        console.error("Error parsing sections:", err);
+    }
+
     const story = new PatientStory({
         patientName: req.body.patientName,
         age: req.body.age,
@@ -41,7 +50,8 @@ router.post('/', upload.single('image'), async (req, res) => {
         outcome: req.body.outcome,
         image: imagePath,
         rating: req.body.rating || 5,
-        featured: req.body.featured === 'true'
+        featured: req.body.featured === 'true',
+        sections: sections
     });
 
     try {
@@ -70,6 +80,15 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         let imagePath = req.body.imageUrl || '';
         if (req.file) imagePath = req.file.path.replace(/\\/g, '/');
 
+        let sections = [];
+        try {
+            if (req.body.sections) {
+                sections = JSON.parse(req.body.sections);
+            }
+        } catch (err) {
+            console.error("Error parsing sections:", err);
+        }
+
         const updateData = {
             patientName: req.body.patientName,
             age: req.body.age,
@@ -79,7 +98,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             story: req.body.story,
             outcome: req.body.outcome,
             rating: req.body.rating || 5,
-            featured: req.body.featured === 'true'
+            featured: req.body.featured === 'true',
+            sections: sections
         };
 
         // Always update image if either a new file is uploaded or a (possibly empty) imageUrl is provided
