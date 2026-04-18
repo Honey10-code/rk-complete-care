@@ -252,14 +252,14 @@ const Exercises = ({ limit, isHomePage = false }) => {
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); handlePrev(); }}
                                         disabled={currentStep === 0}
-                                        className={`pointer-events-auto w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all ${currentStep === 0 ? 'opacity-0 scale-90' : 'bg-white/10 hover:bg-emerald-500 text-white shadow-xl backdrop-blur-md border border-white/10'}`}
+                                        className={`pointer-events-auto w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all ${currentStep === 0 ? 'opacity-0 scale-90' : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl backdrop-blur-md border border-emerald-400/20'}`}
                                     >
                                         <i className="fa-solid fa-chevron-left text-xl"></i>
                                     </button>
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); handleNext(); }}
                                         disabled={currentStep === (selectedExercise.steps?.length || 1) - 1}
-                                        className={`pointer-events-auto w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all ${currentStep === (selectedExercise.steps?.length || 1) - 1 ? 'opacity-0 scale-90' : 'bg-white/10 hover:bg-emerald-500 text-white shadow-xl backdrop-blur-md border border-white/10'}`}
+                                        className={`pointer-events-auto w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all ${currentStep === (selectedExercise.steps?.length || 1) - 1 ? 'opacity-0 scale-90' : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl backdrop-blur-md border border-emerald-400/20'}`}
                                     >
                                         <i className="fa-solid fa-chevron-right text-xl"></i>
                                     </button>
