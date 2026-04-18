@@ -170,47 +170,47 @@ export const verifyPayment = (data) => api.post("/payment/verify", data).then(sa
 
 // Administrative APIs
 export const getAppointments = (search = "") => api.get(`/appointments?search=${search}`).then(safeArray);
-export const patchAppointment = (id, data) => api.patch(`/appointments/${id}`, data).then(safeObject);
-export const deleteAppointment = (id) => api.delete(`/appointments/${id}`).then(safeObject);
+export const patchAppointment = (id, data) => api.patch(`/appointments/${id}`, data).then(res => { clearCache(); return safeObject(res); });
+export const deleteAppointment = (id) => api.delete(`/appointments/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postDoctor = (fd) => api.post(`/doctors`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deleteDoctor = (id) => api.delete(`/doctors/${id}`).then(safeObject);
+export const postDoctor = (fd) => api.post(`/doctors`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deleteDoctor = (id) => api.delete(`/doctors/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postTestimonial = (data) => api.post(`/testimonials`, data).then(safeObject);
-export const deleteTestimonial = (id) => api.delete(`/testimonials/${id}`).then(safeObject);
+export const postTestimonial = (data) => api.post(`/testimonials`, data).then(res => { clearCache(); return safeObject(res); });
+export const deleteTestimonial = (id) => api.delete(`/testimonials/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postClinicInfo = (data) => api.post(`/clinic-info`, data).then(safeObject);
+export const postClinicInfo = (data) => api.post(`/clinic-info`, data).then(res => { clearCache(); return safeObject(res); });
 
-export const postBanner = (fd) => api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deleteBanner = (id) => api.delete(`/banners/${id}`).then(safeObject);
+export const postBanner = (fd) => api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deleteBanner = (id) => api.delete(`/banners/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postPatientStory = (fd) => api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const updatePatientStory = (id, fd) => api.put(`/patient-stories/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deletePatientStory = (id) => api.delete(`/patient-stories/${id}`).then(safeObject);
+export const postPatientStory = (fd) => api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const updatePatientStory = (id, fd) => api.put(`/patient-stories/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deletePatientStory = (id) => api.delete(`/patient-stories/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postClinicPoster = (fd) => api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deleteClinicPoster = (id) => api.delete(`/clinic-posters/${id}`).then(safeObject);
+export const postClinicPoster = (fd) => api.post(`/clinic-posters`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deleteClinicPoster = (id) => api.delete(`/clinic-posters/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postGalleryImage = (fd) => api.post(`/gallery`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deleteGalleryImage = (id) => api.delete(`/gallery/${id}`).then(safeObject);
+export const postGalleryImage = (fd) => api.post(`/gallery`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deleteGalleryImage = (id) => api.delete(`/gallery/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postService = (fd) => api.post(`/services`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const updateService = (id, fd) => api.put(`/services/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deleteService = (id) => api.delete(`/services/${id}`).then(safeObject);
+export const postService = (fd) => api.post(`/services`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const updateService = (id, fd) => api.put(`/services/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deleteService = (id) => api.delete(`/services/${id}`).then(res => { clearCache(); return safeObject(res); });
 
-export const postExercise = (fd) => api.post(`/exercises`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const updateExercise = (id, fd) => api.put(`/exercises/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(safeObject);
-export const deleteExercise = (id) => api.delete(`/exercises/${id}`).then(safeObject);
+export const postExercise = (fd) => api.post(`/exercises`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const updateExercise = (id, fd) => api.put(`/exercises/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
+export const deleteExercise = (id) => api.delete(`/exercises/${id}`).then(res => { clearCache(); return safeObject(res); });
 
 // Contact APIs
 export const submitContactMessage = (data) => api.post("/contacts", data).then(safeObject);
 export const getContactMessages = () => api.get("/contacts").then(safeArray);
-export const deleteContactMessage = (id) => api.delete(`/contacts/${id}`).then(safeObject);
-export const markContactRead = (id) => api.patch(`/contacts/${id}/read`).then(safeObject);
+export const deleteContactMessage = (id) => api.delete(`/contacts/${id}`).then(res => { clearCache(); return safeObject(res); });
+export const markContactRead = (id) => api.patch(`/contacts/${id}/read`).then(res => { clearCache(); return safeObject(res); });
 
 // Video APIs
 export const getVideos = () => api.get("/videos").then(safeArray);
 export const postVideo = (data) => api.post("/videos", data).then(safeObject);
-export const deleteVideo = (id) => api.delete(`/videos/${id}`).then(safeObject);
+export const deleteVideo = (id) => api.delete(`/videos/${id}`).then(res => { clearCache(); return safeObject(res); });
 
 export default api;

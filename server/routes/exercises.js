@@ -16,8 +16,10 @@ router.get('/', async (req, res) => {
         const exercises = await Exercise.find().sort({ createdAt: 1 });
         const exerciseWithUrl = exercises.map(e => {
             const obj = e.toObject();
-            if (obj.image && !obj.image.startsWith('http')) {
-                obj.image = `${req.protocol}://${req.get('host')}/${obj.image}`;
+            if (obj.image && !obj.image.startsWith('http') && !obj.image.startsWith('//')) {
+                // Ensure the path doesn't have double slashes
+                const imagePath = obj.image.startsWith('/') ? obj.image.substring(1) : obj.image;
+                obj.image = `${req.protocol}://${req.get('host')}/${imagePath}`;
             }
             return obj;
         });

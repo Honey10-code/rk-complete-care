@@ -622,7 +622,7 @@ const Admin = () => {
 
     // ── Exercises ─────────────────────────────────────────────────────────────
     const [exercises, setExercises] = useState([]);
-    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running" });
+    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running", imageUrl: "" });
     const [exerciseUploadType, setExerciseUploadType] = useState("url");
     const [exerciseFile, setExerciseFile] = useState(null);
     const [editingExercise, setEditingExercise] = useState(null);
@@ -634,7 +634,21 @@ const Admin = () => {
         e.preventDefault();
         const fd = new FormData();
         ["title", "hindi", "id", "icon"].forEach(k => fd.append(k, editingExercise ? editingExercise[k] : newExercise[k]));
-        if (exerciseUploadType === "url") fd.append("imageUrl", editingExercise ? editingExercise.image : newExercise.imageUrl);
+        if (exerciseUploadType === "url") {
+            let val = editingExercise ? editingExercise.image : newExercise.imageUrl;
+            // If the URL is absolute and belongs to our server, try to send just the relative path
+            // to avoid host lock-in if the URL was already processed by the server
+            const currentHost = window.location.host;
+            if (val && (val.includes(currentHost) || val.includes('localhost:5001') || val.includes('127.0.0.1:5001'))) {
+                try {
+                    const urlObj = new URL(val);
+                    if (urlObj.pathname.includes('/uploads/')) {
+                        val = urlObj.pathname.substring(1); // remove leading /
+                    }
+                } catch (e) { /* ignore invalid URLs */ }
+            }
+            fd.append("imageUrl", val);
+        }
         else if (exerciseFile) fd.append("image", exerciseFile);
 
         try {
@@ -645,7 +659,7 @@ const Admin = () => {
                 await postExercise(fd);
                 addToast("Exercise added!", "success");
             }
-            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running" });
+            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running", imageUrl: "" });
             setEditingExercise(null);
             setExerciseFile(null);
             fetchExercises();
