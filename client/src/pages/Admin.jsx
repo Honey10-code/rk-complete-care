@@ -1257,73 +1257,93 @@ const Admin = () => {
                                                 </span>
                                             </div>
 
-                                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 pt-2">
                                                 {(editingExercise ? editingExercise.steps : newExercise.steps || []).map((s, idx) => (
-                                                    <div key={idx} className="group relative aspect-square bg-slate-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                                                    <div key={idx} className="group relative aspect-square bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
                                                         <img 
                                                           src={s instanceof File ? URL.createObjectURL(s) : (s.startsWith('http') || s.startsWith('//') ? s : (s.startsWith('uploads') ? `/${s}` : s))} 
                                                           className="w-full h-full object-cover" 
                                                           alt={`Step ${idx + 1}`} 
                                                         />
-                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-3 gap-2">
                                                             {idx > 0 && (
                                                                 <button type="button" onClick={() => {
                                                                     const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
                                                                     [steps[idx], steps[idx-1]] = [steps[idx-1], steps[idx]];
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                }} className="w-6 h-6 rounded-full bg-white/20 hover:bg-white text-white hover:text-emerald-600 transition-all flex items-center justify-center">
-                                                                    <i className="fa-solid fa-arrow-left text-[10px]"></i>
+                                                                }} className="w-8 h-8 rounded-full bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md">
+                                                                    <i className="fa-solid fa-arrow-left text-xs"></i>
                                                                 </button>
                                                             )}
-                                                            {idx < (editingExercise ? editingExercise.steps.length : newExercise.steps.length) - 1 && (
+                                                            {idx < (editingExercise ? (editingExercise.steps?.length || 0) : (newExercise.steps?.length || 0)) - 1 && (
                                                                 <button type="button" onClick={() => {
                                                                     const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
                                                                     [steps[idx], steps[idx+1]] = [steps[idx+1], steps[idx]];
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                }} className="w-6 h-6 rounded-full bg-white/20 hover:bg-white text-white hover:text-emerald-600 transition-all flex items-center justify-center">
-                                                                    <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                                                                }} className="w-8 h-8 rounded-full bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md">
+                                                                    <i className="fa-solid fa-arrow-right text-xs"></i>
                                                                 </button>
                                                             )}
                                                             <button type="button" onClick={() => {
                                                                 const steps = (editingExercise ? editingExercise.steps : newExercise.steps).filter((_, i) => i !== idx);
                                                                 editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                            }} className="w-6 h-6 rounded-full bg-rose-500 hover:bg-rose-600 text-white transition-all flex items-center justify-center ml-1">
-                                                                <i className="fa-solid fa-trash text-[10px]"></i>
+                                                            }} className="w-8 h-8 rounded-full bg-rose-500/80 hover:bg-rose-600 text-white transition-all flex items-center justify-center backdrop-blur-md">
+                                                                <i className="fa-solid fa-trash text-xs"></i>
                                                             </button>
                                                         </div>
-                                                        <div className="absolute top-1 left-1 bg-black/50 text-[8px] font-black text-white px-1.5 rounded-full backdrop-blur-sm">
-                                                            {idx + 1}
+                                                        <div className="absolute top-2 left-2 bg-emerald-600 shadow-lg text-[10px] font-black text-white px-2 py-0.5 rounded-lg backdrop-blur-sm ring-1 ring-white/50">
+                                                            STEP {idx + 1}
                                                         </div>
                                                     </div>
                                                 ))}
-                                                <div className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 hover:border-emerald-300 hover:bg-emerald-50 transition-all cursor-pointer overflow-hidden p-2">
-                                                    <select value={exerciseUploadType} onChange={e => setExerciseUploadType(e.target.value)} className="w-full px-1.5 py-1 bg-white border border-slate-200 rounded-lg text-[9px] font-black focus:outline-none">
-                                                        <option value="url">URL</option>
-                                                        <option value="file">File</option>
-                                                    </select>
-                                                    {exerciseUploadType === "url" ? (
-                                                        <div className="w-full flex flex-col gap-1.5">
-                                                            <input type="text" id="new-step-url" placeholder="https://..." className="w-full text-[8px] px-1.5 py-1 border border-slate-100 rounded-lg outline-none" />
-                                                            <button type="button" onClick={() => {
-                                                                const url = document.getElementById('new-step-url').value;
-                                                                if (!url) return;
-                                                                const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), url];
-                                                                editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                document.getElementById('new-step-url').value = '';
-                                                            }} className="w-full py-1 bg-emerald-600 text-white text-[8px] font-black rounded-lg">Add URL</button>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="relative w-full h-full flex flex-col items-center justify-center">
-                                                            <i className="fa-solid fa-plus text-slate-300 text-sm"></i>
-                                                            <span className="text-[8px] font-black text-slate-400 mt-1 uppercase">Add Step</span>
-                                                            <input type="file" onChange={e => {
-                                                                if (!e.target.files[0]) return;
-                                                                const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), e.target.files[0]];
-                                                                editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                e.target.value = null;
-                                                            }} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                                        </div>
-                                                    )}
+
+                                                {/* Premium "Add Step" Card */}
+                                                <div className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 flex flex-col p-3 transition-all hover:border-emerald-400 hover:bg-white overflow-hidden group/add">
+                                                    <div className="flex bg-slate-200/50 p-1 rounded-xl mb-3">
+                                                        {["url", "file"].map(type => (
+                                                            <button 
+                                                                key={type}
+                                                                type="button"
+                                                                onClick={() => setExerciseUploadType(type)}
+                                                                className={`flex-1 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${exerciseUploadType === type ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                                            >
+                                                                {type}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="flex-grow flex flex-col justify-center">
+                                                        {exerciseUploadType === "url" ? (
+                                                            <div className="space-y-2">
+                                                                <div className="relative">
+                                                                    <i className="fa-solid fa-link absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
+                                                                    <input type="text" id="new-step-url" placeholder="Paste image URL..." className="w-full text-[10px] pl-8 pr-2 py-2 bg-white border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                                                                </div>
+                                                                <button type="button" onClick={() => {
+                                                                    const url = document.getElementById('new-step-url').value;
+                                                                    if (!url) return;
+                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), url];
+                                                                    editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                    document.getElementById('new-step-url').value = '';
+                                                                }} className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black rounded-xl transition-all shadow-md shadow-emerald-200 active:scale-95">
+                                                                    ADD STEP
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="relative flex-grow flex flex-col items-center justify-center border border-slate-100 bg-white rounded-xl shadow-sm border-dashed hover:bg-emerald-50 transition-colors cursor-pointer group-hover/add:border-emerald-200">
+                                                                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center mb-2 group-hover/add:scale-110 transition-transform">
+                                                                    <i className="fa-solid fa-cloud-arrow-up text-emerald-600 text-xs"></i>
+                                                                </div>
+                                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Upload File</span>
+                                                                <input type="file" onChange={e => {
+                                                                    if (!e.target.files[0]) return;
+                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), e.target.files[0]];
+                                                                    editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                    e.target.value = null;
+                                                                }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
