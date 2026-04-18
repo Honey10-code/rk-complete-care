@@ -17,10 +17,8 @@ const Doctors = () => {
             designation: 'CHIEF PHYSIOTHERAPIST',
             image: '/dr-piyush-sharma.png',
             specialty: 'Orthopaedic & Sports',
-            hospital: 'WELTON HOSPITAL',
-            address: '219-220 MANDIR MARG, MAHAVIR NAGAR DURGAPURA JAIPUR',
-            experience: '12+ Years Experience',
-            bio: 'Dr. Piyush Sharma is the Chief Physiotherapist at Welton Hospital. He specializes in treating patients with orthopedic problems and disabilities, bringing years of expertise and a compassionate approach to patient care. With a vast experience in the field, he has successfully treated thousands of patients suffering from conditions such as:',
+            experience: '7+ Years Experience',
+            bio: 'Dr. Piyush Sharma is the Chief Physiotherapist. He specializes in treating patients with sports problems and disabilities, bringing years of expertise and a compassionate approach to patient care. With a vast experience in the field, he has successfully treated thousands of patients suffering from conditions such as:',
             expertise: [
                 "Osteoarthritis", "Rheumatoid Arthritis",
                 "Hip & Knee Joint Pain", "Frozen Shoulder",
@@ -37,7 +35,7 @@ const Doctors = () => {
             designation: 'CONSULTANT PHYSIOTHERAPIST',
             image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1974&auto=format&fit=crop',
             specialty: 'Neuro & Pediatric',
-            experience: '8+ Years Experience',
+            experience: '2+ Years Experience',
             bio: 'Dr. Soniya Pathak is a Senior Consultant Physiotherapist specializing in Neurological rehabilitation and Pediatric care. She brings a compassionate, results-driven approach to complex neurological cases including stroke recovery and developmental delays. Her clinical focus includes:',
             expertise: [
                 "Stroke Rehabilitation", "Cerebral Palsy Care",

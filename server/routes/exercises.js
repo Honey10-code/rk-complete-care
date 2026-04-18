@@ -37,8 +37,7 @@ router.post('/', upload.single('image'), async (req, res) => {
         title: req.body.title,
         hindi: req.body.hindi,
         image: imagePath,
-        icon: req.body.icon || 'fa-person-running',
-        fullDetails: req.body.fullDetails
+        icon: req.body.icon || 'fa-person-running'
     });
 
     try {
@@ -58,7 +57,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         if (req.file) exercise.image = req.file.path.replace(/\\/g, '/');
         else if (req.body.imageUrl) exercise.image = req.body.imageUrl;
 
-        const fields = ['title', 'hindi', 'id', 'icon', 'fullDetails'];
+        const fields = ['title', 'hindi', 'id', 'icon'];
         fields.forEach(f => {
             if (req.body[f] !== undefined) exercise[f] = req.body[f];
         });

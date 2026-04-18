@@ -622,7 +622,7 @@ const Admin = () => {
 
     // ── Exercises ─────────────────────────────────────────────────────────────
     const [exercises, setExercises] = useState([]);
-    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running", fullDetails: "" });
+    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running" });
     const [exerciseUploadType, setExerciseUploadType] = useState("url");
     const [exerciseFile, setExerciseFile] = useState(null);
     const [editingExercise, setEditingExercise] = useState(null);
@@ -633,7 +633,7 @@ const Admin = () => {
     const handleExerciseSubmit = async (e) => {
         e.preventDefault();
         const fd = new FormData();
-        ["title", "hindi", "id", "icon", "fullDetails"].forEach(k => fd.append(k, editingExercise ? editingExercise[k] : newExercise[k]));
+        ["title", "hindi", "id", "icon"].forEach(k => fd.append(k, editingExercise ? editingExercise[k] : newExercise[k]));
         if (exerciseUploadType === "url") fd.append("imageUrl", editingExercise ? editingExercise.image : newExercise.imageUrl);
         else if (exerciseFile) fd.append("image", exerciseFile);
 
@@ -645,7 +645,7 @@ const Admin = () => {
                 await postExercise(fd);
                 addToast("Exercise added!", "success");
             }
-            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running", fullDetails: "" });
+            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running" });
             setEditingExercise(null);
             setExerciseFile(null);
             fetchExercises();
@@ -1235,6 +1235,9 @@ const Admin = () => {
                                                     <input type="file" onChange={e => setExerciseFile(e.target.files[0])} className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                                                 )}
                                             </div>
+                                            {editingExercise && editingExercise.image && exerciseUploadType === "url" && (
+                                                <img src={editingExercise.image} alt="Preview" className="h-16 w-16 object-cover rounded-lg mt-2 border border-slate-200" />
+                                            )}
                                         </div>
                                         <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
                                             {editingExercise && (
@@ -1263,7 +1266,6 @@ const Admin = () => {
                                                     </div>
                                                 </div>
                                                 <div className="p-3">
-                                                    <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">{ex.fullDetails}</p>
                                                     <div className="mt-3 flex justify-end gap-2 border-t border-slate-100 pt-3">
                                                         <button onClick={() => { setEditingExercise({ ...ex }); setExerciseUploadType("url"); }} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-emerald-600 flex items-center justify-center transition-all"><i className="fa-solid fa-pen text-xs"></i></button>
                                                         <button onClick={() => handleDeleteExercise(ex._id)} className="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-rose-600 flex items-center justify-center transition-all"><i className="fa-solid fa-trash text-xs"></i></button>

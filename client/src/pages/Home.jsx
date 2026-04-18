@@ -125,7 +125,7 @@ const Home = () => {
                                         <i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i>
                                     </div>
                                     <p className="mb-0.5 flex items-center justify-center sm:justify-start gap-2">
-                                        Trusted by <span className="text-slate-800">5000+</span> Patients
+                                        Trusted by <span className="text-slate-800">500+</span> Patients
                                     </p>
                                     <a href="mailto:rk.completecare@gmail.com" className="text-[10px] text-blue-600 font-bold hover:text-blue-700 transition-colors tracking-tight flex items-center justify-center sm:justify-start gap-1.5 px-2 py-0.5 bg-blue-50/50 rounded-full w-fit">
                                         <i className="fa-solid fa-envelope text-[9px]"></i>

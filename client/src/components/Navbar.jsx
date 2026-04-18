@@ -175,7 +175,7 @@ const Navbar = () => {
                                 <img src={logo} alt="RK" className="w-full h-full object-cover scale-[1.35] transform transition-transform duration-400 group-hover:scale-150" />
                             </div>
                             <div className="flex flex-col leading-tight">
-                                <span className="text-[14px] md:text-[16px] lg:text-[18px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK THE COMPLETE CARE</span>
+                                <span className="text-[13px] md:text-[14px] lg:text-[16px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK THE COMPLETE CARE</span>
                                 <span className="text-[6px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em] ml-auto" >Where Recovery Begins...</span>
                             </div>
                         </Link>
