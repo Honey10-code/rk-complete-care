@@ -1386,7 +1386,11 @@ const Admin = () => {
                                         {exercises.map(ex => (
                                             <div key={ex._id} className="group relative bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg transition-all">
                                                 <div className="h-32 relative">
-                                                    <img src={ex.image} alt={ex.title} className="w-full h-full object-cover" />
+                                                    <img 
+                                                        src={ex.image?.startsWith('http') || ex.image?.startsWith('//') ? ex.image : (ex.image?.startsWith('uploads') ? `/${ex.image}` : ex.image)} 
+                                                        alt={ex.title} 
+                                                        className="w-full h-full object-cover" 
+                                                    />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                                                     <div className="absolute bottom-2 left-3">
                                                         <p className="text-white font-black text-sm">{ex.title} ({ex.hindi})</p>

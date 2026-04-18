@@ -295,7 +295,12 @@ const Exercises = ({ limit, isHomePage = false }) => {
                                     onClick={() => {
                                         setSelectedExercise(null);
                                         const el = document.getElementById('book-appointment');
-                                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                        if (el) {
+                                            el.scrollIntoView({ behavior: 'smooth' });
+                                        } else {
+                                            // Fallback for non-home pages
+                                            window.location.href = '/#book-appointment';
+                                        }
                                     }}
                                     className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-6 py-3 rounded-xl transition-all shadow-lg flex items-center gap-2"
                                 >
