@@ -119,7 +119,7 @@ const Admin = () => {
 
         socket.on('new-appointment', (data) => {
             console.log('🔔 New appointment received:', data);
-            
+
             // 🔊 Play Notification Sound
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
             audio.play().catch(err => console.error("Audio play failed:", err));
@@ -134,7 +134,7 @@ const Admin = () => {
                         <p className="font-black text-xs uppercase tracking-wider text-blue-400 mb-1">New Booking</p>
                         <p>{data.patientName}</p>
                     </div>
-                    <button 
+                    <button
                         onClick={() => toast.dismiss(t.id)}
                         className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
                     >
@@ -142,7 +142,7 @@ const Admin = () => {
                     </button>
                 </div>
             ), {
-                duration: Infinity, 
+                duration: Infinity,
                 icon: '📅',
                 position: 'top-right',
                 style: {
@@ -335,9 +335,9 @@ const Admin = () => {
     useEffect(() => { if (activeTab === "settings" && !clinicInfoLoaded) fetchClinicInfo(); }, [activeTab]);
 
     const toggleAutomation = async (key) => {
-        const updatedAutomations = { 
-            ...(clinicInfo.automations || { birthday: true, medicine: true, followUp: true }), 
-            [key]: !clinicInfo?.automations?.[key] 
+        const updatedAutomations = {
+            ...(clinicInfo.automations || { birthday: true, medicine: true, followUp: true }),
+            [key]: !clinicInfo?.automations?.[key]
         };
         const updatedInfo = { ...clinicInfo, automations: updatedAutomations };
         setClinicInfo(updatedInfo);
@@ -412,7 +412,7 @@ const Admin = () => {
             }
             setNewStory({ patientName: "", age: "", location: "", condition: "", conditionHi: "", story: "", outcome: "", imageUrl: "", rating: 5, featured: false });
             setEditingStory(null);
-            setStoryFile(null); 
+            setStoryFile(null);
             fetchStories();
         } catch { addToast("Error saving story", "error"); }
     };
@@ -484,7 +484,7 @@ const Admin = () => {
     const [galleryUploadType, setGalleryUploadType] = useState("file");
     const [galleryFile, setGalleryFile] = useState(null);
     const GALLERY_CATS = ["Clinic", "Therapy", "Equipment"];
-    
+
     const fetchGalleryImages = async () => {
         try {
             const r = await api.get(`/gallery`);
@@ -502,7 +502,7 @@ const Admin = () => {
         ["title", "category"].forEach(k => fd.append(k, newGalleryImage[k]));
         if (galleryUploadType === "url") fd.append("imageUrl", newGalleryImage.imageUrl);
         else if (galleryFile) fd.append("image", galleryFile);
-        
+
         try {
             await api.post(`/gallery`, fd, { headers: { "Content-Type": "multipart/form-data" } });
             setNewGalleryImage({ title: "", category: "Clinic", imageUrl: "" });
@@ -635,7 +635,7 @@ const Admin = () => {
         const fd = new FormData();
         ["title", "hindi", "id", "icon"].forEach(k => fd.append(k, editingExercise ? editingExercise[k] : newExercise[k]));
         const steps = editingExercise ? (editingExercise.steps || []) : (newExercise.steps || []);
-        
+
         // Prepare steps for transmission
         // We send a JSON of the steps array. If a step is a File, we put a placeholder.
         const stepsToSave = [];
@@ -655,7 +655,7 @@ const Admin = () => {
                         if (urlObj.pathname.includes('/uploads/')) {
                             val = urlObj.pathname.substring(1);
                         }
-                    } catch (e) {}
+                    } catch (e) { }
                 }
                 stepsToSave.push(val);
             }
@@ -804,10 +804,10 @@ const Admin = () => {
                         <div className="text-right hidden sm:block">
                             <p className="text-2xl font-black text-blue-600 tabular-nums">{clock.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
                         </div>
-                        
+
                         {/* 🔔 Notification Bell */}
                         <div className="relative" ref={notificationRef}>
-                            <button 
+                            <button
                                 onClick={() => {
                                     setShowNotifications(!showNotifications);
                                     if (!showNotifications) {
@@ -1249,75 +1249,92 @@ const Admin = () => {
                                             <input type="text" placeholder="fa-person-running" value={editingExercise ? editingExercise.icon : newExercise.icon} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, icon: e.target.value }) : setNewExercise({ ...newExercise, icon: e.target.value })} className={inp} required />
                                         </div>
 
-                                        <div className="md:col-span-2 lg:col-span-3 space-y-4 pt-4 border-t border-slate-100">
-                                            <div className="flex items-center justify-between">
-                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Exercise Steps / Images</label>
-                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                                                    {(editingExercise?.steps?.length || newExercise?.steps?.length || 0)} steps added
-                                                </span>
+                                        <div className="md:col-span-2 lg:col-span-3 space-y-6 pt-6 border-t border-slate-100">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                <div>
+                                                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Exercise Protocol Steps</label>
+                                                    <p className="text-[10px] text-slate-400 ml-1 mt-0.5 font-medium">Add and arrange images to create a step-by-step guide for patients.</p>
+                                                </div>
+                                                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-xl border border-emerald-100 shadow-sm">
+                                                    <i className="fa-solid fa-layer-group text-emerald-600 text-[10px]"></i>
+                                                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">
+                                                        {(editingExercise?.steps?.length || newExercise?.steps?.length || 0)} Total Steps
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 pt-2">
-                                                {(editingExercise ? editingExercise.steps : newExercise.steps || []).map((s, idx) => (
-                                                    <div key={idx} className="group relative aspect-square bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
-                                                        <img 
-                                                          src={s instanceof File ? URL.createObjectURL(s) : (s.startsWith('http') || s.startsWith('//') ? s : (s.startsWith('uploads') ? `/${s}` : s))} 
-                                                          className="w-full h-full object-cover" 
-                                                          alt={`Step ${idx + 1}`} 
-                                                        />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-3 gap-2">
-                                                            {idx > 0 && (
+                                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+                                                <AnimatePresence mode="popLayout">
+                                                    {(editingExercise ? editingExercise.steps : newExercise.steps || []).map((s, idx) => (
+                                                        <motion.div 
+                                                            key={`${idx}-${s instanceof File ? s.name : s}`}
+                                                            layout
+                                                            initial={{ opacity: 0, scale: 0.8 }}
+                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            exit={{ opacity: 0, scale: 0.8 }}
+                                                            className="group relative aspect-square bg-white rounded-[1.5rem] border-2 border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-emerald-200 transition-all duration-300"
+                                                        >
+                                                            <img 
+                                                              src={s instanceof File ? URL.createObjectURL(s) : (s.startsWith('http') || s.startsWith('//') ? s : (s.startsWith('uploads') ? `/${s}` : s))} 
+                                                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                                              alt={`Step ${idx + 1}`} 
+                                                            />
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 gap-2">
+                                                                {idx > 0 && (
+                                                                    <button type="button" onClick={() => {
+                                                                        const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
+                                                                        [steps[idx], steps[idx-1]] = [steps[idx-1], steps[idx]];
+                                                                        editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                    }} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
+                                                                        <i className="fa-solid fa-chevron-left text-xs"></i>
+                                                                    </button>
+                                                                )}
+                                                                {idx < (editingExercise ? (editingExercise.steps?.length || 0) : (newExercise.steps?.length || 0)) - 1 && (
+                                                                    <button type="button" onClick={() => {
+                                                                        const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
+                                                                        [steps[idx], steps[idx+1]] = [steps[idx+1], steps[idx]];
+                                                                        editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                    }} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
+                                                                        <i className="fa-solid fa-chevron-right text-xs"></i>
+                                                                    </button>
+                                                                )}
                                                                 <button type="button" onClick={() => {
-                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
-                                                                    [steps[idx], steps[idx-1]] = [steps[idx-1], steps[idx]];
+                                                                    const steps = (editingExercise ? editingExercise.steps : newExercise.steps).filter((_, i) => i !== idx);
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                }} className="w-8 h-8 rounded-full bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md">
-                                                                    <i className="fa-solid fa-arrow-left text-xs"></i>
+                                                                }} className="w-8 h-8 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white transition-all flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
+                                                                    <i className="fa-solid fa-trash-can text-xs"></i>
                                                                 </button>
-                                                            )}
-                                                            {idx < (editingExercise ? (editingExercise.steps?.length || 0) : (newExercise.steps?.length || 0)) - 1 && (
-                                                                <button type="button" onClick={() => {
-                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
-                                                                    [steps[idx], steps[idx+1]] = [steps[idx+1], steps[idx]];
-                                                                    editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                                }} className="w-8 h-8 rounded-full bg-white/20 hover:bg-emerald-500 text-white transition-all flex items-center justify-center backdrop-blur-md">
-                                                                    <i className="fa-solid fa-arrow-right text-xs"></i>
-                                                                </button>
-                                                            )}
-                                                            <button type="button" onClick={() => {
-                                                                const steps = (editingExercise ? editingExercise.steps : newExercise.steps).filter((_, i) => i !== idx);
-                                                                editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
-                                                            }} className="w-8 h-8 rounded-full bg-rose-500/80 hover:bg-rose-600 text-white transition-all flex items-center justify-center backdrop-blur-md">
-                                                                <i className="fa-solid fa-trash text-xs"></i>
-                                                            </button>
-                                                        </div>
-                                                        <div className="absolute top-2 left-2 bg-emerald-600 shadow-lg text-[10px] font-black text-white px-2 py-0.5 rounded-lg backdrop-blur-sm ring-1 ring-white/50">
-                                                            STEP {idx + 1}
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                                            </div>
+                                                            <div className="absolute top-2.5 left-2.5 bg-slate-900/40 backdrop-blur-md text-[9px] font-black text-white px-2.5 py-1 rounded-lg border border-white/20 tracking-tighter">
+                                                                STEP {idx + 1}
+                                                            </div>
+                                                        </motion.div>
+                                                    ))}
+                                                </AnimatePresence>
 
-                                                {/* Premium "Add Step" Card */}
-                                                <div className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 flex flex-col p-3 transition-all hover:border-emerald-400 hover:bg-white overflow-hidden group/add">
-                                                    <div className="flex bg-slate-200/50 p-1 rounded-xl mb-3">
+                                                {/* Premium Integrated Uploader Card */}
+                                                <div className="aspect-square rounded-[1.5rem] border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col p-4 transition-all hover:border-emerald-400 hover:bg-white overflow-hidden group/add shadow-inner">
+                                                    <div className="flex bg-slate-200/60 p-1 rounded-xl mb-4 self-stretch">
                                                         {["url", "file"].map(type => (
                                                             <button 
                                                                 key={type}
                                                                 type="button"
                                                                 onClick={() => setExerciseUploadType(type)}
-                                                                className={`flex-1 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${exerciseUploadType === type ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                                                className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${exerciseUploadType === type ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                                             >
                                                                 {type}
                                                             </button>
                                                         ))}
                                                     </div>
 
-                                                    <div className="flex-grow flex flex-col justify-center">
+                                                    <div className="flex-grow flex flex-col justify-center items-center w-full">
                                                         {exerciseUploadType === "url" ? (
-                                                            <div className="space-y-2">
-                                                                <div className="relative">
-                                                                    <i className="fa-solid fa-link absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
-                                                                    <input type="text" id="new-step-url" placeholder="Paste image URL..." className="w-full text-[10px] pl-8 pr-2 py-2 bg-white border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20" />
+                                                            <div className="w-full space-y-3 animate-in fade-in slide-in-from-bottom-2">
+                                                                <div className="relative group/input">
+                                                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                                                                        <i className="fa-solid fa-link text-[8px]"></i>
+                                                                    </div>
+                                                                    <input type="text" id="new-step-url" placeholder="Paste URL..." className="w-full text-[10px] pl-10 pr-3 py-2.5 bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-200 transition-all font-medium" />
                                                                 </div>
                                                                 <button type="button" onClick={() => {
                                                                     const url = document.getElementById('new-step-url').value;
@@ -1325,16 +1342,18 @@ const Admin = () => {
                                                                     const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), url];
                                                                     editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
                                                                     document.getElementById('new-step-url').value = '';
-                                                                }} className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black rounded-xl transition-all shadow-md shadow-emerald-200 active:scale-95">
+                                                                }} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black rounded-xl transition-all shadow-lg shadow-emerald-200 active:scale-[0.97] flex items-center justify-center gap-2">
+                                                                    <i className="fa-solid fa-plus-circle text-xs"></i>
                                                                     ADD STEP
                                                                 </button>
                                                             </div>
                                                         ) : (
-                                                            <div className="relative flex-grow flex flex-col items-center justify-center border border-slate-100 bg-white rounded-xl shadow-sm border-dashed hover:bg-emerald-50 transition-colors cursor-pointer group-hover/add:border-emerald-200">
-                                                                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center mb-2 group-hover/add:scale-110 transition-transform">
-                                                                    <i className="fa-solid fa-cloud-arrow-up text-emerald-600 text-xs"></i>
+                                                            <div className="relative w-full h-full flex flex-col items-center justify-center border border-slate-100 bg-white rounded-xl shadow-sm border-dashed hover:bg-emerald-50/50 transition-all duration-300 cursor-pointer group-hover/add:border-emerald-300 animate-in fade-in slide-in-from-bottom-2">
+                                                                <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center mb-3 group-hover/add:scale-110 group-hover/add:bg-emerald-100 transition-all shadow-sm">
+                                                                    <i className="fa-solid fa-cloud-arrow-up text-emerald-600 text-sm"></i>
                                                                 </div>
-                                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Upload File</span>
+                                                                <span className="text-[10px] font-black text-slate-500 underline decoration-slate-200 decoration-2 underline-offset-4 uppercase tracking-widest group-hover/add:text-emerald-700">Drop Image</span>
+                                                                <p className="text-[8px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">or click to browse</p>
                                                                 <input type="file" onChange={e => {
                                                                     if (!e.target.files[0]) return;
                                                                     const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), e.target.files[0]];
@@ -1348,12 +1367,12 @@ const Admin = () => {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
+                                        <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-6 pt-6 border-t border-slate-50">
                                             {editingExercise && (
-                                                <button type="button" onClick={() => { setEditingExercise(null); setExerciseFile(null); }} className="px-6 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">Cancel</button>
+                                                <button type="button" onClick={() => { setEditingExercise(null); setExerciseFile(null); }} className="px-6 py-3 rounded-2xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">Cancel</button>
                                             )}
-                                            <button type="submit" className="px-8 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-emerald-700 transition-all">
-                                                {editingExercise ? "Update Exercise" : "Add Exercise"}
+                                            <button type="submit" className="px-10 py-3 bg-emerald-600 text-white rounded-2xl font-black text-sm shadow-[0_8px_25px_-5px_rgba(16,185,129,0.4)] hover:bg-emerald-700 hover:shadow-[0_12px_30px_-5px_rgba(16,185,129,0.5)] transition-all active:scale-[0.98]">
+                                                {editingExercise ? "Save All Changes" : "Create Exercise"}
                                             </button>
                                         </div>
                                     </form>
@@ -1538,13 +1557,13 @@ const Admin = () => {
                                                 <h4 className="font-bold text-base leading-tight">{b.title}</h4>
                                                 <p className="text-sm opacity-80">{b.subtitle}</p>
                                             </div>
-                                            
+
                                             {/* Reorder Controls */}
                                             <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
                                                 {idx > 0 && (
                                                     <button onClick={async () => {
                                                         const newBanners = [...banners];
-                                                        [newBanners[idx], newBanners[idx-1]] = [newBanners[idx-1], newBanners[idx]];
+                                                        [newBanners[idx], newBanners[idx - 1]] = [newBanners[idx - 1], newBanners[idx]];
                                                         try {
                                                             await reorderBanners(newBanners.map(x => x._id));
                                                             setBanners(newBanners);
@@ -1557,7 +1576,7 @@ const Admin = () => {
                                                 {idx < banners.length - 1 && (
                                                     <button onClick={async () => {
                                                         const newBanners = [...banners];
-                                                        [newBanners[idx], newBanners[idx+1]] = [newBanners[idx+1], newBanners[idx]];
+                                                        [newBanners[idx], newBanners[idx + 1]] = [newBanners[idx + 1], newBanners[idx]];
                                                         try {
                                                             await reorderBanners(newBanners.map(x => x._id));
                                                             setBanners(newBanners);
@@ -1907,9 +1926,9 @@ const Admin = () => {
                                                                     <i className="fa-solid fa-calendar-minus text-blue-400"></i> {day}
                                                                 </h4>
                                                                 <div className="flex items-center gap-2">
-                                                                    <input 
-                                                                        type="text" 
-                                                                        placeholder="e.g. 10AM - 12PM" 
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="e.g. 10AM - 12PM"
                                                                         className="text-[10px] py-1 px-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100"
                                                                         onKeyDown={(e) => {
                                                                             if (e.key === 'Enter') {
@@ -1941,8 +1960,8 @@ const Admin = () => {
                                                                     (clinicInfo.dayWiseSlots?.[day] || []).map((slot, idx) => (
                                                                         <span key={idx} className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-blue-100 text-blue-600 rounded-lg text-[10px] font-black group shadow-sm">
                                                                             {slot}
-                                                                            <button 
-                                                                                type="button" 
+                                                                            <button
+                                                                                type="button"
                                                                                 onClick={() => {
                                                                                     const updated = (clinicInfo.dayWiseSlots?.[day] || []).filter(s => s !== slot);
                                                                                     setClinicInfo({
