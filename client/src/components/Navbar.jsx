@@ -23,8 +23,8 @@ const STATIC_SERVICES = [
 ];
 
 const STATIC_EXERCISES = [
-  { id: "back-exercises", title: "Back Exercises", hindi: "पीठ के व्यायाम", icon: "fa-person-running" },
-  { id: "knee-recovery", title: "Knee Recovery", hindi: "घुटने के व्यायाम", icon: "fa-bone" }
+    { id: "back-exercises", title: "Back Exercises", hindi: "पीठ के व्यायाम", icon: "fa-person-running" },
+    { id: "knee-recovery", title: "Knee Recovery", hindi: "घुटने के व्यायाम", icon: "fa-bone" }
 ];
 
 const Navbar = () => {
@@ -52,7 +52,7 @@ const Navbar = () => {
                     getServices(),
                     getExercises()
                 ]);
-                
+
                 if (isMounted) {
                     if (sData?.length) setServices(sData);
                     if (eData?.length) setExercises(eData);
@@ -175,8 +175,8 @@ const Navbar = () => {
                                 <img src={logo} alt="RK" className="w-full h-full object-cover scale-[1.35] transform transition-transform duration-400 group-hover:scale-150" />
                             </div>
                             <div className="flex flex-col leading-tight">
-                                <span className="text-[11px] md:text-[13px] lg:text-[15px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK The Complete Care</span>
-                                <span className="text-[7px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em]">Where Recovery Begins</span>
+                                <span className="text-[14px] md:text-[16px] lg:text-[18px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK THE COMPLETE CARE</span>
+                                <span className="text-[6px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em] ml-auto" >Where Recovery Begins...</span>
                             </div>
                         </Link>
                     </div>
@@ -229,7 +229,7 @@ const Navbar = () => {
                                                                     <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center text-blue-600">
                                                                         <i className={`fa-solid ${s.icon || 'fa-notes-medical'}`}></i>
                                                                     </div>
-                                                                    {s.title} <span className="ml-1 text-[9px] font-black text-blue-600/60 lowercase tracking-normal">({s.titleHi})</span>
+                                                                    {s.title} <span className="ml-1 text-[11px] font-black text-blue-600/70 tracking-normal">({s.titleHi})</span>
                                                                 </Link>
                                                             ))}
                                                         </div>
@@ -334,7 +334,7 @@ const Navbar = () => {
                                                                     <div className="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center text-emerald-600">
                                                                         <i className={`fa-solid ${e.icon || 'fa-person-running'}`}></i>
                                                                     </div>
-                                                                    {e.title} <span className="ml-1 text-[9px] font-black text-emerald-600/60 lowercase tracking-normal">({e.hindi})</span>
+                                                                    {e.title} <span className="ml-1 text-[11px] font-black text-emerald-600/70 tracking-normal">({e.hindi})</span>
                                                                 </Link>
                                                             ))}
                                                         </div>
@@ -398,7 +398,7 @@ const Navbar = () => {
                                     <div className="w-10 h-10 rounded-full border border-blue-100 overflow-hidden">
                                         <img src={logo} className="w-full h-full object-cover scale-[1.35]" />
                                     </div>
-                                    <span className="font-black text-slate-800 text-sm italic">RK<span className="text-blue-600">Care</span></span>
+                                    <span className="font-black text-slate-800 text-sm italic">RK <span className="text-blue-600">The Complete Care</span></span>
                                 </div>
                                 <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center"><i className="fa-solid fa-xmark text-lg"></i></button>
                             </div>
@@ -428,7 +428,7 @@ const Navbar = () => {
                                                                             className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-500 font-semibold text-sm hover:text-blue-600 hover:bg-blue-50/50 transition-all"
                                                                         >
                                                                             <i className="fa-solid fa-notes-medical text-[10px] opacity-40"></i>
-                                                                            {s.title} <span className="ml-1 text-[10px] font-bold text-blue-600/50">({s.titleHi})</span>
+                                                                            {s.title} <span className="ml-1 text-[12px] font-bold text-blue-600/60 tracking-normal">({s.titleHi})</span>
                                                                         </Link>
                                                                     ))}
                                                                     <Link
@@ -450,7 +450,7 @@ const Navbar = () => {
                                                                             className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-500 font-semibold text-sm hover:text-emerald-600 hover:bg-emerald-50/50 transition-all"
                                                                         >
                                                                             <i className="fa-solid fa-person-running text-[10px] opacity-40"></i>
-                                                                            {e.title} <span className="ml-1 text-[10px] font-bold text-emerald-600/50">({e.hindi})</span>
+                                                                            {e.title} <span className="ml-1 text-[12px] font-bold text-emerald-600/60 tracking-normal">({e.hindi})</span>
                                                                         </Link>
                                                                     ))}
                                                                     <Link

@@ -4,9 +4,12 @@
 @theme {
   /* === NORMAL MEDICAL PALETTE === */
   /* Primary: Professional Blue */
-  --color-primary: #1e40af; /* blue-800 */
-  --color-primary-dark: #1e3a8a; /* blue-900 */
-  --color-primary-light: #3b82f6; /* blue-500 */
+  --color-primary: #1e40af;
+  /* blue-800 */
+  --color-primary-dark: #1e3a8a;
+  /* blue-900 */
+  --color-primary-light: #3b82f6;
+  /* blue-500 */
 
   /* Accent: Professional Teal/Green */
   --color-accent: #0f766e;
@@ -14,26 +17,32 @@
 
   /* Neutrals */
   --color-bg-light: #ffffff;
-  --color-bg-section: #f8fafc; /* slate-50 */
+  --color-bg-section: #f8fafc;
+  /* slate-50 */
   --color-bg-dark: #0f172a;
   --color-bg-card: #ffffff;
 
   /* Text */
   --color-text-dark: #0f172a;
-  --color-text-body: #334155; /* slate-700 */
-  --color-text-muted: #64748b; /* slate-500 */
+  --color-text-body: #334155;
+  /* slate-700 */
+  --color-text-muted: #64748b;
+  /* slate-500 */
   --color-text-light: #f9fafb;
 
-  --backdrop-blur-glass: 0px; /* Disabled for normal look */
+  --backdrop-blur-glass: 0px;
+  /* Disabled for normal look */
 
   --animate-fade-in-up: fadeInUp 0.5s ease-out;
-  --animate-float: none; /* Disabled for normal look */
+  --animate-float: none;
+  /* Disabled for normal look */
 
   @keyframes fadeInUp {
     0% {
       opacity: 0;
       transform: translateY(10px);
     }
+
     100% {
       opacity: 1;
       transform: translateY(0);
@@ -54,7 +63,12 @@
     line-height: 1.6;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Poppins', 'Inter', sans-serif;
     font-weight: 700;
     color: #0f172a;
@@ -63,16 +77,16 @@
     letter-spacing: -0.02em;
   }
 
-  h1 { 
-    font-size: clamp(2.5rem, 5vw, 4rem); 
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
   }
-  
-  h2 { 
-    font-size: clamp(1.8rem, 4vw, 3rem); 
+
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
   }
-  
-  h3 { 
-    font-size: clamp(1.4rem, 2.5vw, 2rem); 
+
+  h3 {
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
   }
 }
 
@@ -102,12 +116,12 @@
   /* === NORMAL CARDS === */
   .glass-card {
     @apply bg-white border border-slate-200 rounded-xl p-6 transition-all duration-300;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
   }
 
   .glass-card:hover {
     @apply border-blue-200 transform translate-y-[-2px];
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
   /* === SECTION BADGE === */

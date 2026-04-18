@@ -119,9 +119,13 @@ router.post('/', async (req, res) => {
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
+        // Escape regex special characters to prevent errors
+        const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const safeNameRegex = new RegExp(`^${escapeRegExp(patientName.trim())}$`, 'i');
+
         const existingAppointment = await Appointment.findOne({
             phone,
-            patientName: { $regex: new RegExp(`^${patientName.trim()}$`, 'i') },
+            patientName: { $regex: safeNameRegex },
             date: { $gte: startOfDay, $lte: endOfDay }
         });
 

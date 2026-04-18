@@ -12,7 +12,6 @@ import api, {
     getBanners, postBanner,
     getServices, postService, updateService, deleteService,
     getExercises, postExercise, updateExercise, deleteExercise,
-    getBroadcasts, postBroadcast, retryBroadcast, deleteBroadcast,
     updatePatientStory
 } from "../services/api";
 
@@ -333,7 +332,7 @@ const Admin = () => {
     const [clinicInfo, setClinicInfo] = useState({ phones: ["", ""], email: "", address: "", openingHours: { morning: "", evening: "", sunday: "" }, socialLinks: { facebook: "", instagram: "", twitter: "", whatsapp: "", google: "" }, automations: { birthday: true, medicine: true, followUp: true } });
     const [clinicInfoLoaded, setClinicInfoLoaded] = useState(false);
     const fetchClinicInfo = async () => { try { const r = await api.get(`/clinic-info`); if (r.data) { setClinicInfo(r.data); setClinicInfoLoaded(true); } } catch { } };
-    useEffect(() => { if ((activeTab === "settings" || activeTab === "broadcasts") && !clinicInfoLoaded) fetchClinicInfo(); }, [activeTab]);
+    useEffect(() => { if (activeTab === "settings" && !clinicInfoLoaded) fetchClinicInfo(); }, [activeTab]);
 
     const toggleAutomation = async (key) => {
         const updatedAutomations = { 
@@ -661,51 +660,11 @@ const Admin = () => {
 
     const unreadMessagesCount = messages.filter(m => m.status === 'Unread').length;
 
-    // ── Broadcasts ────────────────────────────────────────────────────────────
-    const [broadcasts, setBroadcasts] = useState([]);
-    const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
-    const [newBroadcast, setNewBroadcast] = useState({ title: "", message: "", imageUrl: "", target: "All", scheduledAt: "" });
-    
-    const fetchBroadcasts = async () => {
-        try {
-            const data = await getBroadcasts();
-            setBroadcasts(Array.isArray(data) ? data : []);
-        } catch { setBroadcasts([]); }
-    };
-    useEffect(() => { if (activeTab === "broadcasts") fetchBroadcasts(); }, [activeTab]);
 
-    const handleBroadcastSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await postBroadcast(newBroadcast);
-            setIsBroadcastModalOpen(false);
-            setNewBroadcast({ title: "", message: "", imageUrl: "", target: "All", scheduledAt: "" });
-            fetchBroadcasts();
-            addToast("Broadcast queued successfully!", "success");
-        } catch { addToast("Error sending broadcast", "error"); }
-    };
-
-    const handleRetryBroadcast = async (id) => {
-        try {
-            await retryBroadcast(id);
-            fetchBroadcasts();
-            addToast("Retried successfully", "success");
-        } catch { addToast("Retry failed", "error"); }
-    };
-
-    useEffect(() => {
-        const socketUrl = (import.meta.env.VITE_API_URL || "http://127.0.0.1:5001/api").replace('/api', '');
-        const socket = io(socketUrl);
-        // ... (existing listeners)
-        socket.on('broadcast-sent', () => fetchBroadcasts());
-        socket.on('broadcast-status-update', () => fetchBroadcasts());
-        return () => { socket.disconnect(); };
-    }, []);
 
     const navItems = [
         { id: "appointments", icon: "fa-calendar-check", label: "Appointments", badge: stats.pending > 0 ? stats.pending : null },
         { id: "patients", icon: "fa-users", label: "Patients" },
-        { id: "broadcasts", icon: "fa-bullhorn", label: "Broadcasts" },
         { id: "messages", icon: "fa-envelope", label: "Messages", badge: unreadMessagesCount > 0 ? unreadMessagesCount : null },
         { id: "services", icon: "fa-stethoscope", label: "Services" },
         { id: "exercises", icon: "fa-person-running", label: "Exercises" },
@@ -1262,10 +1221,7 @@ const Admin = () => {
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">FontAwesome Icon</label>
                                             <input type="text" placeholder="fa-person-running" value={editingExercise ? editingExercise.icon : newExercise.icon} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, icon: e.target.value }) : setNewExercise({ ...newExercise, icon: e.target.value })} className={inp} required />
                                         </div>
-                                        <div className="md:col-span-2 lg:col-span-3 space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Protocol Details</label>
-                                            <textarea rows="4" placeholder="Enter step-by-step instructions..." value={editingExercise ? editingExercise.fullDetails : newExercise.fullDetails} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, fullDetails: e.target.value }) : setNewExercise({ ...newExercise, fullDetails: e.target.value })} className={inp} required></textarea>
-                                        </div>
+
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image Upload</label>
                                             <div className="flex gap-2">
@@ -1321,223 +1277,7 @@ const Admin = () => {
                         )
                     }
 
-                    {/* ── Broadcasts Tab ── */}
-                    {
-                        activeTab === "broadcasts" && (
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                    {/* Create Broadcast Card */}
-                                    <div className="lg:col-span-2 bg-white rounded-[2rem] shadow-sm border border-slate-100 p-8">
-                                        <div className="flex items-center justify-between mb-8">
-                                            <div>
-                                                <h2 className="text-2xl font-black text-slate-800">New Broadcast</h2>
-                                                <p className="text-sm text-slate-400 font-bold uppercase tracking-wider mt-1">Send manual or scheduled alerts</p>
-                                            </div>
-                                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
-                                                <i className="fa-solid fa-bullhorn text-xl"></i>
-                                            </div>
-                                        </div>
 
-                                        <form onSubmit={handleBroadcastSubmit} className="space-y-6">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Broadcast Title</label>
-                                                    <input type="text" placeholder="e.g. Free Health Camp Alert" value={newBroadcast.title} onChange={e => setNewBroadcast({ ...newBroadcast, title: e.target.value })} className={inp} required />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Target Filter</label>
-                                                    <select value={newBroadcast.target} onChange={e => setNewBroadcast({ ...newBroadcast, target: e.target.value })} className={inp}>
-                                                        <option value="All">All Patients</option>
-                                                        <option value="Today">Today's Patients</option>
-                                                        <option value="Recent">Last 7 Days Patients</option>
-                                                        <option value="Custom">Custom Target</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Message Body</label>
-                                                <textarea rows="4" placeholder="Type your broadcast message here..." value={newBroadcast.message} onChange={e => setNewBroadcast({ ...newBroadcast, message: e.target.value })} className={inp} required></textarea>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image URL (Optional)</label>
-                                                    <input type="text" placeholder="https://example.com/banner.jpg" value={newBroadcast.imageUrl} onChange={e => setNewBroadcast({ ...newBroadcast, imageUrl: e.target.value })} className={inp} />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Schedule Notification (Optional)</label>
-                                                    <div className="relative">
-                                                        <input type="datetime-local" value={newBroadcast.scheduledAt} onChange={e => setNewBroadcast({ ...newBroadcast, scheduledAt: e.target.value })} className={inp} />
-                                                        <i className="fa-solid fa-clock absolute right-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                                                <div className="flex items-center gap-2 text-slate-400">
-                                                    <i className="fa-solid fa-circle-info text-xs"></i>
-                                                    <p className="text-[10px] font-bold uppercase tracking-wide">Messages will be queued for processing</p>
-                                                </div>
-                                                <button type="submit" className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all flex items-center gap-2">
-                                                    <i className="fa-solid fa-paper-plane"></i>
-                                                    {newBroadcast.scheduledAt ? "Schedule Notification" : "Send Broadcast Now"}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    {/* Sidebar: Automations & Quick Stats */}
-                                    <div className="space-y-6">
-                                        <div className="bg-[#0f172a] rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                                            <h3 className="text-lg font-black mb-6 flex items-center gap-2">
-                                                <i className="fa-solid fa-bolt text-amber-400"></i>
-                                                Auto-Reminders
-                                            </h3>
-                                            <div className="space-y-4">
-                                                {[
-                                                    { id: 'birthday', label: 'Birthday Wishes', icon: 'fa-cake-candles', color: 'text-pink-400' },
-                                                    { id: 'followUp', label: 'Follow-up Alerts', icon: 'fa-stethoscope', color: 'text-blue-400' },
-                                                    { id: 'medicine', label: 'Medicine Reminders', icon: 'fa-pills', color: 'text-emerald-400' },
-                                                ].map(auto => {
-                                                    const isActive = clinicInfo?.automations?.[auto.id] !== false;
-                                                    return (
-                                                        <div key={auto.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors group">
-                                                            <div className="flex items-center gap-3">
-                                                                <i className={`fa-solid ${auto.icon} ${auto.color}`}></i>
-                                                                <span className="text-sm font-bold">{auto.label}</span>
-                                                            </div>
-                                                            <button 
-                                                                type="button"
-                                                                onClick={() => toggleAutomation(auto.id)}
-                                                                className={`w-10 h-5 rounded-full relative transition-colors duration-200 ${isActive ? 'bg-blue-600' : 'bg-slate-700'}`}
-                                                            >
-                                                                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all duration-200 ${isActive ? 'right-1' : 'left-1'}`}></div>
-                                                            </button>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                            <p className="mt-8 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Automations run daily at 9:00 AM</p>
-                                        </div>
-
-                                        <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
-                                            <h3 className="font-black text-slate-800 mb-6 uppercase text-xs tracking-widest border-b border-slate-50 pb-4">Target Audience</h3>
-                                            <div className="space-y-4">
-                                                <div className="flex justify-between items-end">
-                                                    <div>
-                                                        <p className="text-2xl font-black text-slate-800">{uniquePatients.length}</p>
-                                                        <p className="text-[10px] font-black text-slate-400 uppercase">Total Patients</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="text-2xl font-black text-blue-600">{(Array.isArray(appointments) ? appointments : []).filter(a => new Date(a.date).toDateString() === new Date().toDateString()).length}</p>
-                                                        <p className="text-[10px] font-black text-slate-400 uppercase">Today's Reach</p>
-                                                    </div>
-                                                </div>
-                                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-blue-600 rounded-full" style={{ width: '65%' }}></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Broadcast History Table */}
-                                <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-                                    <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-                                        <div>
-                                            <h3 className="text-xl font-black text-slate-800">Broadcast History</h3>
-                                            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Status & Delivery Tracking</p>
-                                        </div>
-                                        <button onClick={fetchBroadcasts} className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center">
-                                            <i className="fa-solid fa-rotate"></i>
-                                        </button>
-                                    </div>
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left">
-                                            <thead className="bg-slate-50/50">
-                                                <tr>
-                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Broadcast Information</th>
-                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Target</th>
-                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Metrics</th>
-                                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-50">
-                                                {broadcasts.length > 0 ? broadcasts.map(b => (
-                                                    <tr key={b._id} className="hover:bg-slate-50/50 transition-colors group">
-                                                        <td className="px-8 py-6">
-                                                            <div className="flex items-center gap-4">
-                                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg ${b.autoType !== 'Manual' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'}`}>
-                                                                    <i className={`fa-solid ${b.autoType === 'Birthday' ? 'fa-cake-candles' : b.autoType === 'Followup' ? 'fa-stethoscope' : 'fa-bullhorn'}`}></i>
-                                                                </div>
-                                                                <div>
-                                                                    <p className="font-black text-slate-800">{b.title}</p>
-                                                                    <p className="text-xs text-slate-400 font-bold truncate max-w-[200px]">{b.message}</p>
-                                                                    <p className="text-[10px] text-slate-300 font-black mt-1 uppercase tracking-tighter">
-                                                                        {new Date(b.createdAt).toLocaleString()}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-8 py-6">
-                                                            <span className="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                                                                {b.target}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-8 py-6">
-                                                            <div className="flex items-center gap-2">
-                                                                <div className={`w-2 h-2 rounded-full ${
-                                                                    b.status === 'Sent' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse' : 
-                                                                    b.status === 'Failed' ? 'bg-rose-500' : 
-                                                                    b.status === 'Pending' ? 'bg-amber-500' : 'bg-blue-500'
-                                                                }`}></div>
-                                                                <span className="text-sm font-black text-slate-700">{b.status}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-8 py-6">
-                                                            <div className="flex flex-col items-center">
-                                                                <div className="flex gap-1 mb-1">
-                                                                    <span className="text-xs font-black text-slate-800">{b.metrics?.sent || 0}</span>
-                                                                    <span className="text-xs font-bold text-slate-400">/ {b.metrics?.total || 0}</span>
-                                                                </div>
-                                                                <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                                                    <div className="h-full bg-blue-600" style={{ width: `${(b.metrics?.sent / b.metrics?.total) * 100 || 0}%` }}></div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-8 py-6 text-right">
-                                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                {b.status === 'Failed' && (
-                                                                    <button onClick={() => handleRetryBroadcast(b._id)} className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition-all shadow-sm">
-                                                                        <i className="fa-solid fa-rotate-right text-xs"></i>
-                                                                    </button>
-                                                                )}
-                                                                <button onClick={async () => { if(window.confirm('Clear record?')) { await deleteBroadcast(b._id); fetchBroadcasts(); } }} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-all shadow-sm">
-                                                                    <i className="fa-solid fa-trash text-xs"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                )) : (
-                                                    <tr>
-                                                        <td colSpan="5" className="px-8 py-20 text-center">
-                                                            <div className="flex flex-col items-center opacity-20">
-                                                                <i className="fa-solid fa-paper-plane text-5xl mb-4 text-slate-300"></i>
-                                                                <p className="font-black text-slate-400 uppercase tracking-widest text-sm">No broadcast history found</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    }
 
                     {/* ── Reports Tab ── */}
                     {

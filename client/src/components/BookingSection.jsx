@@ -25,7 +25,7 @@ const BookingSection = () => {
                             <span className="text-blue-700">Towards Recovery</span>
                         </h2>
                         <p className="text-slate-500 text-lg mb-10 max-w-lg leading-relaxed font-medium">
-                            Choose your preferred time slot and schedule a consultation with our expert physiotherapy team today. We provide specialized care for ortho, neuro, and sports recovery.
+                            Choose your preferred time slot and schedule a consultation with our expert physiotherapy team today. We provide <span style={{color:"#2E86FF", fontWeight:"900"}}> One to One care </span>for ortho, and sports recovery.
                         </p>
                         
                         <div className="space-y-6">

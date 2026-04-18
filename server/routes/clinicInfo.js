@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
             return res.json({
                 phones: ['+91 8769556475', '+91 9782468376'],
                 email: 'rk.completecare@gmail.com',
-                address: '21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public School, Benad Road, Jhotwara, Jaipur',
+                address: '21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public School, Benad Road, Jhotwara, Jaipur – 302012',
                 openingHours: {
                     morning: '09:00 AM - 1:00 PM',
                     evening: '04:00 PM - 08:00 PM',

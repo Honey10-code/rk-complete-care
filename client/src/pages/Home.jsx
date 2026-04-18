@@ -21,9 +21,8 @@ const SectionLoader = () => (
 );
 
 const stats = [
-    { value: "5000+", label: "Patients Treated", icon: "fa-users" },
-    { value: "10+", label: "Expert Doctors", icon: "fa-user-doctor" },
-    { value: "15+", label: "Years Experience", icon: "fa-award" },
+    { value: "500+", label: "Patients Treated", icon: "fa-users" },
+    { value: "7+", label: "Years Experience", icon: "fa-award" },
     { value: "98%", label: "Recovery Rate", icon: "fa-heart-pulse" },
 ];
 
@@ -75,18 +74,18 @@ const Home = () => {
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                                 </span>
-                                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-700">Jhotwara's Premier Clinic</span>
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-700">Jaipur's Premier Clinic</span>
                             </motion.div>
 
                             <h1 className="text-slate-900 leading-[1.1] mb-6 font-black tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>
                                 <span className="block text-4xl md:text-5xl lg:text-[3.5rem] text-slate-400 font-extrabold pb-2">Welcome to</span>
-                                <span className="block text-5xl md:text-6xl lg:text-[4.5rem] bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-blue-800 pb-2">
-                                    RK The Complete
+                                <span className="block text-4xl md:text-5xl lg:text-[3.5rem] bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-blue-900 to-blue-800 pb-2">
+                                    RK The Complete Care
                                 </span>
                                 <span className="block text-3xl md:text-5xl lg:text-[3.5rem] text-blue-700 mt-1">
                                     Physiotherapy Centre
                                 </span>
-                                <span className="block text-2xl md:text-2xl lg:text-[2.5rem] text-blue-600 mt-1 font-bold">
+                                <span className="block text-2xl md:text-2xl lg:text-[2.5rem] text-blue-600 mt-1 font-bold ">
                                     Where Recovery Begins...
                                 </span>
                             </h1>
@@ -176,9 +175,9 @@ const Home = () => {
                                         <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm">
                                             <i className="fa-solid fa-clock-rotate-left"></i>
                                         </div>
-                                        <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest leading-tight">Years<br />Active</p>
+                                        <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest leading-tight">Happy<br />Patients</p>
                                     </div>
-                                    <p className="font-black text-slate-900 text-3xl">15<span className="text-blue-600 text-xl">+</span></p>
+                                    <p className="font-black text-slate-900 text-3xl">500<span className="text-blue-600 text-xl">+</span></p>
                                 </div>
                             </motion.div>
                         </motion.div>
@@ -247,7 +246,7 @@ const Home = () => {
                                 <i className="fa-solid fa-user-doctor"></i>
                             </div>
                             <h3 className="text-xl font-black text-slate-800 mb-3 uppercase tracking-tight group-hover:text-indigo-700 transition-colors">Lead Specialists</h3>
-                            <p className="text-slate-500 text-sm mb-8 font-medium leading-relaxed">Meet Dr. Piyush Sharma and our dedicated expert team of clinical therapists.</p>
+                            <p className="text-slate-500 text-sm mb-8 font-medium leading-relaxed">Meet Dr. Piyush Sharma and Dr. Soniya Pathak our dedicated expert team of clinical therapists.</p>
                             <Link to="/doctors" className="mt-auto px-6 py-2.5 rounded-full bg-slate-50 group-hover:bg-indigo-50 text-indigo-700 font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all duration-300">
                                 Meet Experts <i className="fa-solid fa-arrow-right"></i>
                             </Link>
@@ -262,7 +261,7 @@ const Home = () => {
                                 <i className="fa-solid fa-person-running"></i>
                             </div>
                             <h3 className="text-xl font-black text-slate-800 mb-3 uppercase tracking-tight group-hover:text-emerald-600 transition-colors">Recovery Support</h3>
-                            <p className="text-slate-500 text-sm mb-8 font-medium leading-relaxed">Access clinical exercise protocols and guides designed specifically for your recovery.</p>
+                            <p className="text-slate-500 text-sm mb-8 font-medium leading-relaxed">Access clinical exercise protocols and guides designed specially for your recovery.</p>
                             <Link to="/exercises" className="mt-auto px-6 py-2.5 rounded-full bg-slate-50 group-hover:bg-emerald-50 text-emerald-600 font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all duration-300">
                                 View Guides <i className="fa-solid fa-arrow-right"></i>
                             </Link>
@@ -276,7 +275,7 @@ const Home = () => {
                     <div className="text-center mb-16">
                         <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700"> Professional Treatments · व्यावसायिक उपचार </div>
                         <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight"> Specialized Clinical <span className="text-blue-700">Services</span> </h2>
-                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium"> Expert physiotherapy and rehabilitation for orthopaedic and neurological recovery. </p>
+                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium"> Expert physiotherapy and rehabilitation for orthopaedic and sports recovery. </p>
                     </div>
                     <Services limit={6} isHomePage={true} />
                     <div className="mt-16 text-center">
@@ -292,7 +291,7 @@ const Home = () => {
                     <div className="text-center mb-16">
                         <div className="section-badge mx-auto bg-blue-50 border-blue-100 text-blue-700"> Home Rehabilitation · घर पर पुनर्वास </div>
                         <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-4 leading-tight"> Featured Clinical <span className="text-blue-700">Recovery Guides</span> </h2>
-                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium"> Access our most effective home-based protocols designed by our physiotherapists. </p>
+                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg leading-relaxed font-medium"> Access our most effective home-based protocols designed by top physiotherapists. </p>
                     </div>
                     <Exercises limit={4} isHomePage={true} />
                     <div className="mt-16 text-center">

@@ -8,7 +8,7 @@ const Footer = () => {
     const [clinicInfo, setClinicInfo] = useState({
         phones: ["+91 8769556475", "+91 9782468376"],
         email: "rk.completecare@gmail.com",
-        address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public School, Benad Road, Jhotwara, Jaipur",
+        address: "21, Nirmal Vihar, Dadi ka Phatak, Near Victor Public School, Benad Road, Jhotwara, Jaipur – 302012",
         openingHours: { morning: "09:00 AM - 01:00 PM", evening: "04:00 PM - 08:00 PM", sunday: "09:00 AM - 12:00 PM" },
         socialLinks: { facebook: "https://www.facebook.com/profile.php?id=61581299196924", instagram: "https://www.instagram.com/rkthecompletecare/", whatsapp: "https://wa.me/918769556475", google: "https://g.page/r/CXkFsimafLKiEAE/review" }
     });
@@ -201,11 +201,11 @@ const Footer = () => {
                         <div className="space-y-3">
                             <motion.div variants={itemVariants} className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                                <p className="text-xs font-bold text-slate-200">Dr. Piyush Sharma</p>
+                                <p className="text-xs font-bold text-slate-200">Dr. Piyush Sharma (PT)</p>
                             </motion.div>
                             <motion.div variants={itemVariants} className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
-                                <p className="text-xs font-bold text-slate-200">Dr. Soniya Pathak</p>
+                                <p className="text-xs font-bold text-slate-200">Dr. Soniya Pathak (PT)</p>
                             </motion.div>
                         </div>
                     </div>
@@ -278,7 +278,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-medium tracking-wide text-slate-500">
                     <div className="flex flex-col items-center md:items-start gap-1">
-                        <p>© {new Date().getFullYear()} <span className="text-white font-black italic">RK<span className="text-blue-500">The Complete Care</span></span>. All Rights Reserved.</p>
+                        <p>© {new Date().getFullYear()} <span className="text-white font-black italic">RK <span className="text-blue-500">The Complete Care</span></span>. All Rights Reserved.</p>
                         <div className="flex gap-4 uppercase font-bold tracking-widest text-[9px]">
                             <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
                             <span className="text-slate-700 font-normal">|</span>

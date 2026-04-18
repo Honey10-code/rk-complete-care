@@ -9,7 +9,7 @@ const contactItems = [
         content: (
             <p className="text-slate-500 leading-relaxed text-sm">
                 21, Nirmal Vihar, Dadi ka Phatak,<br />
-                Near Victor Public school, Benad Road,<br />
+                Near Victor Public School, Benad Road,<br />
                 Jhotwara, Jaipur – 302012
             </p>
         )

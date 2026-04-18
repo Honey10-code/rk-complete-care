@@ -80,7 +80,6 @@ mongoose.connect(MONGO_URI)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/doctors', require('./routes/doctors'));
 app.use('/api/appointments', require('./routes/appointments'));
-app.use('/api/broadcasts', require('./routes/broadcast'));
 app.use('/api/banners', require('./routes/banners'));
 app.use('/api/testimonials', require('./routes/testimonials'));
 app.use('/api/clinic-info', require('./routes/clinicInfo'));
