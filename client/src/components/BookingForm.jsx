@@ -619,7 +619,6 @@ const BookingForm = () => {
                                     <i className="fa-solid fa-circle-xmark text-lg group-hover:rotate-90 transition-transform relative z-10"></i>
                                 </button>
                                 </div>
-                            </div>
                         </motion.div>
                     </motion.div>
                 )}
