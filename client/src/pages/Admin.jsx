@@ -622,7 +622,7 @@ const Admin = () => {
 
     // ── Exercises ─────────────────────────────────────────────────────────────
     const [exercises, setExercises] = useState([]);
-    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running", imageUrl: "" });
+    const [newExercise, setNewExercise] = useState({ title: "", hindi: "", id: "", icon: "fa-person-running", imageUrl: "", steps: [] });
     const [exerciseUploadType, setExerciseUploadType] = useState("url");
     const [exerciseFile, setExerciseFile] = useState(null);
     const [editingExercise, setEditingExercise] = useState(null);
@@ -634,22 +634,35 @@ const Admin = () => {
         e.preventDefault();
         const fd = new FormData();
         ["title", "hindi", "id", "icon"].forEach(k => fd.append(k, editingExercise ? editingExercise[k] : newExercise[k]));
-        if (exerciseUploadType === "url") {
-            let val = editingExercise ? editingExercise.image : newExercise.imageUrl;
-            // If the URL is absolute and belongs to our server, try to send just the relative path
-            // to avoid host lock-in if the URL was already processed by the server
-            const currentHost = window.location.host;
-            if (val && (val.includes(currentHost) || val.includes('localhost:5001') || val.includes('127.0.0.1:5001'))) {
-                try {
-                    const urlObj = new URL(val);
-                    if (urlObj.pathname.includes('/uploads/')) {
-                        val = urlObj.pathname.substring(1); // remove leading /
-                    }
-                } catch (e) { /* ignore invalid URLs */ }
+        const steps = editingExercise ? (editingExercise.steps || []) : (newExercise.steps || []);
+        
+        // Prepare steps for transmission
+        // We send a JSON of the steps array. If a step is a File, we put a placeholder.
+        const stepsToSave = [];
+        const filesToUpload = [];
+
+        steps.forEach(s => {
+            if (s instanceof File) {
+                stepsToSave.push("FILE_UPLOAD");
+                filesToUpload.push(s);
+            } else {
+                // Clean URLs if they belong to our server
+                let val = s;
+                const currentHost = window.location.host;
+                if (val && (val.includes(currentHost) || val.includes('localhost:5001') || val.includes('127.0.0.1:5001'))) {
+                    try {
+                        const urlObj = new URL(val);
+                        if (urlObj.pathname.includes('/uploads/')) {
+                            val = urlObj.pathname.substring(1);
+                        }
+                    } catch (e) {}
+                }
+                stepsToSave.push(val);
             }
-            fd.append("imageUrl", val);
-        }
-        else if (exerciseFile) fd.append("image", exerciseFile);
+        });
+
+        fd.append("stepsJSON", JSON.stringify(stepsToSave));
+        filesToUpload.forEach(f => fd.append("steps", f));
 
         try {
             if (editingExercise) {
@@ -659,7 +672,7 @@ const Admin = () => {
                 await postExercise(fd);
                 addToast("Exercise added!", "success");
             }
-            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running", imageUrl: "" });
+            setNewExercise({ title: "", hindi: "", id: "", icon: "fa-person-running", imageUrl: "", steps: [] });
             setEditingExercise(null);
             setExerciseFile(null);
             fetchExercises();
@@ -1236,29 +1249,85 @@ const Admin = () => {
                                             <input type="text" placeholder="fa-person-running" value={editingExercise ? editingExercise.icon : newExercise.icon} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, icon: e.target.value }) : setNewExercise({ ...newExercise, icon: e.target.value })} className={inp} required />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image Upload</label>
-                                            {/* Current image preview when editing */}
-                                            {editingExercise && editingExercise.image && (
-                                                <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-emerald-200 mb-2">
-                                                    <img src={editingExercise.image} alt="Current" className="w-full h-full object-cover" />
-                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm px-3 py-1.5">
-                                                        <p className="text-white text-[9px] font-black uppercase tracking-widest">Current Image</p>
+                                        <div className="md:col-span-2 lg:col-span-3 space-y-4 pt-4 border-t border-slate-100">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Exercise Steps / Images</label>
+                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                    {(editingExercise?.steps?.length || newExercise?.steps?.length || 0)} steps added
+                                                </span>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                                {(editingExercise ? editingExercise.steps : newExercise.steps || []).map((s, idx) => (
+                                                    <div key={idx} className="group relative aspect-square bg-slate-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                                                        <img 
+                                                          src={s instanceof File ? URL.createObjectURL(s) : (s.startsWith('http') || s.startsWith('//') ? s : (s.startsWith('uploads') ? `/${s}` : s))} 
+                                                          className="w-full h-full object-cover" 
+                                                          alt={`Step ${idx + 1}`} 
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                                                            {idx > 0 && (
+                                                                <button type="button" onClick={() => {
+                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
+                                                                    [steps[idx], steps[idx-1]] = [steps[idx-1], steps[idx]];
+                                                                    editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                }} className="w-6 h-6 rounded-full bg-white/20 hover:bg-white text-white hover:text-emerald-600 transition-all flex items-center justify-center">
+                                                                    <i className="fa-solid fa-arrow-left text-[10px]"></i>
+                                                                </button>
+                                                            )}
+                                                            {idx < (editingExercise ? editingExercise.steps.length : newExercise.steps.length) - 1 && (
+                                                                <button type="button" onClick={() => {
+                                                                    const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps)];
+                                                                    [steps[idx], steps[idx+1]] = [steps[idx+1], steps[idx]];
+                                                                    editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                }} className="w-6 h-6 rounded-full bg-white/20 hover:bg-white text-white hover:text-emerald-600 transition-all flex items-center justify-center">
+                                                                    <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                                                                </button>
+                                                            )}
+                                                            <button type="button" onClick={() => {
+                                                                const steps = (editingExercise ? editingExercise.steps : newExercise.steps).filter((_, i) => i !== idx);
+                                                                editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                            }} className="w-6 h-6 rounded-full bg-rose-500 hover:bg-rose-600 text-white transition-all flex items-center justify-center ml-1">
+                                                                <i className="fa-solid fa-trash text-[10px]"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div className="absolute top-1 left-1 bg-black/50 text-[8px] font-black text-white px-1.5 rounded-full backdrop-blur-sm">
+                                                            {idx + 1}
+                                                        </div>
                                                     </div>
+                                                ))}
+                                                <div className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 hover:border-emerald-300 hover:bg-emerald-50 transition-all cursor-pointer overflow-hidden p-2">
+                                                    <select value={exerciseUploadType} onChange={e => setExerciseUploadType(e.target.value)} className="w-full px-1.5 py-1 bg-white border border-slate-200 rounded-lg text-[9px] font-black focus:outline-none">
+                                                        <option value="url">URL</option>
+                                                        <option value="file">File</option>
+                                                    </select>
+                                                    {exerciseUploadType === "url" ? (
+                                                        <div className="w-full flex flex-col gap-1.5">
+                                                            <input type="text" id="new-step-url" placeholder="https://..." className="w-full text-[8px] px-1.5 py-1 border border-slate-100 rounded-lg outline-none" />
+                                                            <button type="button" onClick={() => {
+                                                                const url = document.getElementById('new-step-url').value;
+                                                                if (!url) return;
+                                                                const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), url];
+                                                                editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                document.getElementById('new-step-url').value = '';
+                                                            }} className="w-full py-1 bg-emerald-600 text-white text-[8px] font-black rounded-lg">Add URL</button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="relative w-full h-full flex flex-col items-center justify-center">
+                                                            <i className="fa-solid fa-plus text-slate-300 text-sm"></i>
+                                                            <span className="text-[8px] font-black text-slate-400 mt-1 uppercase">Add Step</span>
+                                                            <input type="file" onChange={e => {
+                                                                if (!e.target.files[0]) return;
+                                                                const steps = [...(editingExercise ? editingExercise.steps : newExercise.steps || []), e.target.files[0]];
+                                                                editingExercise ? setEditingExercise({...editingExercise, steps}) : setNewExercise({...newExercise, steps});
+                                                                e.target.value = null;
+                                                            }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                            <div className="flex gap-2">
-                                                <select value={exerciseUploadType} onChange={e => setExerciseUploadType(e.target.value)} className="px-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none">
-                                                    <option value="url">URL</option>
-                                                    <option value="file">File</option>
-                                                </select>
-                                                {exerciseUploadType === "url" ? (
-                                                    <input type="text" placeholder="Image URL" value={editingExercise ? editingExercise.image : newExercise.imageUrl} onChange={e => editingExercise ? setEditingExercise({ ...editingExercise, image: e.target.value }) : setNewExercise({ ...newExercise, imageUrl: e.target.value })} className={inp} />
-                                                ) : (
-                                                    <input type="file" onChange={e => setExerciseFile(e.target.files[0])} className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
-                                                )}
                                             </div>
                                         </div>
+
                                         <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
                                             {editingExercise && (
                                                 <button type="button" onClick={() => { setEditingExercise(null); setExerciseFile(null); }} className="px-6 py-2.5 rounded-xl text-slate-500 font-bold text-sm hover:bg-slate-100 transition-all">Cancel</button>
@@ -1442,13 +1511,44 @@ const Admin = () => {
                                     </form>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                                    {(Array.isArray(banners) ? banners : []).map(b => (
-                                        <div key={b._id} className="group relative rounded-2xl overflow-hidden shadow-md h-52 border border-slate-200">
+                                    {(Array.isArray(banners) ? banners : []).map((b, idx) => (
+                                        <div key={b._id} className="group relative rounded-2xl overflow-hidden shadow-md h-52 border border-slate-200 bg-slate-100">
                                             <img src={b.image} alt={b.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-4 text-white">
                                                 <h4 className="font-bold text-base leading-tight">{b.title}</h4>
                                                 <p className="text-sm opacity-80">{b.subtitle}</p>
                                             </div>
+                                            
+                                            {/* Reorder Controls */}
+                                            <div className="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                                {idx > 0 && (
+                                                    <button onClick={async () => {
+                                                        const newBanners = [...banners];
+                                                        [newBanners[idx], newBanners[idx-1]] = [newBanners[idx-1], newBanners[idx]];
+                                                        try {
+                                                            await reorderBanners(newBanners.map(x => x._id));
+                                                            setBanners(newBanners);
+                                                            addToast("Slide moved left!", "success");
+                                                        } catch { addToast("Error moving slide", "error"); }
+                                                    }} className="w-8 h-8 bg-white/20 backdrop-blur-md text-white rounded-lg flex items-center justify-center hover:bg-emerald-500 transition-all border border-white/20">
+                                                        <i className="fa-solid fa-arrow-left text-xs"></i>
+                                                    </button>
+                                                )}
+                                                {idx < banners.length - 1 && (
+                                                    <button onClick={async () => {
+                                                        const newBanners = [...banners];
+                                                        [newBanners[idx], newBanners[idx+1]] = [newBanners[idx+1], newBanners[idx]];
+                                                        try {
+                                                            await reorderBanners(newBanners.map(x => x._id));
+                                                            setBanners(newBanners);
+                                                            addToast("Slide moved right!", "success");
+                                                        } catch { addToast("Error moving slide", "error"); }
+                                                    }} className="w-8 h-8 bg-white/20 backdrop-blur-md text-white rounded-lg flex items-center justify-center hover:bg-emerald-500 transition-all border border-white/20">
+                                                        <i className="fa-solid fa-arrow-right text-xs"></i>
+                                                    </button>
+                                                )}
+                                            </div>
+
                                             <button onClick={() => handleDeleteBanner(b._id)} className="absolute top-3 right-3 w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-600 shadow-lg">
                                                 <i className="fa-solid fa-trash text-xs"></i>
                                             </button>

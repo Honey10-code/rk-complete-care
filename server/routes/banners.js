@@ -17,10 +17,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// GET all banners
+// GET all banners (Sorted by order)
 router.get('/', async (req, res) => {
     try {
-        const banners = await Banner.find().sort({ createdAt: -1 });
+        const banners = await Banner.find().sort({ order: 1, createdAt: -1 });
         // Add full URL to image path if it's a local file
         const bannersWithUrl = banners.map(banner => {
             const bannerObj = banner.toObject();
@@ -37,21 +37,20 @@ router.get('/', async (req, res) => {
 
 // POST new banner
 router.post('/', upload.single('image'), async (req, res) => {
-    console.log("POST /api/banners hit");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
-
-    let imagePath = req.body.imageUrl; // Default to URL if provided
-
+    let imagePath = req.body.imageUrl;
     if (req.file) {
-        // Store ONLY the web-servable path: 'uploads/filename.png'
         imagePath = `uploads/${req.file.filename}`; 
     }
+
+    // Get max order
+    const lastBanner = await Banner.findOne().sort({ order: -1 });
+    const order = lastBanner ? lastBanner.order + 1 : 0;
 
     const banner = new Banner({
         image: imagePath,
         title: req.body.title,
-        subtitle: req.body.subtitle
+        subtitle: req.body.subtitle,
+        order: order
     });
 
     try {
@@ -59,6 +58,20 @@ router.post('/', upload.single('image'), async (req, res) => {
         res.status(201).json(newBanner);
     } catch (err) {
         res.status(400).json({ message: err.message });
+    }
+});
+
+// PATCH reorder banners
+router.patch('/reorder', async (req, res) => {
+    const { bannerIds } = req.body; // Array of IDs in the new order
+    try {
+        const updates = bannerIds.map((id, index) => 
+            Banner.findByIdAndUpdate(id, { order: index })
+        );
+        await Promise.all(updates);
+        res.json({ message: 'Banners reordered successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 

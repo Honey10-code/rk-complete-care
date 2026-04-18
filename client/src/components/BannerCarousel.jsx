@@ -42,10 +42,15 @@ const BannerCarousel = () => {
             .then((data) => {
                 if (isMounted && data && data.length > 0) {
                     setSlides((prev) => {
-                        // Merge backend banners with manual defaults
-                        // This ensures we always have at least 4 slides
-                        if (data.length >= prev.length) return data;
-                        return [...data, ...prev.slice(data.length)];
+                        // Backend data is already sorted by order in the API
+                        // If we have fewer than 4 backend slides, we append the defaults to fill up
+                        if (data.length >= 4) return data;
+                        
+                        // Pick unique defaults that aren't already represented by backend data (by image)
+                        const backendImages = new Set(data.map(b => b.image));
+                        const uniqueDefaults = defaultSlides.filter(d => !backendImages.has(d.image));
+                        
+                        return [...data, ...uniqueDefaults.slice(0, 4 - data.length)];
                     });
                 }
             })

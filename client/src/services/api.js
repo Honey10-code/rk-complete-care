@@ -183,6 +183,7 @@ export const postClinicInfo = (data) => api.post(`/clinic-info`, data).then(res 
 
 export const postBanner = (fd) => api.post(`/banners`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
 export const deleteBanner = (id) => api.delete(`/banners/${id}`).then(res => { clearCache(); return safeObject(res); });
+export const reorderBanners = (bannerIds) => api.patch(`/banners/reorder`, { bannerIds }).then(res => { clearCache(); return res.data; });
 
 export const postPatientStory = (fd) => api.post(`/patient-stories`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });
 export const updatePatientStory = (id, fd) => api.put(`/patient-stories/${id}`, fd, { headers: { "Content-Type": "multipart/form-data" } }).then(res => { clearCache(); return safeObject(res); });

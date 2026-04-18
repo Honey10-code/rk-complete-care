@@ -16,10 +16,19 @@ router.get('/', async (req, res) => {
         const exercises = await Exercise.find().sort({ createdAt: 1 });
         const exerciseWithUrl = exercises.map(e => {
             const obj = e.toObject();
-            if (obj.image && !obj.image.startsWith('http') && !obj.image.startsWith('//')) {
-                // Ensure the path doesn't have double slashes
-                const imagePath = obj.image.startsWith('/') ? obj.image.substring(1) : obj.image;
-                obj.image = `${req.protocol}://${req.get('host')}/${imagePath}`;
+            const processPath = (p) => {
+                if (p && !p.startsWith('http') && !p.startsWith('//')) {
+                    const clean = p.startsWith('/') ? p.substring(1) : p;
+                    return `${req.protocol}://${req.get('host')}/${clean}`;
+                }
+                return p;
+            };
+
+            obj.image = processPath(obj.image);
+            if (obj.steps && Array.isArray(obj.steps)) {
+                obj.steps = obj.steps.map(processPath);
+            } else {
+                obj.steps = obj.image ? [obj.image] : [];
             }
             return obj;
         });
@@ -30,15 +39,31 @@ router.get('/', async (req, res) => {
 });
 
 // POST new exercise
-router.post('/', upload.single('image'), async (req, res) => {
-    let imagePath = req.body.imageUrl || '';
-    if (req.file) imagePath = req.file.path.replace(/\\/g, '/');
+router.post('/', upload.array('steps'), async (req, res) => {
+    let steps = [];
+    if (req.body.stepsJSON) {
+        steps = JSON.parse(req.body.stepsJSON);
+    }
+
+    // Replace placeholders with actual uploaded files
+    if (req.files && req.files.length > 0) {
+        let fileIdx = 0;
+        steps = steps.map(s => {
+            if (s === 'FILE_UPLOAD' && req.files[fileIdx]) {
+                const path = req.files[fileIdx].path.replace(/\\/g, '/');
+                fileIdx++;
+                return path;
+            }
+            return s;
+        });
+    }
 
     const exercise = new Exercise({
         id: req.body.id || req.body.title.toLowerCase().replace(/\s+/g, '-'),
         title: req.body.title,
         hindi: req.body.hindi,
-        image: imagePath,
+        image: steps.length > 0 ? steps[0] : (req.body.imageUrl || ''),
+        steps: steps,
         icon: req.body.icon || 'fa-person-running'
     });
 
@@ -51,18 +76,38 @@ router.post('/', upload.single('image'), async (req, res) => {
 });
 
 // PUT update exercise
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', upload.array('steps'), async (req, res) => {
     try {
         const exercise = await Exercise.findById(req.params.id);
         if (!exercise) return res.status(404).json({ message: 'Exercise not found' });
 
-        if (req.file) exercise.image = req.file.path.replace(/\\/g, '/');
-        else if (req.body.imageUrl) exercise.image = req.body.imageUrl;
+        let steps = [];
+        if (req.body.stepsJSON) {
+            steps = JSON.parse(req.body.stepsJSON);
+        }
+
+        // Replace placeholders with actual uploaded files
+        if (req.files && req.files.length > 0) {
+            let fileIdx = 0;
+            steps = steps.map(s => {
+                if (s === 'FILE_UPLOAD' && req.files[fileIdx]) {
+                    const path = req.files[fileIdx].path.replace(/\\/g, '/');
+                    fileIdx++;
+                    return path;
+                }
+                return s;
+            });
+        }
 
         const fields = ['title', 'hindi', 'id', 'icon'];
         fields.forEach(f => {
             if (req.body[f] !== undefined) exercise[f] = req.body[f];
         });
+
+        if (steps.length > 0) {
+            exercise.steps = steps;
+            exercise.image = steps[0]; // First step as thumbnail
+        }
 
         const updatedExercise = await exercise.save();
         res.json(updatedExercise);
