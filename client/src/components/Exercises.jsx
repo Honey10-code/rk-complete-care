@@ -240,13 +240,6 @@ const Exercises = ({ limit, isHomePage = false }) => {
                                     </motion.div>
                                 </AnimatePresence>
 
-                                {/* Step Label Indicator */}
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                    <div className="px-6 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white/50 text-4xl font-black opacity-30 select-none">
-                                        STEP {currentStep + 1}
-                                    </div>
-                                </div>
-
                                 {/* Navigation Arrows */}
                                 <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none">
                                     <button 
