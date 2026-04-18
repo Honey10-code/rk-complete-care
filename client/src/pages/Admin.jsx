@@ -1224,6 +1224,15 @@ const Admin = () => {
 
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Image Upload</label>
+                                            {/* Current image preview when editing */}
+                                            {editingExercise && editingExercise.image && (
+                                                <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-emerald-200 mb-2">
+                                                    <img src={editingExercise.image} alt="Current" className="w-full h-full object-cover" />
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm px-3 py-1.5">
+                                                        <p className="text-white text-[9px] font-black uppercase tracking-widest">Current Image</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                             <div className="flex gap-2">
                                                 <select value={exerciseUploadType} onChange={e => setExerciseUploadType(e.target.value)} className="px-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none">
                                                     <option value="url">URL</option>
@@ -1235,9 +1244,6 @@ const Admin = () => {
                                                     <input type="file" onChange={e => setExerciseFile(e.target.files[0])} className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                                                 )}
                                             </div>
-                                            {editingExercise && editingExercise.image && exerciseUploadType === "url" && (
-                                                <img src={editingExercise.image} alt="Preview" className="h-16 w-16 object-cover rounded-lg mt-2 border border-slate-200" />
-                                            )}
                                         </div>
                                         <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
                                             {editingExercise && (
