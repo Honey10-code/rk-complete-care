@@ -13,8 +13,7 @@ const BookingForm = () => {
         problem: '',
         clinicVisit: true,
         videoConsultation: false,
-        notes: '',
-        whatsappNotify: false
+        notes: ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -86,30 +85,10 @@ const BookingForm = () => {
             setShowSuccessModal(true);
             setStatus('success');
 
-            // Generate WhatsApp Link
-            if (formData.whatsappNotify) {
-                const consultationType = data.videoConsultation ? "Video Consultation" : "Clinic Visit";
-                const message = `
-*New Appointment Request*
-------------------------
-*ID:* ${savedAppointment.appointmentId}
-*Name:* ${data.patientName}
-*Phone:* ${data.phone}
-*Date:* ${data.date}
-*Slot:* ${data.slot}
-*Type:* ${consultationType}
-*Problem:* ${data.problem}
-------------------------
-Please confirm.
-Regards,
-RK - The Complete Care Physiotherapy Centre`;
-                window.open(`https://wa.me/918769556475?text=${encodeURIComponent(message)}`, '_blank');
-            }
-
             // Reset form but don't clear status/summary yet as we have a modal now
             setFormData({
                 patientName: '', age: '', gender: 'Male', phone: '', date: '', slot: 'Morning (9AM–1PM)',
-                problem: '', clinicVisit: true, videoConsultation: false, notes: '', whatsappNotify: false
+                problem: '', clinicVisit: true, videoConsultation: false, notes: ''
             });
 
         } catch (err) {
@@ -513,17 +492,6 @@ RK - The Complete Care Physiotherapy Centre`;
                         <>Book Appointment <i className="fa-solid fa-arrow-right"></i></>
                     )}
                 </button>
-
-                <div className="flex items-center justify-center gap-2">
-                    <input
-                        type="checkbox"
-                        name="whatsappNotify"
-                        checked={formData.whatsappNotify}
-                        onChange={handleChange}
-                        className="rounded text-emerald-500 focus:ring-emerald-500 w-4 h-4"
-                    />
-                    <span className="text-xs text-slate-500 font-bold">Get confirmation via <span className="text-emerald-600"><i className="fa-brands fa-whatsapp"></i> WhatsApp</span></span>
-                </div>
             </form>
 
             {/* Success Details Modal */}
@@ -650,15 +618,6 @@ RK - The Complete Care Physiotherapy Centre`;
                                     <span className="relative z-10">Dismiss Details</span>
                                     <i className="fa-solid fa-circle-xmark text-lg group-hover:rotate-90 transition-transform relative z-10"></i>
                                 </button>
-                                
-                                <div className="flex items-center justify-center gap-3 mt-10 opacity-70">
-                                    <div className="relative">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-500 block"></span>
-                                        <span className="w-2 h-2 rounded-full bg-emerald-500 absolute inset-0 animate-ping"></span>
-                                    </div>
-                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                                        Confirmation sent to WhatsApp
-                                    </p>
                                 </div>
                             </div>
                         </motion.div>
