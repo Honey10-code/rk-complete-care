@@ -10,6 +10,10 @@ const ExercisesPage = () => {
             <Helmet>
                 <title>Exercise Guides | RK The Complete Care</title>
                 <meta name="description" content="Access our specialized exercise guides for orthopedic rehabilitation and general pain relief. Dr. Piyush Sharma's recovery protocols." />
+                <link rel="canonical" href="https://rkphysiocare.in/exercises" />
+                <meta property="og:title" content="Exercise Guides | RK The Complete Care" />
+                <meta property="og:description" content="Access our specialized exercise guides for orthopedic rehabilitation and general pain relief. Dr. Piyush Sharma's recovery protocols." />
+                <meta property="og:url" content="https://rkphysiocare.in/exercises" />
             </Helmet>
             <Navbar />
             <div className="pt-4 pb-12">

@@ -107,7 +107,7 @@ const Navbar = () => {
         { label: "Exercises", to: "/exercises", type: "dropdown" },
         { label: "Doctors", to: "/doctors", type: "link" },
         { label: "Stories", to: "/patient-stories", type: "link" },
-        { label: "Blogs", to: "/clinic-posters", type: "link" },
+        { label: "Blogs", to: "/blogs", type: "link" },
         { label: "Gallery", to: "/gallery", type: "dropdown" },
         { label: "Contact", to: "/contact", type: "link" },
     ];

@@ -2464,7 +2464,7 @@ const Admin = () => {
                                         <h2 className="text-xl font-black text-slate-800">Blogs</h2>
                                         <p className="text-sm text-slate-400 mt-0.5">Upload and manage clinic blogs</p>
                                     </div>
-                                    <a href="/clinic-posters" target="_blank" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-colors">
+                                    <a href="/blogs" target="_blank" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-colors">
                                         <i className="fa-solid fa-arrow-up-right-from-square text-xs"></i> View Public Page
                                     </a>
                                 </div>

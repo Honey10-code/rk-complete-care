@@ -81,6 +81,10 @@ const GalleryPage = () => {
             <Helmet>
                 <title>{activeTab === 'photos' ? 'Clinic Gallery' : 'Video Gallery'} | RK The Complete Care</title>
                 <meta name="description" content="View clinical gallery and informational videos from RK The Complete Care Physiotherapy Center." />
+                <link rel="canonical" href={`https://rkphysiocare.in/gallery${activeTab === 'videos' ? '?tab=videos' : ''}`} />
+                <meta property="og:title" content={`${activeTab === 'photos' ? 'Clinic Gallery' : 'Video Gallery'} | RK The Complete Care`} />
+                <meta property="og:description" content="View clinical gallery and informational videos from RK The Complete Care Physiotherapy Center." />
+                <meta property="og:url" content={`https://rkphysiocare.in/gallery${activeTab === 'videos' ? '?tab=videos' : ''}`} />
             </Helmet>
 
             <Navbar />

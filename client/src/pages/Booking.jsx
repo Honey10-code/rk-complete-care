@@ -10,6 +10,10 @@ const Booking = () => {
             <Helmet>
                 <title>Book Appointment | RK The Complete Care</title>
                 <meta name="description" content="Book an appointment with Dr. Piyush Sharma at RK The Complete Care. Select your preferred time slot for physiotherapy consultation." />
+                <link rel="canonical" href="https://rkphysiocare.in/booking" />
+                <meta property="og:title" content="Book Appointment | RK The Complete Care" />
+                <meta property="og:description" content="Book an appointment with Dr. Piyush Sharma at RK The Complete Care. Select your preferred time slot for physiotherapy consultation." />
+                <meta property="og:url" content="https://rkphysiocare.in/booking" />
             </Helmet>
             <Navbar />
             

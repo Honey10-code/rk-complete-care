@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const PrivacyPolicy = () => {
   const sections = [
@@ -32,6 +33,14 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-6 font-sans">
+      <Helmet>
+        <title>Privacy Policy | RK The Complete Care</title>
+        <meta name="description" content="Read our privacy policy to understand how we collect, use, and protect your personal information at RK The Complete Care." />
+        <link rel="canonical" href="https://rkphysiocare.in/privacy-policy" />
+        <meta property="og:title" content="Privacy Policy | RK The Complete Care" />
+        <meta property="og:description" content="Read our privacy policy to understand how we collect, use, and protect your personal information." />
+        <meta property="og:url" content="https://rkphysiocare.in/privacy-policy" />
+      </Helmet>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 

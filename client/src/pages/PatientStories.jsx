@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
+import { Helmet } from "react-helmet-async";
 import { getPatientStories } from "../services/api";
 
 const StarRating = ({ rating }) => (
@@ -30,6 +31,14 @@ const PatientStories = () => {
 
     return (
         <div className="min-h-screen bg-slate-50">
+            <Helmet>
+                <title>Patient Stories & Testimonials | RK Total Physiotherapy Care</title>
+                <meta name="description" content="Read real recovery stories and testimonials from patients at RK The Complete Care. See how expert physiotherapy changes lives." />
+                <link rel="canonical" href="https://rkphysiocare.in/patient-stories" />
+                <meta property="og:title" content="Patient Stories & Testimonials | RK Total Physiotherapy Care" />
+                <meta property="og:description" content="Read real recovery stories and testimonials from patients at RK The Complete Care. See how expert physiotherapy changes lives." />
+                <meta property="og:url" content="https://rkphysiocare.in/patient-stories" />
+            </Helmet>
             <Navbar />
 
             {/* Hero */}

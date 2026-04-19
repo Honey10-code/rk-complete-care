@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getClinicPosters } from "../services/api";
@@ -201,6 +202,14 @@ const ClinicPosters = () => {
 
     return (
         <div className="min-h-screen bg-slate-50">
+            <Helmet>
+                <title>{selectedPoster ? selectedPoster.title : 'Health Blogs & Clinic Updates'} | RK The Complete Care</title>
+                <meta name="description" content={selectedPoster ? selectedPoster.description : "Explore expert insights on physiotherapy, wellness, and clinic updates from our recovery specialists in Jaipur."} />
+                <link rel="canonical" href={`https://rkphysiocare.in/blogs${selectedPoster ? `?article=${selectedPoster._id}` : ''}`} />
+                <meta property="og:title" content={selectedPoster ? selectedPoster.title : 'Health Blogs & Clinic Updates'} />
+                <meta property="og:description" content={selectedPoster ? selectedPoster.description : "Explore expert insights on physiotherapy, wellness, and clinic updates from our recovery specialists."} />
+                <meta property="og:url" content={`https://rkphysiocare.in/blogs${selectedPoster ? `?article=${selectedPoster._id}` : ''}`} />
+            </Helmet>
             <Navbar />
 
             <div className="max-w-7xl mx-auto px-6 pt-12 pb-24">

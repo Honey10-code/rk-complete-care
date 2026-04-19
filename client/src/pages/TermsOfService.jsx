@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const TermsOfService = () => {
   const terms = [
@@ -36,6 +37,14 @@ const TermsOfService = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-6 font-sans">
+      <Helmet>
+        <title>Terms of Service | RK The Complete Care</title>
+        <meta name="description" content="Read our terms of service to understand the rules, regulations, and clinical guidelines of using RK The Complete Care website." />
+        <link rel="canonical" href="https://rkphysiocare.in/terms-of-service" />
+        <meta property="og:title" content="Terms of Service | RK The Complete Care" />
+        <meta property="og:description" content="Read our terms of service to understand the rules, regulations, and clinical guidelines of using RK The Complete Care website." />
+        <meta property="og:url" content="https://rkphysiocare.in/terms-of-service" />
+      </Helmet>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 
