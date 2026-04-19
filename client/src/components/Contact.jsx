@@ -50,15 +50,10 @@ const contactItems = [
     },
 ];
 
-import { Helmet } from 'react-helmet-async';
 
 const Contact = () => {
     return (
-        <>
-            <Helmet>
-                <title>Contact Us | RK The Complete Care Jaipur</title>
-                <meta name="description" content="Get in touch with RK The Complete Care for appointment bookings in Jaipur. Call us at +91 8769556475 or +91 9782468376." />
-            </Helmet>
+        <React.Fragment>
             <section id="contact-info" className="py-24 relative overflow-hidden">
                 {/* Background */}
                 <div className="absolute inset-0 -z-10">
@@ -158,7 +153,7 @@ const Contact = () => {
                     </div>
                 </div>
             </section>
-        </>
+        </React.Fragment>
     );
 };
 

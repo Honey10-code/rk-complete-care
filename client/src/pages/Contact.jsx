@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { submitContactMessage } from '../services/api';
@@ -63,6 +64,14 @@ const Contact = () => {
 
     return (
         <div className="bg-white min-h-screen">
+            <Helmet>
+                <title>Contact Us | RK The Complete Care Jaipur</title>
+                <meta name="description" content="Get in touch with RK The Complete Care for appointment bookings in Jaipur. Call us at +91 8769556475 or +91 9782468376." />
+                <link rel="canonical" href="https://rkphysiocare.in/contact" />
+                <meta property="og:title" content="Contact Us | RK The Complete Care Jaipur" />
+                <meta property="og:description" content="Get in touch with RK The Complete Care for appointment bookings in Jaipur. Call us at +91 8769556475 or +91 9782468376." />
+                <meta property="og:url" content="https://rkphysiocare.in/contact" />
+            </Helmet>
             <Navbar />
 
             {/* Hero Section */}

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getServices } from '../services/api';
 
@@ -170,10 +169,6 @@ const Services = ({ limit, isHomePage = false }) => {
 
     return (
         <section id="services" className={`py-24 relative overflow-hidden ${isHomePage ? 'bg-slate-50' : 'bg-white'}`}>
-            <Helmet>
-                <title>Clinical Services | RK The Complete Care Physiotherapy</title>
-                <meta name="description" content="Expert physiotherapy services in Jaipur for neck pain, back pain, knee pain, sports injuries, and more." />
-            </Helmet>
 
             <div className="container mx-auto px-6 relative z-10">
                 <AnimatePresence mode="wait">

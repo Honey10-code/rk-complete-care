@@ -48,7 +48,7 @@ const BannerCarousel = () => {
     // This ensures LCP (Largest Contentful Paint) is lightning fast
     if (slides.length === 0 && loading) {
         return (
-            <div className="w-full h-[60vh] md:h-[85vh] bg-slate-900 overflow-hidden relative">
+            <div className="w-full h-[70vh] bg-slate-900 overflow-hidden relative">
                 <div className="absolute inset-0 bg-blue-900/20 animate-pulse"></div>
             </div>
         );
@@ -59,7 +59,7 @@ const BannerCarousel = () => {
     }
 
     return (
-        <div className="relative w-full h-[70vh] lg:h-[85vh] overflow-hidden group z-10">
+        <div className="relative w-full h-[70vh] overflow-hidden group z-10">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentIndex}
