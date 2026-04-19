@@ -66,10 +66,10 @@ const Contact = () => {
         <div className="bg-white min-h-screen">
             <Helmet>
                 <title>Contact RK The Complete Care | Physiotherapy Clinic Jaipur</title>
-                <meta name="description" content="Contact RK The Complete Care for expert physiotherapy in Jaipur. Call now, get directions, or book an appointment online." />
+                <meta name="description" content="Contact RK The Complete Care Jaipur for appointments, directions and expert physiotherapy consultation." />
                 <link rel="canonical" href="https://rkphysiocare.in/contact" />
                 <meta property="og:title" content="Contact RK The Complete Care | Physiotherapy Clinic Jaipur" />
-                <meta property="og:description" content="Contact RK The Complete Care for expert physiotherapy in Jaipur. Call now, get directions, or book an appointment online." />
+                <meta property="og:description" content="Contact RK The Complete Care Jaipur for appointments, directions and expert physiotherapy consultation." />
                 <meta property="og:url" content="https://rkphysiocare.in/contact" />
             </Helmet>
             <Navbar />

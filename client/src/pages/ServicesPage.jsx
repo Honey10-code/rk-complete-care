@@ -8,11 +8,11 @@ const ServicesPage = () => {
     return (
         <div className="bg-slate-50 min-h-screen">
             <Helmet>
-                <title>Expert Physiotherapy & Rehabilitation Services | RK The Complete Care</title>
-                <meta name="description" content="Explore our specialized services including manual therapy, robotic rehab, and sports injury recovery in Jaipur." />
+                <title>Physiotherapy Services in Jaipur | RK The Complete Care</title>
+                <meta name="description" content="Back pain, knee pain, sports injury rehab, posture correction and expert physiotherapy services in Jaipur." />
                 <link rel="canonical" href="https://rkphysiocare.in/services" />
-                <meta property="og:title" content="Expert Physiotherapy & Rehabilitation Services | RK The Complete Care" />
-                <meta property="og:description" content="Explore our specialized services including manual therapy, robotic rehab, and sports injury recovery in Jaipur." />
+                <meta property="og:title" content="Physiotherapy Services in Jaipur | RK The Complete Care" />
+                <meta property="og:description" content="Back pain, knee pain, sports injury rehab, posture correction and expert physiotherapy services in Jaipur." />
                 <meta property="og:url" content="https://rkphysiocare.in/services" />
             </Helmet>
             <Navbar />

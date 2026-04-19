@@ -9,11 +9,11 @@ const About = () => {
     return (
         <div className="bg-white min-h-screen">
             <Helmet>
-                <title>About Dr. Piyush Sharma | Professional Physiotherapist in Jaipur</title>
-                <meta name="description" content="Learn about Dr. Piyush Sharma (PT), specialized in orthopedic rehab and sports injuries at RK The Complete Care, Jaipur." />
+                <title>About RK The Complete Care | Trusted Physiotherapy Clinic Jaipur</title>
+                <meta name="description" content="Learn about RK The Complete Care, a trusted physiotherapy clinic in Jaipur focused on pain relief, mobility and recovery." />
                 <link rel="canonical" href="https://rkphysiocare.in/about" />
-                <meta property="og:title" content="About Dr. Piyush Sharma | Professional Physiotherapist in Jaipur" />
-                <meta property="og:description" content="Learn about Dr. Piyush Sharma (PT), specialized in orthopedic rehab and sports injuries at RK The Complete Care, Jaipur." />
+                <meta property="og:title" content="About RK The Complete Care | Trusted Physiotherapy Clinic Jaipur" />
+                <meta property="og:description" content="Learn about RK The Complete Care, a trusted physiotherapy clinic in Jaipur focused on pain relief, mobility and recovery." />
                 <meta property="og:url" content="https://rkphysiocare.in/about" />
             </Helmet>
             <Navbar />
@@ -62,7 +62,7 @@ const About = () => {
 
                             <div className="space-y-6 text-slate-600 leading-relaxed text-lg">
                                 <p>
-                                    <strong className="text-slate-900">RK The Complete Care</strong> is Jhotwara's most trusted physiotherapy and rehabilitation destination. Founded on the principles of evidence-based clinical practice and compassionate care, we provide specialized treatment for a wide range of orthopedic and neurological conditions.
+                                    <strong className="text-slate-900">RK The Complete Care</strong> is Jaipur's most trusted physiotherapy and rehabilitation destination. Founded on the principles of evidence-based clinical practice and compassionate care, we provide specialized treatment for a wide range of orthopedic and neurological conditions.
                                 </p>
                                 <p>
                                     Our clinic is equipped with the latest therapeutic technologies, allowing our expert team to deliver personalized recovery protocols that combine manual therapy, advanced modalities, and targeted exercise science.
