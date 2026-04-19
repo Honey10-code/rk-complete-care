@@ -39,6 +39,86 @@ const Home = () => {
                 <meta name="description" content="Expert physiotherapy, orthopedic rehabilitation, and chiropractic care in Jaipur. Dr. Piyush Sharma provides personalized recovery plans." />
                 <meta name="keywords" content="physiotherapy jaipur, orthopedic doctor, chiropractor, back pain treatment, knee replacement rehab, sports injury" />
                 <link rel="canonical" href="https://rkphysiocare.in/" />
+                
+                {/* JSON-LD Schema Markup */}
+                <script type="application/ld+json">
+                    {`
+                    {
+                      "@context": "https://schema.org",
+                      "@type": "Physiotherapy Center",
+                      "name": "RK The Complete Care",
+                      "image": "https://rkphysiocare.in/assets/images/LOGO.png",
+                      "@id": "https://rkphysiocare.in",
+                      "url": "https://rkphysiocare.in",
+                      "telephone": "+91 8769556475",
+                      "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "21, Nirmal Vihar, Dadi ka Phatak, Benad Road, Jhotwara",
+                        "addressLocality": "Jaipur",
+                        "postalCode": "302012",
+                        "addressCountry": "IN"
+                      },
+                      "geo": {
+                        "@type": "GeoCoordinates",
+                        "latitude": 26.9717627,
+                        "longitude": 75.741857
+                      },
+                      "openingHoursSpecification": [
+                        {
+                          "@type": "OpeningHoursSpecification",
+                          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                          "opens": "09:00",
+                          "closes": "20:00"
+                        },
+                        {
+                          "@type": "OpeningHoursSpecification",
+                          "dayOfWeek": "Sunday",
+                          "opens": "09:00",
+                          "closes": "12:00"
+                        }
+                      ],
+                      "hasOfferCatalog": {
+                        "@type": "OfferCatalog",
+                        "name": "Physiotherapy Services",
+                        "itemListElement": [
+                          {
+                            "@type": "Offer",
+                            "itemOffered": {
+                              "@type": "Service",
+                              "name": "Orthopedic Rehabilitation"
+                            }
+                          },
+                          {
+                            "@type": "Offer",
+                            "itemOffered": {
+                              "@type": "Service",
+                              "name": "Manual Therapy"
+                            }
+                          },
+                          {
+                            "@type": "Offer",
+                            "itemOffered": {
+                              "@type": "Service",
+                              "name": "Robotic Rehab"
+                            }
+                          },
+                          {
+                            "@type": "Offer",
+                            "itemOffered": {
+                              "@type": "Service",
+                              "name": "Sports Injury Recovery"
+                            }
+                          }
+                        ]
+                      },
+                      "sameAs": [
+                        "https://www.facebook.com/rkcompletecare",
+                        "https://www.instagram.com/rkcompletecare"
+                      ]
+                    }
+                    `}
+                </script>
+
                 <meta property="og:title" content="Best Physiotherapy Center in Jaipur | RK The Complete Care" />
                 <meta property="og:description" content="Expert physiotherapy, orthopedic rehabilitation, and chiropractic care in Jaipur. Dr. Piyush Sharma provides personalized recovery plans." />
                 <meta property="og:url" content="https://rkphysiocare.in/" />
