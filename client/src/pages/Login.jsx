@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import api from '../services/api';
 import logo from '../assets/images/LOGO.png';
 import loginBg from '../assets/images/login_luxury_bg.png';
@@ -35,6 +36,11 @@ const Login = () => {
 
     return (
         <div className="min-h-screen relative flex items-center justify-center p-6 font-['Poppins']">
+            <Helmet>
+                <title>Admin Login | RK Total Physiotherapy Care</title>
+                <meta name="description" content="Secure administrator login for managing clinic data and patient appointments." />
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
             {/* Immersive Background */}
             <div className="fixed inset-0 z-0">
                 <img src={loginBg} alt="Clinic Background" className="w-full h-full object-cover scale-105" />

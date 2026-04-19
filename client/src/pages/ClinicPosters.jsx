@@ -203,11 +203,11 @@ const ClinicPosters = () => {
     return (
         <div className="min-h-screen bg-slate-50">
             <Helmet>
-                <title>{selectedPoster ? selectedPoster.title : 'Health Blogs & Clinic Updates'} | RK The Complete Care</title>
-                <meta name="description" content={selectedPoster ? selectedPoster.description : "Explore expert insights on physiotherapy, wellness, and clinic updates from our recovery specialists in Jaipur."} />
+                <title>{selectedPoster ? selectedPoster.title : 'Latest Physiotherapy Blogs & Health Tips'} | RK The Complete Care</title>
+                <meta name="description" content={selectedPoster ? selectedPoster.description : "Stay updated with the latest health tips, physiotherapy insights, and clinic news from our expert team."} />
                 <link rel="canonical" href={`https://rkphysiocare.in/blogs${selectedPoster ? `?article=${selectedPoster._id}` : ''}`} />
-                <meta property="og:title" content={selectedPoster ? selectedPoster.title : 'Health Blogs & Clinic Updates'} />
-                <meta property="og:description" content={selectedPoster ? selectedPoster.description : "Explore expert insights on physiotherapy, wellness, and clinic updates from our recovery specialists."} />
+                <meta property="og:title" content={selectedPoster ? selectedPoster.title : 'Latest Physiotherapy Blogs & Health Tips'} />
+                <meta property="og:description" content={selectedPoster ? selectedPoster.description : "Stay updated with the latest health tips, physiotherapy insights, and clinic news from our expert team."} />
                 <meta property="og:url" content={`https://rkphysiocare.in/blogs${selectedPoster ? `?article=${selectedPoster._id}` : ''}`} />
             </Helmet>
             <Navbar />

@@ -9,11 +9,11 @@ const About = () => {
     return (
         <div className="bg-white min-h-screen">
             <Helmet>
-                <title>About Dr. Piyush Sharma | Best Physiotherapy Clinic in Jaipur</title>
-                <meta name="description" content="Learn about Dr. Piyush Sharma (PT), Chief Physiotherapist at Welton Hospital Jaipur. Specialist in orthopedic rehab, sports injuries, and post-op recovery." />
+                <title>About Dr. Piyush Sharma | Professional Physiotherapist in Jaipur</title>
+                <meta name="description" content="Learn about Dr. Piyush Sharma (PT), specialized in orthopedic rehab and sports injuries at RK The Complete Care, Jaipur." />
                 <link rel="canonical" href="https://rkphysiocare.in/about" />
-                <meta property="og:title" content="About Dr. Piyush Sharma | Best Physiotherapy Clinic in Jaipur" />
-                <meta property="og:description" content="Learn about Dr. Piyush Sharma (PT), Chief Physiotherapist at Welton Hospital Jaipur. Specialist in orthopedic rehab, sports injuries, and post-op recovery." />
+                <meta property="og:title" content="About Dr. Piyush Sharma | Professional Physiotherapist in Jaipur" />
+                <meta property="og:description" content="Learn about Dr. Piyush Sharma (PT), specialized in orthopedic rehab and sports injuries at RK The Complete Care, Jaipur." />
                 <meta property="og:url" content="https://rkphysiocare.in/about" />
             </Helmet>
             <Navbar />

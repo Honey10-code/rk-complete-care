@@ -35,12 +35,12 @@ const Home = () => {
     return (
         <>
             <Helmet>
-                <title>Best Physiotherapy center in Jaipur | RK The Complete Care</title>
-                <meta name="description" content="Expert physiotherapy, orthopedic rehabilitation, and chiropractic care in Jaipur. Dr. Piyush Sharma and team provide personalized treatment for pain relief and recovery." />
+                <title>Best Physiotherapy Center in Jaipur | RK The Complete Care</title>
+                <meta name="description" content="Expert physiotherapy, orthopedic rehabilitation, and chiropractic care in Jaipur. Dr. Piyush Sharma provides personalized recovery plans." />
                 <meta name="keywords" content="physiotherapy jaipur, orthopedic doctor, chiropractor, back pain treatment, knee replacement rehab, sports injury" />
                 <link rel="canonical" href="https://rkphysiocare.in/" />
-                <meta property="og:title" content="Best Physiotherapy center in Jaipur | RK The Complete Care" />
-                <meta property="og:description" content="Expert physiotherapy, orthopedic rehabilitation, and chiropractic care in Jaipur. Dr. Piyush Sharma and team provide personalized treatment for pain relief and recovery." />
+                <meta property="og:title" content="Best Physiotherapy Center in Jaipur | RK The Complete Care" />
+                <meta property="og:description" content="Expert physiotherapy, orthopedic rehabilitation, and chiropractic care in Jaipur. Dr. Piyush Sharma provides personalized recovery plans." />
                 <meta property="og:url" content="https://rkphysiocare.in/" />
                 <meta property="og:type" content="website" />
             </Helmet>

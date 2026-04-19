@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/images/LOGO.png";
 import { io } from "socket.io-client";
@@ -854,6 +855,11 @@ const Admin = () => {
 
     return (
         <div className="flex h-screen bg-slate-100 font-sans overflow-hidden">
+            <Helmet>
+                <title>Admin Dashboard | RK The Complete Care Management</title>
+                <meta name="description" content="Centralized management dashboard for clinic staff to oversee appointments and patient care." />
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
             <Toast toasts={toasts} removeToast={removeToast} />
 
             {/* Mobile Sidebar Backdrop */}

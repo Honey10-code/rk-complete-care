@@ -8,11 +8,11 @@ const ExercisesPage = () => {
     return (
         <div className="bg-slate-50 min-h-screen">
             <Helmet>
-                <title>Exercise Guides | RK The Complete Care</title>
-                <meta name="description" content="Access our specialized exercise guides for orthopedic rehabilitation and general pain relief. Dr. Piyush Sharma's recovery protocols." />
+                <title>Recovery Exercise Guides & Protocols | RK The Complete Care</title>
+                <meta name="description" content="Access expert-designed exercise guides for spine recovery, joint health, and post-surgery rehabilitation." />
                 <link rel="canonical" href="https://rkphysiocare.in/exercises" />
-                <meta property="og:title" content="Exercise Guides | RK The Complete Care" />
-                <meta property="og:description" content="Access our specialized exercise guides for orthopedic rehabilitation and general pain relief. Dr. Piyush Sharma's recovery protocols." />
+                <meta property="og:title" content="Recovery Exercise Guides & Protocols | RK The Complete Care" />
+                <meta property="og:description" content="Access expert-designed exercise guides for spine recovery, joint health, and post-surgery rehabilitation." />
                 <meta property="og:url" content="https://rkphysiocare.in/exercises" />
             </Helmet>
             <Navbar />

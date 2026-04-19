@@ -34,11 +34,11 @@ const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-6 font-sans">
       <Helmet>
-        <title>Privacy Policy | RK The Complete Care</title>
-        <meta name="description" content="Read our privacy policy to understand how we collect, use, and protect your personal information at RK The Complete Care." />
+        <title>Privacy Policy | RK The Complete Care - Your Data Security</title>
+        <meta name="description" content="Learn how we protect your personal information and maintain data security at RK The Complete Care." />
         <link rel="canonical" href="https://rkphysiocare.in/privacy-policy" />
-        <meta property="og:title" content="Privacy Policy | RK The Complete Care" />
-        <meta property="og:description" content="Read our privacy policy to understand how we collect, use, and protect your personal information." />
+        <meta property="og:title" content="Privacy Policy | RK The Complete Care - Your Data Security" />
+        <meta property="og:description" content="Learn how we protect your personal information and maintain data security at RK The Complete Care." />
         <meta property="og:url" content="https://rkphysiocare.in/privacy-policy" />
       </Helmet>
       <div className="max-w-4xl mx-auto">

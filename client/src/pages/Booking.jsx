@@ -8,11 +8,11 @@ const Booking = () => {
     return (
         <div className="bg-slate-50 min-h-screen">
             <Helmet>
-                <title>Book Appointment | RK The Complete Care</title>
-                <meta name="description" content="Book an appointment with Dr. Piyush Sharma at RK The Complete Care. Select your preferred time slot for physiotherapy consultation." />
+                <title>Book Your Physiotherapy Appointment Online | RK The Complete Care</title>
+                <meta name="description" content="Schedule your visit with Dr. Piyush Sharma easily. Choose your preferred time slot and start your recovery today." />
                 <link rel="canonical" href="https://rkphysiocare.in/booking" />
-                <meta property="og:title" content="Book Appointment | RK The Complete Care" />
-                <meta property="og:description" content="Book an appointment with Dr. Piyush Sharma at RK The Complete Care. Select your preferred time slot for physiotherapy consultation." />
+                <meta property="og:title" content="Book Your Physiotherapy Appointment Online | RK The Complete Care" />
+                <meta property="og:description" content="Schedule your visit with Dr. Piyush Sharma easily. Choose your preferred time slot and start your recovery today." />
                 <meta property="og:url" content="https://rkphysiocare.in/booking" />
             </Helmet>
             <Navbar />

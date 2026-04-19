@@ -38,11 +38,11 @@ const TermsOfService = () => {
   return (
     <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-6 font-sans">
       <Helmet>
-        <title>Terms of Service | RK The Complete Care</title>
-        <meta name="description" content="Read our terms of service to understand the rules, regulations, and clinical guidelines of using RK The Complete Care website." />
+        <title>Terms of Service | RK The Complete Care - Legal Guidelines</title>
+        <meta name="description" content="Review the terms and conditions for using our services and website for RK The Complete Care." />
         <link rel="canonical" href="https://rkphysiocare.in/terms-of-service" />
-        <meta property="og:title" content="Terms of Service | RK The Complete Care" />
-        <meta property="og:description" content="Read our terms of service to understand the rules, regulations, and clinical guidelines of using RK The Complete Care website." />
+        <meta property="og:title" content="Terms of Service | RK The Complete Care - Legal Guidelines" />
+        <meta property="og:description" content="Review the terms and conditions for using our services and website for RK The Complete Care." />
         <meta property="og:url" content="https://rkphysiocare.in/terms-of-service" />
       </Helmet>
       <div className="max-w-4xl mx-auto">

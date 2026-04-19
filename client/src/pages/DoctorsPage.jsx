@@ -8,11 +8,11 @@ const DoctorsPage = () => {
     return (
         <div className="bg-slate-900 min-h-screen">
             <Helmet>
-                <title>Our Specialists | RK Total Physiotherapy Care</title>
-                <meta name="description" content="Meet our expert physiotherapists at RK The Complete Care. Dr. Piyush Sharma and specialists dedicated to your recovery." />
+                <title>Meet Our Expert Medical Team | RK Total Physiotherapy Care</title>
+                <meta name="description" content="Our team of dedicated physiotherapists and specialists are committed to your rapid recovery and long-term health." />
                 <link rel="canonical" href="https://rkphysiocare.in/doctors" />
-                <meta property="og:title" content="Our Specialists | RK Total Physiotherapy Care" />
-                <meta property="og:description" content="Meet our expert physiotherapists at RK The Complete Care. Dr. Piyush Sharma and specialists dedicated to your recovery." />
+                <meta property="og:title" content="Meet Our Expert Medical Team | RK Total Physiotherapy Care" />
+                <meta property="og:description" content="Our team of dedicated physiotherapists and specialists are committed to your rapid recovery and long-term health." />
                 <meta property="og:url" content="https://rkphysiocare.in/doctors" />
             </Helmet>
             <Navbar />

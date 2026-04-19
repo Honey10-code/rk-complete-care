@@ -79,11 +79,11 @@ const GalleryPage = () => {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col">
             <Helmet>
-                <title>{activeTab === 'photos' ? 'Clinic Gallery' : 'Video Gallery'} | RK The Complete Care</title>
-                <meta name="description" content="View clinical gallery and informational videos from RK The Complete Care Physiotherapy Center." />
+                <title>{activeTab === 'photos' ? 'Clinic Gallery & Inside Look' : 'Clinical Education Videos'} | RK The Complete Care</title>
+                <meta name="description" content="See our modern clinic facilities and watch educational physiotherapy videos for better health insights." />
                 <link rel="canonical" href={`https://rkphysiocare.in/gallery${activeTab === 'videos' ? '?tab=videos' : ''}`} />
-                <meta property="og:title" content={`${activeTab === 'photos' ? 'Clinic Gallery' : 'Video Gallery'} | RK The Complete Care`} />
-                <meta property="og:description" content="View clinical gallery and informational videos from RK The Complete Care Physiotherapy Center." />
+                <meta property="og:title" content={`${activeTab === 'photos' ? 'Clinic Gallery & Inside Look' : 'Clinical Education Videos'} | RK The Complete Care`} />
+                <meta property="og:description" content="See our modern clinic facilities and watch educational physiotherapy videos for better health insights." />
                 <meta property="og:url" content={`https://rkphysiocare.in/gallery${activeTab === 'videos' ? '?tab=videos' : ''}`} />
             </Helmet>
 
