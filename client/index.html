@@ -10,6 +10,23 @@
     gtag('js', new Date());
 
     gtag('config', 'G-TYTDC95FMR');
+
+    // WhatsApp & Call Tracking Helper
+    document.addEventListener('click', function(e) {
+      const a = e.target.closest('a');
+      if (!a) return;
+      
+      const isWhatsApp = a.href.includes('wa.me') || a.href.includes('api.whatsapp.com');
+      const isPhone = a.href.startsWith('tel:');
+
+      if (isWhatsApp || isPhone) {
+        gtag('event', 'generate_lead', {
+          'event_category': 'Engagement',
+          'event_label': isWhatsApp ? 'WhatsApp Click' : 'Phone Call Click',
+          'value': 1
+        });
+      }
+    });
   </script>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/logo.png" />

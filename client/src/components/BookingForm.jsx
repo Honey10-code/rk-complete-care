@@ -85,6 +85,19 @@ const BookingForm = () => {
             setShowSuccessModal(true);
             setStatus('success');
 
+            // 📊 Track successful booking in Google Analytics
+            if (window.gtag) {
+                window.gtag('event', 'generate_lead', {
+                    'event_category': 'Engagement',
+                    'event_label': 'Appointment Booked',
+                    'value': data.videoConsultation ? 500 : 0, // Online consults carry value
+                    'items': [{
+                        'item_name': data.problem || 'Physiotherapy Consultation',
+                        'item_category': data.videoConsultation ? 'Video' : 'Clinic'
+                    }]
+                });
+            }
+
             // Reset form but don't clear status/summary yet as we have a modal now
             setFormData({
                 patientName: '', age: '', gender: 'Male', phone: '', date: '', slot: 'Morning (9AM–1PM)',

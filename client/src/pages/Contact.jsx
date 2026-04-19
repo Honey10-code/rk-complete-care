@@ -33,6 +33,16 @@ const Contact = () => {
         try {
             await submitContactMessage(formData);
             setSubmitStatus({ type: 'success', message: 'Message sent successfully! We will get back to you soon.' });
+            
+            // 📊 Track successful contact inquiry in Google Analytics
+            if (window.gtag) {
+                window.gtag('event', 'generate_lead', {
+                    'event_category': 'Engagement',
+                    'event_label': 'Contact Form Submitted',
+                    'topic': formData.topic
+                });
+            }
+
             setFormData({ name: '', email: '', phone: '', topic: 'General Inquiry', message: '' });
         } catch (error) {
             setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
