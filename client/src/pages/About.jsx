@@ -36,9 +36,9 @@ const About = () => {
                                             <img src="/logo.png" alt="RK Logo" className="h-24 w-24 object-cover" />
                                         </div>
                                     </div>
-                                    <h3 className="text-2xl font-black mb-2 uppercase tracking-tighter italic">RK The Complete Care</h3>
-                                    <div className="w-20 h-1 bg-blue-400 mx-auto rounded-full"></div>
-                                    <p className="mt-4 text-blue-200 font-bold uppercase tracking-widest text-xs">Where Recovery Begins</p>
+                                    <h3 className="text-3xl font-black mb-2 uppercase tracking-tighter italic text-yellow-400 drop-shadow-lg">RK The Complete Care</h3>
+                                    <div className="w-24 h-1 bg-blue-400 mx-auto rounded-full"></div>
+                                    <p className="mt-4 text-blue-100 font-bold uppercase tracking-widest text-xs">Where Recovery Begins</p>
                                 </div>
                             </div>
                             {/* Decorative element */}

@@ -125,7 +125,7 @@ const BookingForm = () => {
 
             // 2. Configure Razorpay Options
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SWfjeQTs0VReYV',
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SfNYqFeFzRXQEM',
                 amount: order.amount,
                 currency: order.currency,
                 name: "RK The Complete Care",
