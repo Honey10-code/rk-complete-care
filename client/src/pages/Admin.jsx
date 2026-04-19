@@ -2214,6 +2214,20 @@ const Admin = () => {
                                                     </div>
                                                     <p className="text-[10px] text-slate-400 mt-1 italic">When enabled, patients see "X slots left". When disabled, they only see slot names.</p>
                                                 </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Video Consultation Feature</label>
+                                                    <div className="flex items-center gap-3 mt-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setClinicInfo({ ...clinicInfo, isVideoConsultationEnabled: !(clinicInfo.isVideoConsultationEnabled !== false) })}
+                                                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${clinicInfo.isVideoConsultationEnabled !== false ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                                                        >
+                                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${clinicInfo.isVideoConsultationEnabled !== false ? 'translate-x-5' : 'translate-x-0'}`} />
+                                                        </button>
+                                                        <span className="text-xs font-semibold text-slate-600">{clinicInfo.isVideoConsultationEnabled !== false ? "Active" : "Hidden"}</span>
+                                                    </div>
+                                                    <p className="text-[10px] text-slate-400 mt-1 italic">When hidden, the "Video Consultation" option will be removed from the public booking form.</p>
+                                                </div>
                                             </div>
                                         )
                                     },

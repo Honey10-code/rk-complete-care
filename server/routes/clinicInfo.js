@@ -24,7 +24,8 @@ router.get('/', async (req, res) => {
                     twitter: '#',
                     whatsapp: 'https://wa.me/918769556475',
                     google: 'https://g.page/r/CXkFsimafLKiEAE/review'
-                }
+                },
+                isVideoConsultationEnabled: true
             });
         }
 
@@ -60,6 +61,7 @@ router.post('/', async (req, res) => {
             address: req.body.address,
             openingHours: req.body.openingHours,
             socialLinks: req.body.socialLinks,
+            isVideoConsultationEnabled: req.body.isVideoConsultationEnabled,
             updatedAt: Date.now()
         };
 

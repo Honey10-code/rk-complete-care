@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { bookAppointment, getBookedSlots, createPaymentOrder, verifyPayment } from '../services/api';
+import { bookAppointment, getBookedSlots, createPaymentOrder, verifyPayment, getClinicInfo } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BookingForm = () => {
@@ -31,6 +31,15 @@ const BookingForm = () => {
     const [bookingSummary, setBookingSummary] = useState(null);
     const [slotDropdownOpen, setSlotDropdownOpen] = useState(false);
     const [slotsCache, setSlotsCache] = useState({}); // Local memory cache for slots { "2024-04-10": data }
+    const [isVideoConsultEnabled, setIsVideoConsultEnabled] = useState(true);
+
+    useEffect(() => {
+        getClinicInfo().then(info => {
+            if (info) {
+                setIsVideoConsultEnabled(info.isVideoConsultationEnabled !== false);
+            }
+        }).catch(err => console.error("Error fetching clinic info", err));
+    }, []);
 
     // Fetch booked slots when date changes
     const today = new Date().toISOString().split('T')[0];
@@ -476,22 +485,24 @@ const BookingForm = () => {
                         <span className="font-bold text-slate-700 group-hover:text-blue-600 transition-colors"><i className="fa-solid fa-stethoscope mr-2 text-blue-600"></i>Clinic Visit</span>
                     </label>
 
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <div className="relative flex items-center">
-                            <input
-                                type="checkbox"
-                                name="videoConsultation"
-                                checked={formData.videoConsultation}
-                                onChange={(e) => {
-                                    handleChange(e);
-                                    if (e.target.checked) setFormData(p => ({ ...p, clinicVisit: false }));
-                                }}
-                                className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-purple-600 checked:bg-purple-600 group-hover:border-purple-600"
-                            />
-                            <i className="fa-solid fa-video absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 text-white text-xs peer-checked:opacity-100"></i>
-                        </div>
-                        <span className="font-medium text-gray-700 group-hover:text-purple-600 transition-colors">Video Consultation</span>
-                    </label>
+                    {isVideoConsultEnabled && (
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <div className="relative flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name="videoConsultation"
+                                    checked={formData.videoConsultation}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        if (e.target.checked) setFormData(p => ({ ...p, clinicVisit: false }));
+                                    }}
+                                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-purple-600 checked:bg-purple-600 group-hover:border-purple-600"
+                                />
+                                <i className="fa-solid fa-video absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 text-white text-xs peer-checked:opacity-100"></i>
+                            </div>
+                            <span className="font-medium text-gray-700 group-hover:text-purple-600 transition-colors">Video Consultation</span>
+                        </label>
+                    )}
                 </div>
 
                 <button

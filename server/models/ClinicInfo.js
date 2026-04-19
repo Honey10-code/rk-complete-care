@@ -46,6 +46,10 @@ const clinicInfoSchema = new mongoose.Schema({
         medicine: { type: Boolean, default: true },
         followUp: { type: Boolean, default: true }
     },
+    isVideoConsultationEnabled: {
+        type: Boolean,
+        default: true
+    },
     updatedAt: {
         type: Date,
         default: Date.now
