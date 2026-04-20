@@ -29,7 +29,7 @@
     });
   </script>
   <meta charset="UTF-8" />
-  <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="preload" href="/logo.png" as="image" />
   <link rel="preload" as="image" href="/banner-v2.webp" />
   
@@ -45,11 +45,12 @@
   <title>RK The Complete Care | Best Physiotherapy in Jaipur</title>
   <!-- Razorpay Checkout script -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+  <script type="module" crossorigin src="/assets/index-iY1i9xEk.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-C7bt-5tr.css">
 </head>
 
 <body>
   <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>
