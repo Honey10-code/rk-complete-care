@@ -2,33 +2,25 @@ const express = require('express');
 const router = express.Router();
 const Banner = require('../models/Banner');
 const multer = require('multer');
-const path = require('path');
+const { bannerStorage } = require('../utils/cloudinary');
 
-// Configure Multer for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dest = path.join(__dirname, '..', 'uploads');
-        cb(null, dest);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // unique filename
-    }
-});
-
-const upload = multer({ storage: storage });
+const upload = multer({ storage: bannerStorage });
 
 // GET all banners (Sorted by order)
 router.get('/', async (req, res) => {
     try {
         const banners = await Banner.find().sort({ order: 1, createdAt: -1 });
-        // Add full URL to image path if it's a local file
+        
+        // Add full URL to image path if it's a local file (legacy support)
         const bannersWithUrl = banners.map(banner => {
             const bannerObj = banner.toObject();
-            if (bannerObj.image && !bannerObj.image.startsWith('http')) {
+            // If the image is a local path (starts with 'uploads') and NOT a full URL
+            if (bannerObj.image && !bannerObj.image.startsWith('http') && bannerObj.image.startsWith('uploads')) {
                 bannerObj.image = `${req.protocol}://${req.get('host')}/${bannerObj.image}`;
             }
             return bannerObj;
         });
+        
         res.json(bannersWithUrl);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -38,8 +30,14 @@ router.get('/', async (req, res) => {
 // POST new banner
 router.post('/', upload.single('image'), async (req, res) => {
     let imagePath = req.body.imageUrl;
-    if (req.file) {
-        imagePath = `uploads/${req.file.filename}`; 
+    
+    // If a file was uploaded to Cloudinary, use its secure_url
+    if (req.file && req.file.path) {
+        imagePath = req.file.path; 
+    }
+
+    if (!imagePath) {
+        return res.status(400).json({ message: "Image is required" });
     }
 
     // Get max order
@@ -84,8 +82,10 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         if (!banner) return res.status(404).json({ message: 'Banner not found' });
 
         let imagePath = req.body.imageUrl || banner.image;
-        if (req.file) {
-            imagePath = `uploads/${req.file.filename}`;
+        
+        // If a new file was uploaded to Cloudinary
+        if (req.file && req.file.path) {
+            imagePath = req.file.path;
         }
 
         banner.title = req.body.title !== undefined ? req.body.title : banner.title;
@@ -107,7 +107,10 @@ router.delete('/:id', async (req, res) => {
         const banner = await Banner.findById(req.params.id);
         if (!banner) return res.status(404).json({ message: 'Banner not found' });
 
-        await banner.deleteOne(); // Use deleteOne() instead of remove()
+        // Note: For a production app, you might want to also delete the image from Cloudinary here
+        // But to keep it simple and safe (prevent accidental loss), we just delete the DB record
+        
+        await banner.deleteOne(); 
         res.json({ message: 'Banner deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });

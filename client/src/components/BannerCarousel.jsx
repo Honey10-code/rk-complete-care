@@ -76,6 +76,11 @@ const BannerCarousel = () => {
                             className="w-full h-full object-cover absolute inset-0"
                             fetchpriority={currentIndex === 0 ? "high" : "auto"}
                             loading="eager"
+                            onError={(e) => {
+                                if (e.target.src !== "/banner-v2.webp") {
+                                    e.target.src = "/banner-v2.webp";
+                                }
+                            }}
                         />
                         {/* Premium Gradient Overlays */}
                         {/* Main dark gradient - stronger on left for text */}
@@ -125,7 +130,7 @@ const BannerCarousel = () => {
                                     <Link
                                         to="/booking"
                                         onClick={(e) => {
-                                            if (location.pathname === '/' || location.pathname === '/home') {
+                                            if (window.location.pathname === '/' || window.location.pathname === '/home') {
                                                 const el = document.getElementById('book-appointment');
                                                 if (el) {
                                                     e.preventDefault();

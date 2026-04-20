@@ -102,7 +102,6 @@ router.put('/:id', upload.single('image'), async (req, res) => {
             sections: sections
         };
 
-        // Always update image if either a new file is uploaded or a (possibly empty) imageUrl is provided
         if (req.file) {
             updateData.image = req.file.path.replace(/\\/g, '/');
         } else if (req.body.imageUrl !== undefined) {

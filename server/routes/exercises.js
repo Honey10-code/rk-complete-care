@@ -25,7 +25,6 @@ router.get('/', async (req, res) => {
             };
 
             obj.image = processPath(obj.image);
-            obj.image = processPath(obj.image);
             if (obj.steps && Array.isArray(obj.steps) && obj.steps.length > 0) {
                 obj.steps = obj.steps.map(processPath);
             } else {

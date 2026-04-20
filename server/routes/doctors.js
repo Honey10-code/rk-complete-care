@@ -4,7 +4,7 @@ const Doctor = require('../models/Doctor');
 const multer = require('multer');
 const path = require('path');
 
-// Configure Multer for file uploads
+// Configure Multer for local file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/');
