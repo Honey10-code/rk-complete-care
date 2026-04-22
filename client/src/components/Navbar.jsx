@@ -123,13 +123,12 @@ const Navbar = () => {
 
                 <div className="max-w-[1536px] mx-auto px-4 md:px-6 lg:px-10 flex flex-wrap justify-between items-center gap-y-1">
                     {/* Contact Details */}
-                    <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-center sm:justify-start">
-                        <a href="mailto:rk.completecare@gmail.com" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
+                    <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-start">
+                        <a href="mailto:rk.completecare@gmail.com" className="flex items-center gap-1 text-[8.5px] xs:text-[9.5px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-wider group">
                             <i className="fa-solid fa-envelope text-emerald-300 group-hover:scale-110 transition-transform"></i>
-                            <span className="xs:inline">rk.completecare@gmail.com</span>
-
+                            <span>rk.completecare@gmail.com</span>
                         </a>
-                        <a href="tel:+918769556475" className="flex items-center gap-1.5 text-[9px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-widest group">
+                        <a href="tel:+918769556475" className="flex items-center gap-1 text-[8.5px] xs:text-[9.5px] md:text-[11px] font-bold text-emerald-50 hover:text-white transition-colors uppercase tracking-wider group">
                             <i className="fa-solid fa-phone text-emerald-300 group-hover:scale-110 transition-transform"></i>
                             +91 87695 56475
                         </a>
@@ -175,8 +174,8 @@ const Navbar = () => {
                                 <img src={logo} alt="RK" className="w-full h-full object-cover scale-[1.35] transform transition-transform duration-400 group-hover:scale-150" />
                             </div>
                             <div className="flex flex-col leading-tight">
-                                <span className="text-[13px] md:text-[14px] lg:text-[16px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK THE COMPLETE CARE</span>
-                                <span className="text-[6px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em] ml-auto" >Where Recovery Begins...</span>
+                                <span className="text-[11px] xs:text-[13px] md:text-[14px] lg:text-[16px] font-black text-slate-900 tracking-tight whitespace-nowrap">RK THE COMPLETE CARE</span>
+                                <span className="text-[5px] xs:text-[6px] md:text-[8px] lg:text-[9px] font-bold text-blue-600 uppercase tracking-[0.1em] ml-auto" >Where Recovery Begins...</span>
                             </div>
                         </Link>
                     </div>

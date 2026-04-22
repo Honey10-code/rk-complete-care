@@ -59,7 +59,7 @@ const BannerCarousel = () => {
     }
 
     return (
-        <div className="relative w-full h-[70vh] overflow-hidden group z-10">
+        <div className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] xl:h-[75vh] overflow-hidden group z-10">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentIndex}
@@ -73,7 +73,7 @@ const BannerCarousel = () => {
                         <img
                             src={slides[currentIndex].image || "/banner-v2.webp"}
                             alt={slides[currentIndex].title || "Physiotherapy Banner"}
-                            className="w-full h-full object-cover absolute inset-0"
+                            className="w-full h-full object-cover object-right-top xs:object-right sm:object-center absolute inset-0"
                             fetchpriority={currentIndex === 0 ? "high" : "auto"}
                             loading="eager"
                             onError={(e) => {
@@ -105,7 +105,7 @@ const BannerCarousel = () => {
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.4, duration: 0.8 }}
-                                    className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 lg:mb-6 leading-[1.1] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] md:drop-shadow-2xl"
+                                    className="text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold mb-3 lg:mb-6 leading-[1.2] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] md:drop-shadow-2xl"
                                     style={{ color: slides[currentIndex].titleColor || 'white' }}
                                 >
                                     {slides[currentIndex].title}
@@ -115,7 +115,7 @@ const BannerCarousel = () => {
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.6, duration: 0.8 }}
-                                    className="text-base md:text-xl lg:text-2xl font-light drop-shadow-md max-w-2xl mb-8 lg:mb-10 border-l-4 border-blue-500 pl-4 lg:pl-6"
+                                    className="text-[11px] xs:text-sm sm:text-lg md:text-xl lg:text-2xl font-light drop-shadow-md max-w-2xl mb-6 lg:mb-10 border-l-4 border-blue-500 pl-3 lg:pl-6"
                                     style={{ color: slides[currentIndex].subtitleColor || '#e2e8f0' }}
                                 >
                                     {slides[currentIndex].subtitle}
@@ -125,7 +125,7 @@ const BannerCarousel = () => {
                                     initial={{ y: 30, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.8, duration: 0.8 }}
-                                    className="flex flex-wrap gap-4"
+                                    className="flex flex-wrap gap-2.5 sm:gap-4"
                                 >
                                     <Link
                                         to="/booking"
@@ -138,14 +138,14 @@ const BannerCarousel = () => {
                                                 }
                                             }
                                         }}
-                                        className="book-btn px-8 py-4 bg-primary-blue hover:bg-blue-700 text-white rounded-full font-semibold shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_25px_rgba(37,99,235,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-3 group"
+                                        className="book-btn px-5 xs:px-8 py-2.5 xs:py-4 bg-primary-blue hover:bg-blue-700 text-white rounded-full font-semibold shadow-[0_4px_15px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_25px_rgba(37,99,235,0.6)] text-[10px] sm:text-base border border-blue-400/30 transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2 xs:gap-3 group"
                                     >
                                         Book Consultation
                                         <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                                     </Link>
                                     <Link
                                         to="/services"
-                                        className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full font-semibold border border-white/30 transition-all duration-300 transform hover:-translate-y-1"
+                                        className="px-5 xs:px-8 py-2.5 xs:py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-full font-semibold border border-white/30 text-[10px] sm:text-base transition-all duration-300 transform hover:-translate-y-1"
                                     >
                                         Explore Therapies
                                     </Link>
