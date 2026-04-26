@@ -33,7 +33,7 @@ const Doctors = () => {
             suffix: '(PT)',
             qualification: 'BPT (CDNT,CCT)',
             designation: 'CONSULTANT PHYSIOTHERAPIST',
-            image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1974&auto=format&fit=crop',
+            image: '',
             specialty: 'Neuro & Pediatric',
             experience: '2+ Years Experience',
             bio: 'Dr. Soniya Pathak is a Senior Consultant Physiotherapist specializing in Neurological rehabilitation and Pediatric care. She brings a compassionate, results-driven approach to complex neurological cases including stroke recovery and developmental delays. Her clinical focus includes:',
